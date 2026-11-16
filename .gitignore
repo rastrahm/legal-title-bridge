@@ -1,0 +1,158 @@
+# =============================================================================
+# Legal Title Bridge (módulo 22) — Foundry + Anchor + Relayer + Frontend
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Foundry (Ethereum)
+# -----------------------------------------------------------------------------
+cache/
+out/
+broadcast/
+/lib/
+
+# Cobertura y reportes Foundry
+lcov.info
+coverage/
+gas-report.txt
+# Versionar .gas-snapshot (C13: forge snapshot --check)
+!.gas-snapshot
+
+# -----------------------------------------------------------------------------
+# Solana / Anchor
+# -----------------------------------------------------------------------------
+solana/target/
+solana/.anchor/
+solana/test-ledger/
+solana/**/target/
+.anchor/
+test-ledger/
+.cargo-cache/
+
+# Artefactos de programa (regenerables con anchor build)
+solana/target/deploy/*.so
+# Mantener keypairs de programa solo si el equipo decide versionarlos;
+# por defecto NO versionar keypairs reales:
+solana/target/deploy/*-keypair.json
+*.so
+
+# -----------------------------------------------------------------------------
+# Node — raíz, shared/, relayer/, e2e/, frontend/
+# -----------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+*.tsbuildinfo
+
+# Relayer
+relayer/node_modules/
+relayer/dist/
+relayer/coverage/
+relayer/*.db
+relayer/*.db-journal
+relayer/*.sqlite
+relayer/*.sqlite-journal
+relayer/data/
+
+# Shared
+shared/node_modules/
+shared/dist/
+shared/coverage/
+
+# E2E
+e2e/node_modules/
+e2e/dist/
+e2e/coverage/
+e2e/.cache/
+
+# Frontend (Next.js 16)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
+frontend/.turbo/
+frontend/.vercel/
+frontend/next-env.d.ts
+frontend/*.tsbuildinfo
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
+frontend/playwright/.cache/
+
+# -----------------------------------------------------------------------------
+# Secretos, claves y entorno
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env*.example
+
+*.pem
+*.key
+!*.key.example
+keystore/
+wallets/
+secrets/
+**/id.json
+**/keypair.json
+**/*-keypair.json
+!solana/programs/**/.gitkeep
+
+# Claves de anvil / billeteras E2E (nunca en producción ni en el repo)
+**/anvil-keys*
+**/e2e-wallet*
+**/test-wallet*
+
+# -----------------------------------------------------------------------------
+# Análisis estático / auditorías (salidas locales)
+# -----------------------------------------------------------------------------
+slither-report/
+slither.db.json
+aderyn-report/
+aderyn-report.md
+audit-reports/
+mutation-out/
+mutants/
+
+# -----------------------------------------------------------------------------
+# IDE y editores
+# -----------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+.cursor/
+# No ignorar reglas del módulo si se versionan en la raíz del proyecto
+!.cursorrules
+
+# -----------------------------------------------------------------------------
+# Sistema operativo
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -----------------------------------------------------------------------------
+# Logs y temporales
+# -----------------------------------------------------------------------------
+*.log
+tmp/
+temp/
+.tmp/
+*.tmp
+doc/Untitled
+doc/Untitled.*
+
+# Graphify / artefactos de agentes locales
+graphify-out/
+)
