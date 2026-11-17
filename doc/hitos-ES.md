@@ -39,7 +39,7 @@
 |---|------|:----------:|:------:|------------------|
 | 1 | BOOT | ✅ | ✅ | `make check-boot` OK · 2026-11-17 · rama `boot` |
 | 2 | CODEC | ✅ | ✅ | `make check-codec` C5 OK · 2026-11-17 · rama `codec` |
-| 3 | TITLE | ⬜ | ⬜ | |
+| 3 | TITLE | ✅ | ✅ | `make check-title` · TitleRegistry 98.9% · I1/I7/I9 · 2026-11-17 · rama `title` |
 | 4 | ATTEST | ⬜ | ⬜ | |
 | 5 | ENDPOINT | ⬜ | ⬜ | |
 | 6 | MIRROR | ⬜ | ⬜ | |
@@ -79,11 +79,11 @@
 
 ### 3. TITLE — Registro de títulos
 
-- [ ] Autorizada
-- [ ] `IdentityRegistry` (EIP-712, vencimiento, revocación)
-- [ ] `TitleRegistry` + cumplimiento + `LedgerChain`
-- [ ] Invariantes I1, I7, I9
-- [ ] Criterio: tests verdes; cobertura TitleRegistry ≥ 90 %
+- [x] Autorizada (2026-11-17, rama `title`)
+- [x] `IdentityRegistry` (EIP-712, vencimiento, revocación)
+- [x] `TitleRegistry` + cumplimiento (`Country`/`MaxHolders`/`Lockup`) + `LedgerChain`
+- [x] Invariantes I1, I7, I9
+- [x] Criterio: tests verdes; cobertura TitleRegistry ≥ 90 % (98.9% líneas) · `make check-title`
 
 ### 4. ATTEST — Certificaciones
 
@@ -216,4 +216,5 @@
 1. ~~Aceptar D1–D14~~ ✅ 2026-11-17
 2. ~~BOOT~~ ✅ 2026-11-17
 3. ~~CODEC~~ ✅ 2026-11-17 (`make check-codec` / C5 OK, rama `codec`)
-4. Autorizar: *"Autorizo Fase TITLE"*.
+4. ~~TITLE~~ ✅ 2026-11-17 (`make check-title`, I1/I7/I9, rama `title`)
+5. Autorizar: *"Autorizo Fase ATTEST"*.
