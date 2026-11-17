@@ -38,7 +38,7 @@
 | # | Fase | Autorizada | Cerrada | Evidencia / nota |
 |---|------|:----------:|:------:|------------------|
 | 1 | BOOT | ✅ | ✅ | `make check-boot` OK · 2026-11-17 · rama `boot` |
-| 2 | CODEC | ⬜ | ⬜ | |
+| 2 | CODEC | ✅ | ✅ | `make check-codec` C5 OK · 2026-11-17 · rama `codec` |
 | 3 | TITLE | ⬜ | ⬜ | |
 | 4 | ATTEST | ⬜ | ⬜ | |
 | 5 | ENDPOINT | ⬜ | ⬜ | |
@@ -71,11 +71,11 @@
 
 ### 2. CODEC — Formato del mensaje
 
-- [ ] Autorizada
-- [ ] `doc/PROTOCOLO-ES.md` escrito
-- [ ] `PacketCodec.sol` + `codec.rs` + `codec.ts` (TDD)
-- [ ] Vectores dorados `test/vectors/packets.json`
-- [ ] Criterio: C5 verde (tres lenguajes idénticos)
+- [x] Autorizada (2026-11-17, rama `codec`)
+- [x] `doc/PROTOCOLO-ES.md` escrito
+- [x] `PacketCodec.sol` + `codec.rs` + `codec.ts` (TDD)
+- [x] Vectores dorados `test/vectors/packets.json` (8 vectores)
+- [x] Criterio: C5 verde (tres lenguajes idénticos) · `make check-codec`
 
 ### 3. TITLE — Registro de títulos
 
@@ -214,5 +214,6 @@
 ## Próximo hito activo
 
 1. ~~Aceptar D1–D14~~ ✅ 2026-11-17
-2. ~~BOOT~~ ✅ 2026-11-17 (`make check-boot` OK, rama `boot`)
-3. Autorizar: *"Autorizo Fase CODEC"*.
+2. ~~BOOT~~ ✅ 2026-11-17
+3. ~~CODEC~~ ✅ 2026-11-17 (`make check-codec` / C5 OK, rama `codec`)
+4. Autorizar: *"Autorizo Fase TITLE"*.

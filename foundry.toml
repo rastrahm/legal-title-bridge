@@ -7,7 +7,11 @@ evm_version = "cancun"
 optimizer = true
 optimizer_runs = 10_000
 via_ir = true
-fs_permissions = [{ access = "read", path = "./src" }, { access = "read", path = "./test" }]
+fs_permissions = [
+    { access = "read", path = "./src" },
+    { access = "read-write", path = "./test" },
+    { access = "read", path = "./script" },
+]
 
 [profile.default.fuzz]
 runs = 1000
@@ -18,8 +22,16 @@ runs = 1000
 runs = 256
 depth = 50
 
+# Heavy profile: forge test --profile heavy
 [profile.heavy]
-inherits = "default"
+src = "src"
+out = "out"
+libs = ["lib"]
+solc = "0.8.37"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 10_000
+via_ir = true
 
 [profile.heavy.fuzz]
 runs = 2000
@@ -43,4 +55,6 @@ number_underscore = "preserve"
 single_line_statement_blocks = "multi"
 
 [lint]
-exclude_lints = []
+# asm-keccak256: prefer readable keccak256 in codec; gas path optimizes later.
+# unsafe-cheatcode: tests/scripts intentionally use vm.readFile / writeFile for C5 vectors.
+exclude_lints = ["asm-keccak256", "unsafe-cheatcode"]
