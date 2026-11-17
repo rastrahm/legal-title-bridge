@@ -469,7 +469,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 |------|--------|--------|--------------|
 | **BOOT** | Scaffold Foundry + Anchor + relayer, herramientas, `Makefile` | ✅ Cerrada | ✅ 2026-11-17 |
 | **CODEC** | Formato de mensaje, dominio, vectores dorados en tres lenguajes | ✅ Cerrada | ✅ 2026-11-17 |
-| **TITLE** | `TitleRegistry` + `IdentityRegistry` + módulos de cumplimiento + asientos encadenados | ⏳ Pendiente | ⬜ |
+| **TITLE** | `TitleRegistry` + `IdentityRegistry` + módulos de cumplimiento + asientos encadenados | ✅ Cerrada | ✅ 2026-11-17 |
 | **ATTEST** | Certificaciones con vencimiento y quórum; bloqueo por vencimiento; separación de roles | ⏳ Pendiente | ⬜ |
 | **ENDPOINT** | `BridgeEndpoint`: quórum, ids, dominio, límites de flujo, pausa, rotación con timelock | ⏳ Pendiente | ⬜ |
 | **MIRROR** | Programa Anchor: config, quórum secp256k1, mint Token-2022, hook, emisión | ⏳ Pendiente | ⬜ |

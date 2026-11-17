@@ -2,8 +2,7 @@
 # C0 — forge lint wrapper.
 # forge lint often exits 0 even with findings. Fail if the output contains:
 #   - forge-style: error[ / warning[ / note[
-#   - solc-style:  Error ( / Warning ( / Note (
-#   - "Compiler run successful with warnings"
+#   - solc-style diagnostics that cite our trees (src|test|script), not lib/
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -44,7 +43,14 @@ if [[ $STATUS -ne 0 ]]; then
   exit "$STATUS"
 fi
 
-if grep -E 'error\[|warning\[|note\[|Error \(|Warning \(|Note \(|Compiler run successful with warnings' "$OUT" >/dev/null; then
+# forge-lint findings on targeted paths
+if grep -E 'error\[|warning\[|note\[' "$OUT" >/dev/null; then
+  echo "lint.sh: findings detected" >&2
+  exit 1
+fi
+
+# solc Error/Warning/Note only count when the location is our code (ignore OZ/lib noise)
+if grep -E '^\s*--> (src|test|script)/' "$OUT" >/dev/null; then
   echo "lint.sh: findings detected" >&2
   exit 1
 fi

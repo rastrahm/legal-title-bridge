@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
-# Full gate grows with phases; default = boot + codec
-check: check-boot check-codec
+# Full gate grows with phases; default = boot + codec + title
+check: check-boot check-codec check-title
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -24,6 +24,11 @@ check-codec: gen-vectors
 	cd solana && cargo test -p title_mirror codec -- --nocapture
 	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd shared && npm run test:codec
 	@echo "make check-codec: OK (C5)"
+
+# TITLE: IdentityRegistry + TitleRegistry + compliance + I1/I7/I9
+check-title:
+	forge test --match-contract "IdentityRegistryTest|TitleRegistryTest|LedgerChainTest|TitleRegistryInvariants"
+	@echo "make check-title: OK"
 
 fmt:
 	forge fmt --check
