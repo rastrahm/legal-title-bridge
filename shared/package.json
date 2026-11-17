@@ -8,9 +8,11 @@
     "./addresses": "./src/addresses.ts"
   },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:codec": "vitest run test/codec.test.ts"
   },
   "dependencies": {
+    "ethers": "^6.17.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
