@@ -26,9 +26,10 @@
 - [x] EXTATK en testnet = subconjunto (no repetir X1–X36 enteros)
 - [x] Catálogo X1–X36 fijo para v1 (nada opcional por defecto)
 - [x] Solidity del módulo: `0.8.37` exacto (EVM Cancun); Solana sin cambio (Anchor 0.31.1 / CLI 2.2.20)
+- [x] Comentarios en código: solo inglés, o bilingües ES+EN (nunca solo ES)
 - [x] Docs de diseño: clases, flujo, flujograma, mapa de ataques, superficie de ataques (ES)
-- [ ] Decisiones D1–D14 revisadas y aceptadas (sobre todo D5/D6)
-- [ ] Primera fase autorizada: *"Autorizo Fase BOOT"*
+- [x] Decisiones D1–D14 revisadas y aceptadas (sobre todo D5/D6) — 2026-11-17
+- [x] Primera fase autorizada: *"Autorizo Fase BOOT"* — 2026-11-17 · rama `boot`
 
 ---
 
@@ -36,7 +37,7 @@
 
 | # | Fase | Autorizada | Cerrada | Evidencia / nota |
 |---|------|:----------:|:------:|------------------|
-| 1 | BOOT | ⬜ | ⬜ | |
+| 1 | BOOT | ✅ | ✅ | `make check-boot` OK · 2026-11-17 · rama `boot` |
 | 2 | CODEC | ⬜ | ⬜ | |
 | 3 | TITLE | ⬜ | ⬜ | |
 | 4 | ATTEST | ⬜ | ⬜ | |
@@ -59,14 +60,14 @@
 
 ### 1. BOOT — Scaffold
 
-- [ ] Autorizada
-- [ ] Foundry + OZ v5 + `foundry.toml` (0.8.37, Cancun, fuzz/invariant)
-- [ ] Anchor `title_mirror` + Token-2022 + feature `redteam`
-- [ ] `shared/`, `relayer/`, `e2e/` (Node 22, vitest)
-- [ ] `frontend/` Next.js 16 + Tailwind 4 + Playwright + CSP
-- [ ] `Makefile`, `.cursorrules`, `.env.example`, pre-commit + `scripts/lint.sh`
-- [ ] Herramientas: slither, aderyn, cargo-audit, Chromium (versiones en README)
-- [ ] Criterio: C0; builds de humo verdes; hook bloquea lint malo
+- [x] Autorizada (2026-11-17, rama `boot`)
+- [x] Foundry + OZ v5 + `foundry.toml` (0.8.37, Cancun, fuzz/invariant)
+- [x] Anchor `title_mirror` + Token-2022 + feature `redteam`
+- [x] `shared/`, `relayer/`, `e2e/` (Node 22, vitest)
+- [x] `frontend/` Next.js 16 + Tailwind 4 + Playwright + CSP
+- [x] `Makefile`, `.cursorrules`, `.env.example`, pre-commit + `scripts/lint.sh`
+- [x] Herramientas: slither 0.11.6, aderyn 0.6.8, cargo-audit 0.23.0, Chromium Playwright
+- [x] Criterio: C0; `make check-boot` verde; fixture lint falla a propósito; hook instalado
 
 ### 2. CODEC — Formato del mensaje
 
@@ -212,6 +213,6 @@
 
 ## Próximo hito activo
 
-1. Aceptar D1–D14 (marcar arriba).
-2. Autorizar: *"Autorizo Fase BOOT"*.
-3. Al cerrar BOOT: marcar tablero rápido + checklist de la fase; anotar fecha/nota.
+1. ~~Aceptar D1–D14~~ ✅ 2026-11-17
+2. ~~BOOT~~ ✅ 2026-11-17 (`make check-boot` OK, rama `boot`)
+3. Autorizar: *"Autorizo Fase CODEC"*.

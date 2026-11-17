@@ -1,0 +1,11 @@
+{
+  "name": "legal-title-bridge-boot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:shared": "npm --prefix shared run test",
+    "test:relayer": "npm --prefix relayer run test",
+    "test:e2e": "npm --prefix e2e run test",
+    "test:ts": "npm run test:shared && npm run test:relayer && npm run test:e2e"
+  }
+}

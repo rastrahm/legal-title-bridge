@@ -48,7 +48,7 @@ Clase de activo en v1: **vino en depósito fiscal** (lote intercambiable, custod
 ### Suite (`evm-smart-contracts-suite` + `solidity.cursorrules`)
 
 - Solidity **exacto** `0.8.37`, EVM Cancun. OpenZeppelin Contracts v5.x (`EIP712`, `ECDSA`, `AccessControl`, `TimelockController`, `ReentrancyGuardTransient`, `SafeERC20`).
-- Foundry: unit + fuzz (`runs >= 1000`) + invariant (`runs >= 256`, `depth >= 30`) + gas.
+- Foundry: unit + fuzz (`runs >= 1000`) + invariant (`runs >= 256`, `depth >= 50`; perfil `heavy`: `depth = 100`, `runs = 512`) + gas.
 - Custom errors; CEI estricto; NatSpec en toda API pública/externa; layout Interfaces → Libraries → Contracts → State → Events → Errors → Modifiers → Functions.
 - TDD: en cada fase de contratos, los tests primero.
 - Linter de contratos integrado al flujo (OWASP SCSVS/SCSTG, capítulo 0x06): `forge fmt --check` y `forge lint` en `make check` y en el hook de pre-commit. Cada excepción va en la línea, con `// forge-lint: disable-next-line(<id>)` y el motivo al lado.
@@ -467,7 +467,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 
 | Fase | Nombre | Estado | Autorización |
 |------|--------|--------|--------------|
-| **BOOT** | Scaffold Foundry + Anchor + relayer, herramientas, `Makefile` | ⏳ Pendiente | ⬜ |
+| **BOOT** | Scaffold Foundry + Anchor + relayer, herramientas, `Makefile` | ✅ Cerrada | ✅ 2026-11-17 |
 | **CODEC** | Formato de mensaje, dominio, vectores dorados en tres lenguajes | ⏳ Pendiente | ⬜ |
 | **TITLE** | `TitleRegistry` + `IdentityRegistry` + módulos de cumplimiento + asientos encadenados | ⏳ Pendiente | ⬜ |
 | **ATTEST** | Certificaciones con vencimiento y quórum; bloqueo por vencimiento; separación de roles | ⏳ Pendiente | ⬜ |
@@ -486,7 +486,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 
 **Orden fijado tras FRONT:** REDTEAM → QA → EXTATK → TESTNET → SOLV. QA busca fallos de producto con mentalidad humana; EXTATK busca romper el sistema con mentalidad adversaria e independiente; TESTNET exige evidencia en **las dos** redes de prueba.
 
-**Acuerdos cerrados (2026-11-16):** orden anterior confirmado; EXTATK en testnet = subconjunto obligatorio; catálogo X1–X36 fijo para v1; Solidity **`0.8.37`** (Cancun). Seguimiento operativo en `doc/hitos-ES.md`.
+**Acuerdos cerrados (2026-11-16 / 2026-11-17):** orden post-FRONT confirmado; EXTATK en testnet = subconjunto obligatorio; catálogo X1–X36 fijo para v1; Solidity **`0.8.37`** (Cancun); **D1–D14 aceptadas** (2026-11-17). Seguimiento operativo en `doc/hitos-ES.md`.
 
 **Cómo autorizar:** escribir *"Autorizo Fase BOOT"*.
 
@@ -496,7 +496,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 
 ### Fase BOOT — Scaffold
 
-1. Foundry: `foundry.toml` (solc `0.8.37`, Cancun, optimizer, fuzz `runs = 1000`, invariant `runs = 256`, `depth = 30`), remappings, `lib/` (forge-std, OpenZeppelin v5).
+1. Foundry: `foundry.toml` (solc `0.8.37`, Cancun, optimizer, fuzz `runs = 1000`, invariant `runs = 256`, `depth = 50`; perfil `heavy` con `depth = 100`), remappings, `lib/` (forge-std, OpenZeppelin v5).
 2. Anchor: `solana/` con `title_mirror`, Token-2022 habilitado, feature `redteam`.
 3. `shared/`, `relayer/` y `e2e/` con `package.json`, `tsconfig`, `vitest`; `.nvmrc` con Node 22.
 4. `frontend/` con Next.js 16, Tailwind 4, Vitest + Testing Library, Playwright, ESLint con la regla que prohíbe `dangerouslySetInnerHTML`, y cabeceras de seguridad (CSP, `frame-ancestors 'none'`) desde el primer día.
@@ -698,9 +698,8 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 ## 14. Próximo paso
 
-Orden, EXTATK en testnet (subconjunto) y X1–X36 fijos: **cerrados**. Tablero para ir marcando: [`doc/hitos-ES.md`](hitos-ES.md).
+Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-1. Revisar y aceptar D1–D14 (sobre todo D5 y D6) → marcar en hitos.
-2. Autorizar la primera fase: *"Autorizo Fase BOOT"*.
+**Siguiente:** autorizar la primera fase con *"Autorizo Fase BOOT"*.
 
 **Ruta:** local → REDTEAM → QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
