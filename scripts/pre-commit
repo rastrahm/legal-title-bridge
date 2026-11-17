@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Pre-commit BOOT: fmt + lint Solidity, fmt Solana, lint frontend.
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+export PATH="${HOME}/.foundry/bin:${HOME}/.cargo/bin:${PATH}"
+
+echo "[pre-commit] forge fmt --check"
+forge fmt --check
+
+echo "[pre-commit] scripts/lint.sh"
+./scripts/lint.sh
+
+if [[ -d solana ]]; then
+  echo "[pre-commit] cargo fmt --check (solana)"
+  (cd solana && cargo fmt --all -- --check)
+fi
+
+if [[ -f frontend/package.json ]]; then
+  echo "[pre-commit] frontend npm run lint"
+  # shellcheck disable=SC1091
+  if [[ -f "${HOME}/.nvm/nvm.sh" ]]; then
+    source "${HOME}/.nvm/nvm.sh"
+    nvm use 22 >/dev/null
+  fi
+  (cd frontend && npm run lint)
+fi
+
+echo "[pre-commit] OK"

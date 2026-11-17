@@ -1,0 +1,25 @@
+[package]
+name = "title_mirror"
+version = "0.1.0"
+description = "Anchor program for mirroring legal title state on Solana"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "title_mirror"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+redteam = []
+
+[dependencies]
+anchor-lang = "=0.31.1"
+anchor-spl = { version = "=0.31.1", features = ["token_2022", "token_2022_extensions"] }

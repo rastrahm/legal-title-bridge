@@ -1,0 +1,44 @@
+# Legal Title Bridge (módulo 22) — reglas del workspace
+
+## Gobernanza
+- No escribir código de una fase hasta: `Autorizo Fase <ID>`.
+- TDD en contratos, programa Anchor y frontend.
+- Destino v1: Sepolia + Solana Devnet (ambas).
+- Decisiones D1–D14 cerradas (Ethereum manda; plazos D4–D6; MsgType cerrado; frontend no es verdad).
+
+## Language in source comments
+- Code comments / NatSpec / JSDoc / Rust docs: **English only**, or **bilingual ES+EN** in the same block.
+- Never Spanish-only inside `src/`, `test/`, `solana/`, `shared/`, `relayer/`, `frontend/src/`, `e2e/`, `script/`, `scripts/`.
+- User-facing UI copy and `doc/*-ES.md` may stay Spanish (i18n).
+
+## Solidity (Foundry)
+- Pragma exacto `0.8.37`, EVM Cancun.
+- OpenZeppelin Contracts v5.x.
+- Custom errors; CEI; NatSpec en API pública/externa.
+- Layout: Interfaces → Libraries → Contracts → State → Events → Errors → Modifiers → Functions.
+- Fuzz `runs >= 1000`; invariant `runs >= 256`, `depth >= 50` (perfil `heavy`: depth 100).
+- Preferir `~/.foundry/bin` en PATH (evitar el `forge` de nvm).
+- Excepciones de lint: `// forge-lint: disable-next-line(<id>)` + motivo.
+
+## Solana (Anchor)
+- Anchor `0.31.1`; `anchor-spl` con `token_2022` + `token_2022_extensions`.
+- Toda cuenta validada; `UncheckedAccount` solo con `/// CHECK:` + test de sustitución.
+- Sysvar de instrucciones solo con `load_instruction_at_checked` y `address = sysvar::instructions::ID`.
+- `cargo clippy -- -D warnings` limpio.
+- Feature `redteam` solo para variantes vulnerables de test.
+
+## Relayer / shared
+- Node 22 (`nvm use 22`).
+- Códec/ABIs/IDL/direcciones solo en `shared/` (Zod).
+- API HTTP del relayer: solo lectura (`GET`).
+
+## Frontend (Next.js)
+- Next.js 16 App Router, React 19, TypeScript estricto (cero `any`), Tailwind 4.
+- Prohibido `dangerouslySetInnerHTML`.
+- Cabeceras: CSP + `frame-ancestors 'none'` + `X-Frame-Options: DENY`.
+- Direcciones desde `shared/`, nunca desde la URL (D14).
+- `'use client'` / `'use server'` explícitos; JSDoc; `error.tsx` / `not-found.tsx`.
+
+## Seguridad
+- REDTEAM con control positivo; EXTATK por otro agente; QA humano simulado.
+- No mainnet ni fondos reales en este laboratorio.
