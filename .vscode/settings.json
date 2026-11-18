@@ -15,15 +15,7 @@
     "editor.insertSpaces": true
   },
   "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#00BCD4",
-    "titleBar.activeForeground": "#001018",
-    "titleBar.inactiveBackground": "#00838F",
-    "titleBar.inactiveForeground": "#E0F7FA",
-    "statusBar.background": "#00BCD4",
-    "statusBar.foreground": "#001018",
     "statusBar.noFolderBackground": "#00BCD4",
-    "statusBar.debuggingBackground": "#00ACC1",
-    "statusBar.debuggingForeground": "#001018",
     "[Cursor Dark High Contrast]": {
       "titleBar.activeBackground": "#00BCD4",
       "titleBar.activeForeground": "#001018",

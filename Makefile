@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
-# Full gate grows with phases; default = boot + codec + title
-check: check-boot check-codec check-title
+# Full gate grows with phases; default = boot + codec + title + attest
+check: check-boot check-codec check-title check-attest
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -29,6 +29,11 @@ check-codec: gen-vectors
 check-title:
 	forge test --match-contract "IdentityRegistryTest|TitleRegistryTest|LedgerChainTest|TitleRegistryInvariants"
 	@echo "make check-title: OK"
+
+# ATTEST: AttestationRegistry quorum/expiry + I7 under cert lapse
+check-attest:
+	forge test --match-contract "AttestationRegistryTest|AttestationTitleTest|AttestationI7Invariants"
+	@echo "make check-attest: OK"
 
 fmt:
 	forge fmt --check

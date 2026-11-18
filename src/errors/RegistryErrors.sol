@@ -23,4 +23,8 @@ library RegistryErrors {
     error RoleOverlap(bytes32 roleA, bytes32 roleB);
     error InvalidCountry();
     error LockupActive(bytes32 holder);
+    error InvalidKind(uint8 kind);
+    error ThresholdInvalid();
+    error DuplicateCertifier(address certifier);
+    error AttestationExpired(bytes32 assetId);
 }

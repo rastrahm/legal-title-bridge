@@ -40,7 +40,7 @@
 | 1 | BOOT | ✅ | ✅ | `make check-boot` OK · 2026-11-17 · rama `boot` |
 | 2 | CODEC | ✅ | ✅ | `make check-codec` C5 OK · 2026-11-17 · rama `codec` |
 | 3 | TITLE | ✅ | ✅ | `make check-title` · TitleRegistry 98.9% · I1/I7/I9 · 2026-11-17 · rama `title` |
-| 4 | ATTEST | ⬜ | ⬜ | |
+| 4 | ATTEST | ✅ | ✅ | `make check-attest` · quorum 2/n · I7 con certs que vencen · 2026-11-18 · rama `attest` |
 | 5 | ENDPOINT | ⬜ | ⬜ | |
 | 6 | MIRROR | ⬜ | ⬜ | |
 | 7 | DVP | ⬜ | ⬜ | |
@@ -87,10 +87,10 @@
 
 ### 4. ATTEST — Certificaciones
 
-- [ ] Autorizada
-- [ ] Emisión bloqueada sin certificación / vencida → `Rejected`
-- [ ] Quórum de certificadores; `RoleOverlap` en deploy
-- [ ] Criterio: I7 con vencimientos en fuzz
+- [x] Autorizada (2026-11-18, rama `attest`)
+- [x] Emisión bloqueada sin certificación / vencida → `Rejected(CertificationExpired)`
+- [x] Quórum de certificadores (existencia + registral); `RoleOverlap` en deploy
+- [x] Criterio: I7 con vencimientos en fuzz · `make check-attest`
 
 ### 5. ENDPOINT — Puente Ethereum
 
@@ -217,4 +217,5 @@
 2. ~~BOOT~~ ✅ 2026-11-17
 3. ~~CODEC~~ ✅ 2026-11-17 (`make check-codec` / C5 OK, rama `codec`)
 4. ~~TITLE~~ ✅ 2026-11-17 (`make check-title`, I1/I7/I9, rama `title`)
-5. Autorizar: *"Autorizo Fase ATTEST"*.
+5. ~~ATTEST~~ ✅ 2026-11-18 (`make check-attest`, rama `attest`)
+6. Autorizar: *"Autorizo Fase ENDPOINT"*.
