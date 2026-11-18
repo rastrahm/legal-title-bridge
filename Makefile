@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -39,6 +39,12 @@ check-attest:
 check-endpoint:
 	forge test --match-contract "RelayerQuorumTest|BridgeEndpointTest|BridgeEndpointInvariants"
 	@echo "make check-endpoint: OK"
+
+# MIRROR: Anchor title_mirror — config, Token-2022, quorum sysvar (R3), I5/R4/R6
+check-mirror:
+	cd solana && cargo test -p title_mirror
+	cd solana && anchor test
+	@echo "make check-mirror: OK"
 
 fmt:
 	forge fmt --check

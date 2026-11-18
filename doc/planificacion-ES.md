@@ -472,7 +472,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **TITLE** | `TitleRegistry` + `IdentityRegistry` + módulos de cumplimiento + asientos encadenados | ✅ Cerrada | ✅ 2026-11-17 |
 | **ATTEST** | Certificaciones con vencimiento y quórum; bloqueo por vencimiento; separación de roles | ✅ Cerrada | ✅ 2026-11-18 |
 | **ENDPOINT** | `BridgeEndpoint`: quórum, ids, dominio, límites de flujo, pausa, rotación con timelock | ✅ Cerrada | ✅ 2026-11-18 |
-| **MIRROR** | Programa Anchor: config, quórum secp256k1, mint Token-2022, hook, emisión | ⏳ Pendiente | ⬜ |
+| **MIRROR** | Programa Anchor: config, quórum secp256k1, mint Token-2022, hook, emisión | ✅ Cerrada | ✅ 2026-11-18 |
 | **DVP** | Escrow de entrega contra pago, decisiones, plazos (D4–D6) | ⏳ Pendiente | ⬜ |
 | **COURT** | Orden judicial, reconciliación, cierre en especie | ⏳ Pendiente | ⬜ |
 | **RELAY** | Relayers, finalidad, idempotencia, entrega, reconciliador | ⏳ Pendiente | ⬜ |

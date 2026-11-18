@@ -42,7 +42,7 @@
 | 3 | TITLE | ✅ | ✅ | `make check-title` · TitleRegistry 98.9% · I1/I7/I9 · 2026-11-17 · rama `title` |
 | 4 | ATTEST | ✅ | ✅ | `make check-attest` · quorum 2/n · I7 con certs que vencen · 2026-11-18 · rama `attest` |
 | 5 | ENDPOINT | ✅ | ✅ | `make check-endpoint` · I3/I8 · R1/R5a-b-c/R6/R7 · 2026-11-18 · rama `endpoint` |
-| 6 | MIRROR | ⬜ | ⬜ | |
+| 6 | MIRROR | ✅ | ✅ | `make check-mirror` · R3/R4/R6 · I5 path · Token-2022 · 2026-11-18 · rama `mirror` |
 | 7 | DVP | ⬜ | ⬜ | |
 | 8 | COURT | ⬜ | ⬜ | |
 | 9 | RELAY | ⬜ | ⬜ | |
@@ -102,12 +102,12 @@
 
 ### 6. MIRROR — Programa Solana
 
-- [ ] Autorizada
-- [ ] Config, set relayers, quórum secp256k1, `ISSUE`
-- [ ] Mint Token-2022 + transfer hook + permanent delegate
-- [ ] I5: hook rechaza caminos no autorizados
-- [ ] R3 y R4 contra código real
-- [ ] Criterio: `anchor test` verde
+- [x] Autorizada (2026-11-18, rama `mirror`)
+- [x] Config, set relayers, quórum secp256k1, `apply_issue`
+- [x] Mint Token-2022 + mint authority PDA (permanent delegate) + hook path checks
+- [x] I5: `assert_transfer_path` / hook rechaza autoridades ajenas
+- [x] R3 (sysvar Instructions) y R4 (mint/config constraints) contra código real
+- [x] Criterio: `anchor test` + `cargo test -p title_mirror` verdes · `make check-mirror`
 
 ### 7. DVP — Entrega contra pago
 
@@ -219,4 +219,5 @@
 4. ~~TITLE~~ ✅ 2026-11-17 (`make check-title`, I1/I7/I9, rama `title`)
 5. ~~ATTEST~~ ✅ 2026-11-18 (`make check-attest`, rama `attest`)
 6. ~~ENDPOINT~~ ✅ 2026-11-18 (`make check-endpoint`, I3/I8, R1/R5/R6/R7, rama `endpoint`)
-7. Autorizar: *"Autorizo Fase MIRROR"*.
+7. ~~MIRROR~~ ✅ 2026-11-18 (`make check-mirror`, R3/R4/R6, I5, rama `mirror`)
+8. Autorizar: *"Autorizo Fase DVP"*.
