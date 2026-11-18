@@ -41,7 +41,7 @@
 | 2 | CODEC | ✅ | ✅ | `make check-codec` C5 OK · 2026-11-17 · rama `codec` |
 | 3 | TITLE | ✅ | ✅ | `make check-title` · TitleRegistry 98.9% · I1/I7/I9 · 2026-11-17 · rama `title` |
 | 4 | ATTEST | ✅ | ✅ | `make check-attest` · quorum 2/n · I7 con certs que vencen · 2026-11-18 · rama `attest` |
-| 5 | ENDPOINT | ⬜ | ⬜ | |
+| 5 | ENDPOINT | ✅ | ✅ | `make check-endpoint` · I3/I8 · R1/R5a-b-c/R6/R7 · 2026-11-18 · rama `endpoint` |
 | 6 | MIRROR | ⬜ | ⬜ | |
 | 7 | DVP | ⬜ | ⬜ | |
 | 8 | COURT | ⬜ | ⬜ | |
@@ -94,11 +94,11 @@
 
 ### 5. ENDPOINT — Puente Ethereum
 
-- [ ] Autorizada
-- [ ] Quórum, dominio, ids, `MsgType`, flow limit, pausa, timelock + época
-- [ ] Invariantes I3, I8
-- [ ] Tests unitarios R1, R5(a/b), R6, R7 (sin control positivo aún)
-- [ ] Criterio: tests e invariantes verdes
+- [x] Autorizada (2026-11-18, rama `endpoint`)
+- [x] Quórum, dominio, ids, `MsgType`, flow limit, pausa, timelock + época
+- [x] Invariantes I3, I8
+- [x] Tests unitarios R1, R5(a/b/c), R6, R7 (sin control positivo aún)
+- [x] Criterio: tests e invariantes verdes · `make check-endpoint`
 
 ### 6. MIRROR — Programa Solana
 
@@ -218,4 +218,5 @@
 3. ~~CODEC~~ ✅ 2026-11-17 (`make check-codec` / C5 OK, rama `codec`)
 4. ~~TITLE~~ ✅ 2026-11-17 (`make check-title`, I1/I7/I9, rama `title`)
 5. ~~ATTEST~~ ✅ 2026-11-18 (`make check-attest`, rama `attest`)
-6. Autorizar: *"Autorizo Fase ENDPOINT"*.
+6. ~~ENDPOINT~~ ✅ 2026-11-18 (`make check-endpoint`, I3/I8, R1/R5/R6/R7, rama `endpoint`)
+7. Autorizar: *"Autorizo Fase MIRROR"*.

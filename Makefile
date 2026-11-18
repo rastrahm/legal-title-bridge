@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
-# Full gate grows with phases; default = boot + codec + title + attest
-check: check-boot check-codec check-title check-attest
+# Full gate grows with phases
+check: check-boot check-codec check-title check-attest check-endpoint
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -34,6 +34,11 @@ check-title:
 check-attest:
 	forge test --match-contract "AttestationRegistryTest|AttestationTitleTest|AttestationI7Invariants"
 	@echo "make check-attest: OK"
+
+# ENDPOINT: BridgeEndpoint + RelayerQuorum/MessageIdSet/FlowLimiter + I3/I8 + R1/R5/R6/R7
+check-endpoint:
+	forge test --match-contract "RelayerQuorumTest|BridgeEndpointTest|BridgeEndpointInvariants"
+	@echo "make check-endpoint: OK"
 
 fmt:
 	forge fmt --check
