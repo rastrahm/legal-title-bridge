@@ -1,4 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
 import {
   Keypair,
   PublicKey,
@@ -11,21 +12,27 @@ import {
   TOKEN_2022_PROGRAM_ID,
   getAssociatedTokenAddressSync,
   createAssociatedTokenAccountInstruction,
+  createMint,
+  createAccount,
+  mintTo,
+  approve,
+  getAccount,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { expect } from "chai";
 import { createHash } from "crypto";
+import { TitleMirror } from "../target/types/title_mirror";
 
 describe("title_mirror", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const program = (anchor.workspace as any).titleMirror as anchor.Program;
+  const program = anchor.workspace.titleMirror as Program<TitleMirror>;
   const admin = (provider.wallet as anchor.Wallet).payer;
   const CONFIG_SEED = Buffer.from("config");
   const ASSET_SEED = Buffer.from("asset");
   const PERMANENT_DELEGATE_SEED = Buffer.from("permanent_delegate");
   const ESCROW_AUTHORITY_SEED = Buffer.from("escrow_authority");
+  const ESCROW_SEED = Buffer.from("escrow");
 
   const ethEndpoint = Buffer.alloc(32, 0x11);
   const localChain = new anchor.BN(100001);
@@ -53,8 +60,9 @@ describe("title_mirror", () => {
         remoteChainId: remoteChain,
         threshold: 2,
         relayers,
+        hardDeadlineSecs: new anchor.BN(2), // short offset for DVP tests (prod: 7d)
       })
-      .accounts({
+      .accountsPartial({
         admin: admin.publicKey,
         config: configPda(),
         systemProgram: SystemProgram.programId,
@@ -73,7 +81,7 @@ describe("title_mirror", () => {
     try {
       await program.methods
         .rotateRelayers({ threshold: 2, relayers: five })
-        .accounts({
+        .accountsPartial({
           admin: admin.publicKey,
           config: configPda(),
         })
@@ -88,7 +96,7 @@ describe("title_mirror", () => {
     const next = [ethAddr(4), ethAddr(5), ethAddr(6)];
     await program.methods
       .rotateRelayers({ threshold: 2, relayers: next })
-      .accounts({
+      .accountsPartial({
         admin: admin.publicKey,
         config: configPda(),
       })
@@ -112,7 +120,7 @@ describe("title_mirror", () => {
 
     await program.methods
       .initializeAsset(Array.from(assetId), 0)
-      .accounts({
+      .accountsPartial({
         admin: admin.publicKey,
         config: configPda(),
         permanentDelegate,
@@ -146,7 +154,7 @@ describe("title_mirror", () => {
 
     await program.methods
       .initializeAsset(Array.from(assetId), 0)
-      .accounts({
+      .accountsPartial({
         admin: admin.publicKey,
         config: configPda(),
         permanentDelegate,
@@ -162,7 +170,7 @@ describe("title_mirror", () => {
 
     await program.methods
       .assertTransferPath()
-      .accounts({
+      .accountsPartial({
         authority: permanentDelegate,
         mint: mint.publicKey,
         asset: assetPda(assetId),
@@ -175,7 +183,7 @@ describe("title_mirror", () => {
     try {
       await program.methods
         .assertTransferPath()
-        .accounts({
+        .accountsPartial({
           authority: stranger,
           mint: mint.publicKey,
           asset: assetPda(assetId),
@@ -193,7 +201,7 @@ describe("title_mirror", () => {
     try {
       await program.methods
         .assertTransferPath()
-        .accounts({
+        .accountsPartial({
           authority: permanentDelegate,
           mint: otherMint.publicKey,
           asset: assetPda(assetId),
@@ -221,7 +229,7 @@ describe("title_mirror", () => {
 
     await program.methods
       .initializeAsset(Array.from(assetId), 0)
-      .accounts({
+      .accountsPartial({
         admin: admin.publicKey,
         config: configPda(),
         permanentDelegate,
@@ -253,7 +261,7 @@ describe("title_mirror", () => {
     try {
       await program.methods
         .applyIssue(Array.from(messageId), wire)
-        .accounts({
+        .accountsPartial({
           payer: admin.publicKey,
           config: configPda(),
           asset: assetPda(assetId),
@@ -283,5 +291,260 @@ describe("title_mirror", () => {
   it("pings", async () => {
     const signature = await program.methods.ping().rpc();
     expect(signature).to.be.a("string").and.not.empty;
+  });
+
+  it("DVP: request_transfer escrow + P9 refund after hardDeadline + I4 terminal", async () => {
+    const seller = Keypair.generate();
+    const buyer = Keypair.generate();
+    const stranger = Keypair.generate();
+    for (const kp of [seller, buyer, stranger]) {
+      const sig = await provider.connection.requestAirdrop(kp.publicKey, 2e9);
+      await provider.connection.confirmTransaction(sig);
+    }
+
+    const mint = Keypair.generate();
+    const assetId = createHash("sha256").update("lot-dvp").digest();
+    const [permanentDelegate] = PublicKey.findProgramAddressSync(
+      [PERMANENT_DELEGATE_SEED, mint.publicKey.toBuffer()],
+      program.programId
+    );
+    const [escrowAuthority] = PublicKey.findProgramAddressSync(
+      [ESCROW_AUTHORITY_SEED, mint.publicKey.toBuffer()],
+      program.programId
+    );
+
+    await program.methods
+      .initializeAsset(Array.from(assetId), 0)
+      .accountsPartial({
+        admin: admin.publicKey,
+        config: configPda(),
+        permanentDelegate,
+        escrowAuthority,
+        mint: mint.publicKey,
+        asset: assetPda(assetId),
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
+      })
+      .signers([mint])
+      .rpc();
+
+    const sellerTitleAta = await createAccount(
+      provider.connection,
+      admin,
+      mint.publicKey,
+      seller.publicKey,
+      undefined,
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+    await program.methods
+      .mintToHolder(new anchor.BN(100))
+      .accountsPartial({
+        admin: admin.publicKey,
+        config: configPda(),
+        asset: assetPda(assetId),
+        mint: mint.publicKey,
+        permanentDelegate,
+        destination: sellerTitleAta,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+      })
+      .rpc();
+
+    const paymentMint = await createMint(
+      provider.connection,
+      admin,
+      admin.publicKey,
+      null,
+      6,
+      undefined,
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+    const buyerPaymentAta = await createAccount(
+      provider.connection,
+      admin,
+      paymentMint,
+      buyer.publicKey,
+      undefined,
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+    const sellerPaymentAta = await createAccount(
+      provider.connection,
+      admin,
+      paymentMint,
+      seller.publicKey,
+      undefined,
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+    await mintTo(
+      provider.connection,
+      admin,
+      paymentMint,
+      buyerPaymentAta,
+      admin,
+      1_000_000n,
+      [],
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+
+    // I5 path: seller approves escrow authority to pull title units.
+    await approve(
+      provider.connection,
+      admin,
+      sellerTitleAta,
+      escrowAuthority,
+      seller,
+      40,
+      [],
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+
+    const transferId = createHash("sha256").update("xfer-dvp-1").digest();
+    const [escrowPda] = PublicKey.findProgramAddressSync(
+      [ESCROW_SEED, transferId],
+      program.programId
+    );
+    const escrowTitleAta = Keypair.generate();
+    const escrowPaymentAta = Keypair.generate();
+    const deadline = Math.floor(Date.now() / 1000) + 3;
+
+    await program.methods
+      .requestTransfer({
+        transferId: Array.from(transferId),
+        amount: new anchor.BN(40),
+        paymentAmount: new anchor.BN(500_000),
+        deadline: new anchor.BN(deadline),
+        travelRuleHash: Array.from(Buffer.alloc(32, 9)),
+      })
+      .accountsPartial({
+        payer: admin.publicKey,
+        seller: seller.publicKey,
+        buyer: buyer.publicKey,
+        config: configPda(),
+        asset: assetPda(assetId),
+        titleMint: mint.publicKey,
+        escrowAuthority,
+        sellerTitleAta,
+        escrowTitleAta: escrowTitleAta.publicKey,
+        paymentMint,
+        buyerPaymentAta,
+        escrowPaymentAta: escrowPaymentAta.publicKey,
+        escrow: escrowPda,
+        titleTokenProgram: TOKEN_2022_PROGRAM_ID,
+        paymentTokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([seller, buyer, escrowTitleAta, escrowPaymentAta])
+      .rpc();
+
+    const escrow = await program.account.escrow.fetch(escrowPda);
+    expect(escrow.status).to.equal(0); // Pending
+    expect(escrow.amount.toNumber()).to.equal(40);
+    expect(escrow.hardDeadline.toNumber()).to.equal(deadline + 2);
+
+    // D5: too early for unilateral refund
+    try {
+      await program.methods
+        .refundAfterHardDeadline()
+        .accountsPartial({
+          caller: stranger.publicKey,
+          escrow: escrowPda,
+          titleMint: mint.publicKey,
+          escrowAuthority,
+          escrowTitleAta: escrowTitleAta.publicKey,
+          sellerTitleAta,
+          paymentMint,
+          escrowPaymentAta: escrowPaymentAta.publicKey,
+          buyerPaymentAta,
+          titleTokenProgram: TOKEN_2022_PROGRAM_ID,
+          paymentTokenProgram: TOKEN_2022_PROGRAM_ID,
+        })
+        .signers([stranger])
+        .rpc();
+      expect.fail("refund before hardDeadline must fail");
+    } catch (e: any) {
+      expect(String(e)).to.match(/TooEarlyForRefund|custom program error/i);
+    }
+
+    // Wait past hardDeadline (config hard_deadline_secs = 2)
+    await new Promise((r) => setTimeout(r, 5500));
+
+    // P9: stranger can call; funds go to seller/buyer only
+    const sellerTitleBefore = (await getAccount(provider.connection, sellerTitleAta, undefined, TOKEN_2022_PROGRAM_ID))
+      .amount;
+    const buyerPayBefore = (await getAccount(provider.connection, buyerPaymentAta, undefined, TOKEN_2022_PROGRAM_ID))
+      .amount;
+    const strangerPayAta = await createAccount(
+      provider.connection,
+      admin,
+      paymentMint,
+      stranger.publicKey,
+      undefined,
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+
+    await program.methods
+      .refundAfterHardDeadline()
+      .accountsPartial({
+        caller: stranger.publicKey,
+        escrow: escrowPda,
+        titleMint: mint.publicKey,
+        escrowAuthority,
+        escrowTitleAta: escrowTitleAta.publicKey,
+        sellerTitleAta,
+        paymentMint,
+        escrowPaymentAta: escrowPaymentAta.publicKey,
+        buyerPaymentAta,
+        titleTokenProgram: TOKEN_2022_PROGRAM_ID,
+        paymentTokenProgram: TOKEN_2022_PROGRAM_ID,
+      })
+      .signers([stranger])
+      .rpc();
+
+    const escrowAfter = await program.account.escrow.fetch(escrowPda);
+    expect(escrowAfter.status).to.equal(2); // Refunded
+
+    const sellerTitleAfter = (await getAccount(provider.connection, sellerTitleAta, undefined, TOKEN_2022_PROGRAM_ID))
+      .amount;
+    const buyerPayAfter = (await getAccount(provider.connection, buyerPaymentAta, undefined, TOKEN_2022_PROGRAM_ID))
+      .amount;
+    expect(sellerTitleAfter - sellerTitleBefore).to.equal(40n);
+    expect(buyerPayAfter - buyerPayBefore).to.equal(500_000n);
+    const strangerBal = (await getAccount(provider.connection, strangerPayAta, undefined, TOKEN_2022_PROGRAM_ID))
+      .amount;
+    expect(strangerBal).to.equal(0n);
+
+    // I4: second refund fails
+    try {
+      await program.methods
+        .refundAfterHardDeadline()
+        .accountsPartial({
+          caller: stranger.publicKey,
+          escrow: escrowPda,
+          titleMint: mint.publicKey,
+          escrowAuthority,
+          escrowTitleAta: escrowTitleAta.publicKey,
+          sellerTitleAta,
+          paymentMint,
+          escrowPaymentAta: escrowPaymentAta.publicKey,
+          buyerPaymentAta,
+          titleTokenProgram: TOKEN_2022_PROGRAM_ID,
+          paymentTokenProgram: TOKEN_2022_PROGRAM_ID,
+        })
+        .signers([stranger])
+        .rpc();
+      expect.fail("second refund must fail");
+    } catch (e: any) {
+      expect(String(e)).to.match(/EscrowNotPending|custom program error/i);
+    }
+
+    // unused ATA keeps typecheck quiet if tree-shaken
+    expect(sellerPaymentAta).to.be.instanceOf(PublicKey);
   });
 });

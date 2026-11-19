@@ -43,7 +43,7 @@
 | 4 | ATTEST | ✅ | ✅ | `make check-attest` · quorum 2/n · I7 con certs que vencen · 2026-11-18 · rama `attest` |
 | 5 | ENDPOINT | ✅ | ✅ | `make check-endpoint` · I3/I8 · R1/R5a-b-c/R6/R7 · 2026-11-18 · rama `endpoint` |
 | 6 | MIRROR | ✅ | ✅ | `make check-mirror` · R3/R4/R6 · I5 path · Token-2022 · 2026-11-18 · rama `mirror` |
-| 7 | DVP | ⬜ | ⬜ | |
+| 7 | DVP | ✅ | ✅ | 2026-11-18 |
 | 8 | COURT | ⬜ | ⬜ | |
 | 9 | RELAY | ⬜ | ⬜ | |
 | 10 | E2E | ⬜ | ⬜ | |
@@ -111,11 +111,11 @@
 
 ### 7. DVP — Entrega contra pago
 
-- [ ] Autorizada
-- [ ] Escrow Solana: request / decision / refund after hardDeadline
-- [ ] Decisión Ethereum con D4 (deadline)
-- [ ] I4, I6; P4, P6, P9
-- [ ] Criterio: tests en ambas cadenas; carrera documentada en PROTOCOLO
+- [x] Autorizada (2026-11-18, rama `dvp`)
+- [x] Escrow Solana: `request_transfer` / `apply_decision` / `refund_after_hard_deadline`
+- [x] Decisión Ethereum con D4 + `TRANSFER_DECISION` outbound vía BridgeEndpoint
+- [x] I4, I6; P4 (documentado), P6, P9
+- [x] Criterio: tests en ambas cadenas; carrera D6 en `PROTOCOLO` §6.1 · `make check-dvp`
 
 ### 8. COURT — Orden judicial y reconciliación
 

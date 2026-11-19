@@ -32,4 +32,16 @@ pub enum MirrorError {
     MintMismatch,
     #[msg("Config mismatch (R4)")]
     ConfigMismatch,
+    #[msg("Escrow is not Pending")]
+    EscrowNotPending,
+    #[msg("Hard deadline not reached yet (D5)")]
+    TooEarlyForRefund,
+    #[msg("Approved after hardDeadline rejected (D6)")]
+    LateApprovalRejected,
+    #[msg("Deadline must be in the future")]
+    DeadlineInPast,
+    #[msg("Amount / payment mismatch")]
+    AmountMismatch,
+    #[msg("Arithmetic overflow")]
+    MathOverflow,
 }

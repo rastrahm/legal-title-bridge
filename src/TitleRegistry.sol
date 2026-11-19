@@ -5,9 +5,11 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 import {RegistryErrors} from "./errors/RegistryErrors.sol";
 import {IAttestationRegistry} from "./interfaces/IAttestationRegistry.sol";
+import {IBridgeEndpoint} from "./interfaces/IBridgeEndpoint.sol";
 import {IComplianceModule} from "./interfaces/IComplianceModule.sol";
 import {IIdentityRegistry} from "./interfaces/IIdentityRegistry.sol";
 import {LedgerChain} from "./libraries/LedgerChain.sol";
+import {MsgType} from "./libraries/PacketCodec.sol";
 
 /// @notice Lifecycle state of a registered asset.
 enum AssetState {
@@ -67,6 +69,8 @@ contract TitleRegistry is AccessControl {
 
     IIdentityRegistry public identityRegistry;
     IAttestationRegistry public attestationRegistry;
+    /// @notice Optional bridge for TRANSFER_DECISION outbound (DVP). Zero until wired.
+    IBridgeEndpoint public bridgeEndpoint;
 
     mapping(bytes32 assetId => AssetState state) public assetState;
     mapping(bytes32 assetId => mapping(bytes32 holder => uint256 balance)) public balanceOf;
@@ -103,6 +107,7 @@ contract TitleRegistry is AccessControl {
     event ComplianceModuleAdded(address indexed module, uint8 ruleId);
     event ComplianceModuleRemoved(address indexed module, uint8 ruleId);
     event RegistriesUpdated(address identity, address attestation);
+    event BridgeEndpointUpdated(address indexed bridgeEndpoint);
 
     /// @param admin DEFAULT_ADMIN_ROLE (distinct from issuer/operator/court).
     /// @param issuer ISSUER_ROLE.
@@ -156,6 +161,15 @@ contract TitleRegistry is AccessControl {
         identityRegistry = IIdentityRegistry(identity);
         attestationRegistry = IAttestationRegistry(attestation);
         emit RegistriesUpdated(identity, attestation);
+    }
+
+    /// @notice Wire BridgeEndpoint so `decide` emits TRANSFER_DECISION (D4 → Solana).
+    function setBridgeEndpoint(address bridgeEndpoint_) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (bridgeEndpoint_ == address(0)) {
+            revert RegistryErrors.ZeroAddress();
+        }
+        bridgeEndpoint = IBridgeEndpoint(bridgeEndpoint_);
+        emit BridgeEndpointUpdated(bridgeEndpoint_);
     }
 
     function addComplianceModule(address module) external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -368,6 +382,12 @@ contract TitleRegistry is AccessControl {
         }
 
         emit TransferDecided(transferId, outcome, reason, entry);
+
+        if (address(bridgeEndpoint) != address(0)) {
+            bridgeEndpoint.emitOutbound(
+                MsgType.TRANSFER_DECISION, _encodeDecisionPayload(transferId, outcome, reason, req.amount)
+            );
+        }
     }
 
     /// @notice D6 reconciler path: undo an Approved move that Solana rejected after hardDeadline.
@@ -431,6 +451,21 @@ contract TitleRegistry is AccessControl {
     // -------------------------------------------------------------------------
     // Internal
     // -------------------------------------------------------------------------
+
+    function _encodeDecisionPayload(bytes32 transferId, DecisionOutcome outcome, uint8 reasonCode, uint256 amount)
+        internal
+        pure
+        returns (bytes memory payload)
+    {
+        payload = new bytes(66);
+        assembly ("memory-safe") {
+            let p := add(payload, 0x20)
+            mstore(p, transferId)
+            mstore8(add(p, 32), outcome)
+            mstore8(add(p, 33), reasonCode)
+            mstore(add(p, 34), amount)
+        }
+    }
 
     function _evaluateApproval(TransferRequest storage req) internal view returns (bool ok, uint8 reason) {
         if (!identityRegistry.isVerified(req.buyer)) {
