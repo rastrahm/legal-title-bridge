@@ -67,6 +67,7 @@ e2e/node_modules/
 e2e/dist/
 e2e/coverage/
 e2e/.cache/
+e2e/.stack/
 
 # Frontend (Next.js 16)
 frontend/node_modules/

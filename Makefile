@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -64,6 +64,11 @@ check-court:
 check-relay:
 	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd relayer && npm test && npm run typecheck
 	@echo "make check-relay: OK"
+
+# E2E: stack.sh (sim|full) + lifecycle + F1–F5 + D6 reconcile (C10)
+check-e2e:
+	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd e2e && E2E_STACK_MODE=sim bash ./stack.sh && npm test && npm run typecheck
+	@echo "make check-e2e: OK"
 
 fmt:
 	forge fmt --check
