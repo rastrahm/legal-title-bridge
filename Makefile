@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -69,6 +69,11 @@ check-relay:
 check-e2e:
 	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd e2e && E2E_STACK_MODE=sim bash ./stack.sh && npm test && npm run typecheck
 	@echo "make check-e2e: OK"
+
+# FRONT: C14 lint/tsc/build, C15 vitest+coverage, C16 playwright, C17 check-bundle
+check-front:
+	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run check-bundle && npx playwright test
+	@echo "make check-front: OK"
 
 fmt:
 	forge fmt --check

@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>W1 positive control (vulnerable)</title>
+  </head>
+  <body>
+    <!-- Positive control only — never shipped in the Next.js app build. -->
+    <div id="name"></div>
+    <script>
+      const payload = '<img src=x onerror="window.__xss=1">';
+      document.getElementById("name").innerHTML = payload;
+    </script>
+  </body>
+</html>

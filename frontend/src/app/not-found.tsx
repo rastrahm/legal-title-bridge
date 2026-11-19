@@ -8,7 +8,7 @@ export default function NotFound() {
       </p>
       <h1 className="text-3xl font-bold">Ruta no encontrada</h1>
       <p className="max-w-xl text-slate-300">
-        La vista solicitada aun no existe en el BOOT de Legal Title Bridge.
+        La vista solicitada no existe en Legal Title Bridge.
       </p>
       <Link
         className="rounded-full border border-slate-700 px-5 py-3 font-semibold text-slate-100 transition hover:border-cyan-300 hover:text-cyan-200"
