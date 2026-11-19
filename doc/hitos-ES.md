@@ -45,7 +45,7 @@
 | 6 | MIRROR | ✅ | ✅ | `make check-mirror` · R3/R4/R6 · I5 path · Token-2022 · 2026-11-18 · rama `mirror` |
 | 7 | DVP | ✅ | ✅ | 2026-11-18 |
 | 8 | COURT | ✅ | ✅ | 2026-11-19 |
-| 9 | RELAY | ⬜ | ⬜ | |
+| 9 | RELAY | ✅ | ✅ | 2026-11-19 |
 | 10 | E2E | ⬜ | ⬜ | |
 | 11 | FRONT | ⬜ | ⬜ | |
 | 12 | REDTEAM | ⬜ | ⬜ | `doc/RED-TEAM-ES.md` |
@@ -127,11 +127,12 @@
 
 ### 9. RELAY — Relayers
 
-- [ ] Autorizada
-- [ ] Watchers, finalidad, firma, entrega, SQLite idempotente
-- [ ] Reconciliador I2 + estados de solicitud
-- [ ] API solo lectura `/status`, `/messages`
-- [ ] Criterio: C9; API rechaza no-GET
+- [x] Autorizada (2026-11-19, rama `relay`)
+- [x] Watchers Eth (confirmations/`finalized`) + Sol (`finalized`); signer; submitter quórum
+- [x] SQLite (`node:sqlite`) idempotente + backoff exponencial
+- [x] Reconciliador I2 + detección D6
+- [x] API solo lectura `GET /status`, `GET /messages` (405 en no-GET)
+- [x] Criterio: C9 · `make check-relay`
 
 ### 10. E2E — Stack local
 

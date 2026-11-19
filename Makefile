@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -59,6 +59,11 @@ check-court:
 	cd solana && cargo test -p title_mirror
 	cd solana && anchor test
 	@echo "make check-court: OK"
+
+# RELAY: watchers, SQLite idempotency, signer/submitter, reconciler I2/D6, GET-only API (C9)
+check-relay:
+	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd relayer && npm test && npm run typecheck
+	@echo "make check-relay: OK"
 
 fmt:
 	forge fmt --check

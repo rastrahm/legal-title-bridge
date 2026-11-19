@@ -475,7 +475,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **MIRROR** | Programa Anchor: config, quórum secp256k1, mint Token-2022, hook, emisión | ✅ Cerrada | ✅ 2026-11-18 |
 | **DVP** | Escrow de entrega contra pago, decisiones, plazos (D4–D6) | ✅ Cerrada | ✅ 2026-11-18 |
 | **COURT** | Orden judicial, reconciliación, cierre en especie | ✅ Cerrada | ✅ 2026-11-19 |
-| **RELAY** | Relayers, finalidad, idempotencia, entrega, reconciliador | ⏳ Pendiente | ⬜ |
+| **RELAY** | Relayers, finalidad, idempotencia, entrega, reconciliador | ✅ Cerrada | ✅ 2026-11-19 |
 | **E2E** | Stack local, escenarios de ciclo de vida y fallas inducidas | ⏳ Pendiente | ⬜ |
 | **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ⏳ Pendiente | ⬜ |
 | **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ⏳ Pendiente | ⬜ |
