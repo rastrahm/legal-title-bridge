@@ -4,9 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "stack": "bash ./stack.sh"
+  },
+  "dependencies": {
+    "@legal-title-bridge/relayer": "file:../relayer",
+    "@legal-title-bridge/shared": "file:../shared",
+    "ethers": "^6.17.0"
   },
   "devDependencies": {
+    "@types/node": "^22.19.1",
     "typescript": "^5.9.3",
     "vitest": "4.0.10"
   }

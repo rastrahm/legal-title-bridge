@@ -4,7 +4,7 @@
 **Destino v1:** evidencia en **Sepolia** y **Solana Devnet** (ambas).
 **Orden cerrado tras FRONT:** REDTEAM → QA → EXTATK → TESTNET → SOLV.
 **EXTATK:** X1–X36 fijos en local; subconjunto obligatorio en testnet.
-**Última actualización:** 2026-11-16
+**Última actualización:** 2026-11-19
 
 ---
 
@@ -46,7 +46,7 @@
 | 7 | DVP | ✅ | ✅ | 2026-11-18 |
 | 8 | COURT | ✅ | ✅ | 2026-11-19 |
 | 9 | RELAY | ✅ | ✅ | 2026-11-19 |
-| 10 | E2E | ⬜ | ⬜ | |
+| 10 | E2E | ✅ | ✅ | `make check-e2e` C10 · sim harness + F1–F5/D6 · 2026-11-19 · rama `e2e` |
 | 11 | FRONT | ⬜ | ⬜ | |
 | 12 | REDTEAM | ⬜ | ⬜ | `doc/RED-TEAM-ES.md` |
 | 13 | QA | ⬜ | ⬜ | `doc/QA-ES.md` |
@@ -136,11 +136,11 @@
 
 ### 10. E2E — Stack local
 
-- [ ] Autorizada
-- [ ] `e2e/stack.sh` (anvil + validator + deploy + 3 relayers)
-- [ ] Ciclo de vida completo
-- [ ] Fallas F1–F5
-- [ ] Criterio: C10; D6 detectado y corregido
+- [x] Autorizada (2026-11-19, rama `e2e`)
+- [x] `e2e/stack.sh` (`sim` por defecto: harness in-process; `full`: anvil + solana-test-validator)
+- [x] Ciclo de vida completo (emisión → colocación → approve/reject/expire → court/P7 → redeem)
+- [x] Fallas F1–F5 (kill/restart, double deliver, out-of-order, D6, reorg pre-confirm)
+- [x] Criterio: C10 · `make check-e2e`; D6 detectado y corregido; reconciliador limpio en lifecycle
 
 ### 11. FRONT — Frontend
 
