@@ -156,9 +156,21 @@ Codec de capa 1 trata el payload como opaco. Layouts v1 (también big-endian / f
 | Reloj | Quién | Efecto |
 |-------|-------|--------|
 | `deadline` | Ethereum al decidir | Solo `Approved` si `now <= deadline` |
-| `hardDeadline = deadline + 7 days` | Solana | Refund unilateral solo después; `Approved` tardío se rechaza (D6) |
+| `hardDeadline = deadline + hard_deadline_secs` | Solana | Refund unilateral solo después; `Approved` tardío se rechaza (D6). Producción: `hard_deadline_secs = 7 días`. |
 
 Detalle de estados de escrow: ver flujograma / fases DVP.
+
+### 6.1 Carrera reembolso vs aprobación tardía (P4 / D6)
+
+Escenario documentado (riesgo residual **aceptado**):
+
+1. Escrow Solana en `Pending`; `now >= hardDeadline`.
+2. Un caller cualquiera ejecuta `refund_after_hard_deadline` → Solana pasa a `Refunded` (pago al comprador, título al vendedor; el caller no recibe fondos — P9).
+3. Los relayers entregan después un `TRANSFER_DECISION(Approved)` firmado en Ethereum (D4 cumplió a tiempo en Eth, pero la entrega fue lenta).
+4. `apply_decision` en Solana **revierte** con `LateApprovalRejected` (o `EscrowNotPending` si el refund ya cerró).
+5. Cada cadena tiene un estado terminal propio: Eth `Approved`, Solana `Refunded`. El reconciliador (fase COURT/RELAY) detecta la divergencia; el operador aplica `reconcile` en Ethereum con hash de resolución (D6).
+
+No hay ventana en la que Solana complete y reembolse a la vez (I4).
 
 ---
 

@@ -11,6 +11,8 @@ pub struct InitializeConfigParams {
     pub remote_chain_id: u64,
     pub threshold: u8,
     pub relayers: Vec<[u8; 20]>,
+    /// D5 offset; production should use `HARD_DEADLINE_SECS` (7 days). Tests may use a short value.
+    pub hard_deadline_secs: i64,
 }
 
 #[derive(Accounts)]
@@ -56,6 +58,8 @@ pub fn handler(ctx: Context<InitializeConfig>, params: InitializeConfigParams) -
         config.relayers[i] = *r;
     }
     config.paused = false;
+    require!(params.hard_deadline_secs > 0, MirrorError::InvalidPacket);
+    config.hard_deadline_secs = params.hard_deadline_secs;
     Ok(())
 }
 

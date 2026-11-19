@@ -5,6 +5,7 @@
 use anchor_lang::prelude::*;
 
 pub mod codec;
+pub mod dvp;
 pub mod errors;
 pub mod hook;
 pub mod instructions;
@@ -41,12 +42,35 @@ pub mod title_mirror {
         instructions::initialize_asset::handler(ctx, asset_id, decimals)
     }
 
+    pub fn mint_to_holder(ctx: Context<MintToHolder>, amount: u64) -> Result<()> {
+        instructions::mint_to_holder::handler(ctx, amount)
+    }
+
     pub fn apply_issue(
         ctx: Context<ApplyIssue>,
         message_id: [u8; 32],
         wire: Vec<u8>,
     ) -> Result<()> {
         instructions::apply_issue::handler(ctx, message_id, wire)
+    }
+
+    pub fn request_transfer(
+        ctx: Context<RequestTransfer>,
+        params: RequestTransferParams,
+    ) -> Result<()> {
+        instructions::request_transfer::handler(ctx, params)
+    }
+
+    pub fn apply_decision(
+        ctx: Context<ApplyDecision>,
+        message_id: [u8; 32],
+        wire: Vec<u8>,
+    ) -> Result<()> {
+        instructions::apply_decision::handler(ctx, message_id, wire)
+    }
+
+    pub fn refund_after_hard_deadline(ctx: Context<RefundAfterHardDeadline>) -> Result<()> {
+        instructions::refund_after_hard_deadline::handler(ctx)
     }
 
     /// Token-2022 transfer hook entry (I5).
