@@ -44,7 +44,7 @@
 | 5 | ENDPOINT | ✅ | ✅ | `make check-endpoint` · I3/I8 · R1/R5a-b-c/R6/R7 · 2026-11-18 · rama `endpoint` |
 | 6 | MIRROR | ✅ | ✅ | `make check-mirror` · R3/R4/R6 · I5 path · Token-2022 · 2026-11-18 · rama `mirror` |
 | 7 | DVP | ✅ | ✅ | 2026-11-18 |
-| 8 | COURT | ⬜ | ⬜ | |
+| 8 | COURT | ✅ | ✅ | 2026-11-19 |
 | 9 | RELAY | ⬜ | ⬜ | |
 | 10 | E2E | ⬜ | ⬜ | |
 | 11 | FRONT | ⬜ | ⬜ | |
@@ -119,11 +119,11 @@
 
 ### 8. COURT — Orden judicial y reconciliación
 
-- [ ] Autorizada
-- [ ] `FORCED_TRANSFER` + hash de resolución
-- [ ] Reconciliación D6; rescate en especie
-- [ ] P7
-- [ ] Criterio: I1 e I2 se mantienen
+- [x] Autorizada (2026-11-19, rama `court`)
+- [x] `FORCED_TRANSFER` outbound + `apply_forced_transfer` / `apply_forced_p7` (Solana)
+- [x] Reconciliación D6 (X20/X21); rescate en especie (`redeemInKind` → burn wire `to=0`)
+- [x] P7: cancel Pending en Eth + escrow CourtCancelled en Solana
+- [x] Criterio: I1 en Eth tras órdenes/rescates · `make check-court`
 
 ### 9. RELAY — Relayers
 

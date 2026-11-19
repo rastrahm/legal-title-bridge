@@ -32,7 +32,7 @@ contract RelayerQuorumTest is BridgePacketHelpers {
         this._requireThreshold(2, 2);
     }
 
-    function test_VerifyExactAndMore() public {
+    function test_VerifyExactAndMore() public pure {
         uint256 pk1 = 0xB1;
         uint256 pk2 = 0xB2;
         uint256 pk3 = 0xB3;
@@ -55,7 +55,7 @@ contract RelayerQuorumTest is BridgePacketHelpers {
         assertTrue(RelayerQuorum.verify(digest, three, set, 3));
     }
 
-    function test_VerifyInsufficient_R5a() public {
+    function test_VerifyInsufficient_R5a() public pure {
         uint256 pk1 = 0xC1;
         uint256 pk2 = 0xC2;
         uint256 pk3 = 0xC3;
@@ -73,7 +73,7 @@ contract RelayerQuorumTest is BridgePacketHelpers {
         assertFalse(RelayerQuorum.verify(digest, one, set, 2));
     }
 
-    function test_VerifyStrangerRejected() public {
+    function test_VerifyStrangerRejected() public pure {
         uint256 pk1 = 0xD1;
         uint256 pk2 = 0xD2;
         uint256 pk3 = 0xD3;

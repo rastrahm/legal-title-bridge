@@ -149,6 +149,9 @@ Codec de capa 1 trata el payload como opaco. Layouts v1 (también big-endian / f
 | 128 | 32 | `resolutionHash` |
 | **Total** | **160** | |
 
+- `to == bytes32(0)`: rescate en especie → Solana **quema** (`apply_forced_transfer` burn path).
+- Si el título está en escrow `Pending`, Solana usa `apply_forced_p7` (P7: pago al comprador, título al destinatario judicial).
+
 ---
 
 ## 6. Plazos (referencia D4–D6)

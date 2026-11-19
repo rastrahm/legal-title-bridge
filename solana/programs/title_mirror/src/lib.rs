@@ -73,6 +73,23 @@ pub mod title_mirror {
         instructions::refund_after_hard_deadline::handler(ctx)
     }
 
+    pub fn apply_forced_transfer(
+        ctx: Context<ApplyForcedTransfer>,
+        message_id: [u8; 32],
+        wire: Vec<u8>,
+    ) -> Result<()> {
+        instructions::apply_forced_transfer::handler(ctx, message_id, wire)
+    }
+
+    /// P7: FORCED_TRANSFER while title+payment sit in a Pending escrow.
+    pub fn apply_forced_p7(
+        ctx: Context<ApplyForcedP7>,
+        message_id: [u8; 32],
+        wire: Vec<u8>,
+    ) -> Result<()> {
+        instructions::apply_forced_p7::handler(ctx, message_id, wire)
+    }
+
     /// Token-2022 transfer hook entry (I5).
     pub fn transfer_hook(ctx: Context<TransferHookExecute>, amount: u64) -> Result<()> {
         instructions::transfer_hook::handler(ctx, amount)

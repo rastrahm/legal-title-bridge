@@ -19,6 +19,8 @@ pub enum EscrowStatus {
     Pending = 0,
     Completed = 1,
     Refunded = 2,
+    /// P7: court cancelled pending DvP; payment refunded, title sent to court recipient.
+    CourtCancelled = 3,
 }
 
 /// Bridge config: Ethereum endpoint identity + relayer quorum (D10/D11).
@@ -120,6 +122,7 @@ impl Escrow {
             0 => Some(EscrowStatus::Pending),
             1 => Some(EscrowStatus::Completed),
             2 => Some(EscrowStatus::Refunded),
+            3 => Some(EscrowStatus::CourtCancelled),
             _ => None,
         }
     }

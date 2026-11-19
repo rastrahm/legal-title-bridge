@@ -224,7 +224,7 @@ contract TitleRegistryTest is IdentitySig {
     function test_ForcedTransfer() public {
         _issue(40, seller);
         vm.prank(court);
-        titles.forcedTransfer(assetId, seller, buyer, 15, keccak256("court-res-1"));
+        titles.forcedTransfer(assetId, seller, buyer, 15, keccak256("court-res-1"), bytes32(0));
         assertEq(titles.balanceOf(assetId, seller), 25);
         assertEq(titles.balanceOf(assetId, buyer), 15);
         assertTrue(titles.verifyLedger(assetId));
@@ -246,7 +246,7 @@ contract TitleRegistryTest is IdentitySig {
     function test_RedeemInKind() public {
         _issue(30, seller);
         vm.prank(court);
-        titles.redeemInKind(assetId, seller, 10);
+        titles.redeemInKind(assetId, seller, 10, keccak256("redeem-res"));
         assertEq(titles.balanceOf(assetId, seller), 20);
         assertEq(titles.totalRedeemed(assetId), 10);
         assertEq(titles.circulating(assetId), 20);
@@ -256,7 +256,7 @@ contract TitleRegistryTest is IdentitySig {
         _issue(10, seller);
         _issue(5, buyer);
         vm.prank(court);
-        titles.forcedTransfer(assetId, seller, buyer2, 3, keccak256("r"));
+        titles.forcedTransfer(assetId, seller, buyer2, 3, keccak256("r"), bytes32(0));
         assertEq(titles.entryCount(assetId), 3);
         assertTrue(titles.verifyLedger(assetId));
     }
@@ -355,15 +355,15 @@ contract TitleRegistryTest is IdentitySig {
         _issue(10, seller);
         vm.prank(court);
         vm.expectRevert(RegistryErrors.ZeroAmount.selector);
-        titles.forcedTransfer(assetId, seller, buyer, 0, keccak256("r"));
+        titles.forcedTransfer(assetId, seller, buyer, 0, keccak256("r"), bytes32(0));
 
         vm.prank(court);
         vm.expectRevert(RegistryErrors.ZeroAddress.selector);
-        titles.forcedTransfer(assetId, bytes32(0), buyer, 1, keccak256("r"));
+        titles.forcedTransfer(assetId, bytes32(0), buyer, 1, keccak256("r"), bytes32(0));
 
         vm.prank(court);
         vm.expectRevert(abi.encodeWithSelector(RegistryErrors.InsufficientBalance.selector, assetId, seller));
-        titles.forcedTransfer(assetId, seller, buyer, 999, keccak256("r"));
+        titles.forcedTransfer(assetId, seller, buyer, 999, keccak256("r"), bytes32(0));
     }
 
     function test_OnTransferRequestGuards() public {
