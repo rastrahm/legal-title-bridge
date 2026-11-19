@@ -477,7 +477,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **COURT** | Orden judicial, reconciliación, cierre en especie | ✅ Cerrada | ✅ 2026-11-19 |
 | **RELAY** | Relayers, finalidad, idempotencia, entrega, reconciliador | ✅ Cerrada | ✅ 2026-11-19 |
 | **E2E** | Stack local, escenarios de ciclo de vida y fallas inducidas | ✅ Cerrada | ✅ 2026-11-19 |
-| **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ⏳ Pendiente | ⬜ |
+| **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ✅ Cerrada | ✅ 2026-11-19 |
 | **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ⏳ Pendiente | ⬜ |
 | **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ⏳ Pendiente | ⬜ |
 | **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ⏳ Pendiente | ⬜ |
@@ -700,6 +700,6 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-**Siguiente:** autorizar *"Autorizo Fase FRONT"* (E2E cerrada con C10 / `make check-e2e`).
+**Siguiente:** autorizar *"Autorizo Fase REDTEAM"* (FRONT cerrada con C14–C17 / `make check-front`).
 
-**Ruta:** FRONT → REDTEAM → QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
+**Ruta:** REDTEAM → QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.

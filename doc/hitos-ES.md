@@ -47,7 +47,7 @@
 | 8 | COURT | ✅ | ✅ | 2026-11-19 |
 | 9 | RELAY | ✅ | ✅ | 2026-11-19 |
 | 10 | E2E | ✅ | ✅ | `make check-e2e` C10 · sim harness + F1–F5/D6 · 2026-11-19 · rama `e2e` |
-| 11 | FRONT | ⬜ | ⬜ | |
+| 11 | FRONT | ✅ | ✅ | `make check-front` C14–C17 · 2026-11-19 · rama `front` |
 | 12 | REDTEAM | ⬜ | ⬜ | `doc/RED-TEAM-ES.md` |
 | 13 | QA | ⬜ | ⬜ | `doc/QA-ES.md` |
 | 14 | EXTATK | ⬜ | ⬜ | `doc/EXTATK-ES.md` |
@@ -144,11 +144,11 @@
 
 ### 11. FRONT — Frontend
 
-- [ ] Autorizada
-- [ ] Vistas: explorador, cartera, operador, verificador, puente
-- [ ] Guardas W2/W4; ES/EN; simulación previa a firmar
-- [ ] Playwright contra stack local
-- [ ] Criterio: C14–C17; capturas en `doc/`
+- [x] Autorizada (2026-11-19, rama `front`)
+- [x] Vistas: explorador, cartera, operador, verificador, puente
+- [x] Guardas W2/W4; ES/EN; simulación previa a firmar
+- [x] Playwright contra stack local (flujos + W1–W6)
+- [x] Criterio: C14–C17 · `make check-front`; capturas en `doc/front-screenshots/`
 
 ### 12. REDTEAM — Seguridad en repo
 

@@ -9,10 +9,9 @@ export default function Error({
 }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-950 px-6 text-center text-slate-50">
-      <h1 className="text-3xl font-bold">No pudimos cargar el modulo</h1>
+      <h1 className="text-3xl font-bold">No pudimos cargar la aplicación</h1>
       <p className="max-w-xl text-slate-300">
-        Ocurrio un error inesperado en Legal Title Bridge. Puedes reintentar la
-        carga o revisar el estado de la aplicacion.
+        Ocurrió un error inesperado en Legal Title Bridge.
       </p>
       <p className="text-sm text-slate-500">{error.message}</p>
       <button
