@@ -1,4 +1,6 @@
 pub mod apply_decision;
+pub mod apply_forced_p7;
+pub mod apply_forced_transfer;
 pub mod apply_issue;
 pub mod initialize_asset;
 pub mod initialize_config;
@@ -10,6 +12,8 @@ pub mod rotate_relayers;
 pub mod transfer_hook;
 
 pub use apply_decision::*;
+pub use apply_forced_p7::*;
+pub use apply_forced_transfer::*;
 pub use apply_issue::*;
 pub use initialize_asset::*;
 pub use initialize_config::*;

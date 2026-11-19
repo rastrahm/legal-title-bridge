@@ -23,6 +23,11 @@ import { expect } from "chai";
 import { createHash } from "crypto";
 import { TitleMirror } from "../target/types/title_mirror";
 
+/** Anchor IDL `bytes` expects `Buffer`; Node 22 typings use `Buffer<ArrayBuffer>` (IDE mismatch). */
+function asAnchorBytes(data: Uint8Array): Buffer {
+  return Buffer.from(data) as Buffer;
+}
+
 describe("title_mirror", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -260,7 +265,7 @@ describe("title_mirror", () => {
 
     try {
       await program.methods
-        .applyIssue(Array.from(messageId), wire)
+        .applyIssue(Array.from(messageId), asAnchorBytes(wire))
         .accountsPartial({
           payer: admin.publicKey,
           config: configPda(),
@@ -286,6 +291,73 @@ describe("title_mirror", () => {
     expect(SYSVAR_INSTRUCTIONS_PUBKEY.toBase58()).to.equal(
       "Sysvar1nstructions1111111111111111111111111"
     );
+  });
+
+  it("COURT: apply_forced_transfer rejects non-Instructions sysvar (R3)", async () => {
+    const mint = Keypair.generate();
+    const assetId = createHash("sha256").update("lot-court-r3").digest();
+    const [permanentDelegate] = PublicKey.findProgramAddressSync(
+      [PERMANENT_DELEGATE_SEED, mint.publicKey.toBuffer()],
+      program.programId
+    );
+    const [escrowAuthority] = PublicKey.findProgramAddressSync(
+      [ESCROW_AUTHORITY_SEED, mint.publicKey.toBuffer()],
+      program.programId
+    );
+
+    await program.methods
+      .initializeAsset(Array.from(assetId), 0)
+      .accountsPartial({
+        admin: admin.publicKey,
+        config: configPda(),
+        permanentDelegate,
+        escrowAuthority,
+        mint: mint.publicKey,
+        asset: assetPda(assetId),
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
+      })
+      .signers([mint])
+      .rpc();
+
+    const source = await createAccount(
+      provider.connection,
+      admin,
+      mint.publicKey,
+      admin.publicKey,
+      undefined,
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+    const fakeSysvar = Keypair.generate();
+    const messageId = Buffer.alloc(32, 8);
+    const wire = Buffer.alloc(62 + 160, 2);
+
+    try {
+      await program.methods
+        .applyForcedTransfer(Array.from(messageId), asAnchorBytes(wire))
+        .accountsPartial({
+          payer: admin.publicKey,
+          config: configPda(),
+          asset: assetPda(assetId),
+          mint: mint.publicKey,
+          permanentDelegate,
+          sourceTitleAta: source,
+          destinationTitleAta: source,
+          processed: PublicKey.findProgramAddressSync(
+            [Buffer.from("processed"), messageId],
+            program.programId
+          )[0],
+          instructionsSysvar: fakeSysvar.publicKey,
+          tokenProgram: TOKEN_2022_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
+      expect.fail("fake instructions sysvar must fail");
+    } catch (e: any) {
+      expect(String(e)).to.match(/InvalidInstructionsSysvar|ConstraintAddress|custom program error/i);
+    }
   });
 
   it("pings", async () => {

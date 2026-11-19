@@ -44,4 +44,8 @@ pub enum MirrorError {
     AmountMismatch,
     #[msg("Arithmetic overflow")]
     MathOverflow,
+    #[msg("Escrow seller / amount mismatch for court cancel (P7)")]
+    EscrowCourtMismatch,
+    #[msg("Resolution hash required")]
+    MissingResolutionHash,
 }

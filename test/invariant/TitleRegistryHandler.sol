@@ -169,7 +169,7 @@ contract TitleRegistryHandler is CommonBase, StdUtils {
             return;
         }
         vm.prank(COURT);
-        try TITLES.forcedTransfer(ASSET_ID, from, to, amount, keccak256(abi.encode(calls))) {} catch {}
+        try TITLES.forcedTransfer(ASSET_ID, from, to, amount, keccak256(abi.encode(calls)), bytes32(0)) {} catch {}
     }
 
     function redeem(uint256 holderSeed, uint256 amount) external {
@@ -180,7 +180,7 @@ contract TitleRegistryHandler is CommonBase, StdUtils {
             return;
         }
         vm.prank(COURT);
-        try TITLES.redeemInKind(ASSET_ID, h, amount) {} catch {}
+        try TITLES.redeemInKind(ASSET_ID, h, amount, keccak256(abi.encode(calls))) {} catch {}
     }
 
     function setState(uint8 stateSeed) external {

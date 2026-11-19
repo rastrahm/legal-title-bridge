@@ -26,7 +26,8 @@ enum RequestStatus {
     Approved,
     Rejected,
     Expired,
-    Reconciled
+    Reconciled,
+    CourtCancelled
 }
 
 /// @notice Decision outcome mirrored in TRANSFER_DECISION.outcome (PROTOCOLO).
@@ -44,6 +45,7 @@ library ReasonCode {
     uint8 internal constant ASSET_FROZEN = 3;
     uint8 internal constant ASSET_NOT_ACTIVE = 4;
     uint8 internal constant INSUFFICIENT_BALANCE = 5;
+    uint8 internal constant COURT_ORDER = 6;
     // Compliance failures reuse the module ruleId (Country=1, MaxHolders=2, Lockup=3, …).
 }
 
@@ -257,11 +259,16 @@ contract TitleRegistry is AccessControl {
         emit Issued(assetId, toHolder, amount, entry);
     }
 
-    /// @notice Court-ordered move (bypasses compliance; still requires Active or Frozen source of truth).
-    function forcedTransfer(bytes32 assetId, bytes32 from, bytes32 to, uint256 amount, bytes32 resolutionHash)
-        external
-        onlyRole(COURT_ROLE)
-    {
+    /// @notice Court-ordered move (bypasses compliance). `pendingTransferId` non-zero cancels a Pending DvP (P7).
+    /// @dev `to == bytes32(0)` is reserved for in-kind redeem encoding on the wire; use `redeemInKind` instead.
+    function forcedTransfer(
+        bytes32 assetId,
+        bytes32 from,
+        bytes32 to,
+        uint256 amount,
+        bytes32 resolutionHash,
+        bytes32 pendingTransferId
+    ) external onlyRole(COURT_ROLE) {
         if (amount == 0) {
             revert RegistryErrors.ZeroAmount();
         }
@@ -270,6 +277,10 @@ contract TitleRegistry is AccessControl {
         }
         if (assetState[assetId] == AssetState.Unknown) {
             revert RegistryErrors.AssetUnknown(assetId);
+        }
+
+        if (pendingTransferId != bytes32(0)) {
+            _cancelPendingForCourt(pendingTransferId, assetId, from);
         }
 
         uint256 fromBal = balanceOf[assetId][from];
@@ -286,14 +297,23 @@ contract TitleRegistry is AccessControl {
         bytes32 entry = _appendEntry(assetId, dataHash);
         _notifyModules(assetId, from, to, newFrom, newTo);
         emit ForcedTransfer(assetId, from, to, amount, resolutionHash, entry);
+
+        if (address(bridgeEndpoint) != address(0)) {
+            bridgeEndpoint.emitOutbound(
+                MsgType.FORCED_TRANSFER, _encodeForcedPayload(assetId, from, to, amount, resolutionHash)
+            );
+        }
     }
 
-    /// @notice Burn units in-kind (court/issuer close-out); maintains I1.
-    function redeemInKind(bytes32 assetId, bytes32 holder, uint256 amount) external onlyRole(COURT_ROLE) {
+    /// @notice Burn units in-kind (court close-out); maintains I1. Emits FORCED_TRANSFER with `to = 0` (burn).
+    function redeemInKind(bytes32 assetId, bytes32 holder, uint256 amount, bytes32 resolutionHash)
+        external
+        onlyRole(COURT_ROLE)
+    {
         if (amount == 0) {
             revert RegistryErrors.ZeroAmount();
         }
-        if (holder == bytes32(0)) {
+        if (holder == bytes32(0) || resolutionHash == bytes32(0)) {
             revert RegistryErrors.ZeroAddress();
         }
         if (assetState[assetId] == AssetState.Unknown) {
@@ -309,10 +329,17 @@ contract TitleRegistry is AccessControl {
         balanceOf[assetId][holder] = newBal;
         totalRedeemed[assetId] += amount;
 
-        bytes32 dataHash = keccak256(abi.encode("REDEEM", assetId, holder, amount, block.timestamp));
+        bytes32 dataHash = keccak256(abi.encode("REDEEM", assetId, holder, amount, resolutionHash, block.timestamp));
         bytes32 entry = _appendEntry(assetId, dataHash);
         _notifyModules(assetId, holder, bytes32(0), newBal, 0);
         emit Redeemed(assetId, holder, amount, entry);
+
+        if (address(bridgeEndpoint) != address(0)) {
+            // Wire: `to = 0` ⇒ Solana burns (rescate en especie).
+            bridgeEndpoint.emitOutbound(
+                MsgType.FORCED_TRANSFER, _encodeForcedPayload(assetId, holder, bytes32(0), amount, resolutionHash)
+            );
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -397,7 +424,7 @@ contract TitleRegistry is AccessControl {
         }
         TransferRequest storage req = requests[transferId];
         if (req.status != RequestStatus.Approved) {
-            revert RegistryErrors.RequestNotPending(transferId);
+            revert RegistryErrors.RequestNotApproved(transferId);
         }
 
         bytes32 assetId = req.assetId;
@@ -465,6 +492,36 @@ contract TitleRegistry is AccessControl {
             mstore8(add(p, 33), reasonCode)
             mstore(add(p, 34), amount)
         }
+    }
+
+    function _encodeForcedPayload(bytes32 assetId, bytes32 from, bytes32 to, uint256 amount, bytes32 resolutionHash)
+        internal
+        pure
+        returns (bytes memory payload)
+    {
+        payload = new bytes(160);
+        assembly ("memory-safe") {
+            let p := add(payload, 0x20)
+            mstore(p, assetId)
+            mstore(add(p, 32), from)
+            mstore(add(p, 64), to)
+            mstore(add(p, 96), amount)
+            mstore(add(p, 128), resolutionHash)
+        }
+    }
+
+    /// @notice P7: cancel Pending DvP so Eth cannot later Approve after a court order.
+    function _cancelPendingForCourt(bytes32 transferId, bytes32 assetId, bytes32 from) internal {
+        TransferRequest storage req = requests[transferId];
+        if (req.status != RequestStatus.Pending) {
+            revert RegistryErrors.RequestNotPending(transferId);
+        }
+        if (req.assetId != assetId || req.seller != from) {
+            revert RegistryErrors.RequestMismatch(transferId);
+        }
+        req.status = RequestStatus.CourtCancelled;
+        req.reasonCode = ReasonCode.COURT_ORDER;
+        emit TransferDecided(transferId, DecisionOutcome.Rejected, ReasonCode.COURT_ORDER, bytes32(0));
     }
 
     function _evaluateApproval(TransferRequest storage req) internal view returns (bool ok, uint8 reason) {

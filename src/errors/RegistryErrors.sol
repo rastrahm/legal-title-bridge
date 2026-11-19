@@ -15,7 +15,9 @@ library RegistryErrors {
     error AssetUnknown(bytes32 assetId);
     error InsufficientBalance(bytes32 assetId, bytes32 holder);
     error RequestNotPending(bytes32 transferId);
+    error RequestNotApproved(bytes32 transferId);
     error RequestAlreadyExists(bytes32 transferId);
+    error RequestMismatch(bytes32 transferId);
     error DeadlinePassed(bytes32 transferId);
     error InvalidSignature();
     error AssertionExpired(bytes32 holder);

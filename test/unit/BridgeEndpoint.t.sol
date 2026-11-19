@@ -289,7 +289,7 @@ contract BridgeEndpointTest is BridgePacketHelpers {
         assertEq(endpoint.flowRemaining(assetId), 900);
     }
 
-    function test_UnsupportedMsgType_Codec() public {
+    function test_UnsupportedMsgType_Codec() public view {
         // forge / codec rejects invalid msgType at encode; R1 path uses UnsupportedMsgType on dispatch
         Packet memory bad = Packet({
             version: 1,

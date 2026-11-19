@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -52,6 +52,13 @@ check-dvp:
 	cd solana && cargo test -p title_mirror dvp -- --nocapture
 	cd solana && anchor test
 	@echo "make check-dvp: OK"
+
+# COURT: FORCED_TRANSFER, P7, D6 reconcile, redeem burn; I1 on Eth
+check-court:
+	forge test --match-contract "CourtTest|TitleRegistryTest"
+	cd solana && cargo test -p title_mirror
+	cd solana && anchor test
+	@echo "make check-court: OK"
 
 fmt:
 	forge fmt --check
