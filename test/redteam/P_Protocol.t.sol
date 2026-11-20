@@ -3,7 +3,7 @@ pragma solidity 0.8.37;
 
 import {BridgeErrors} from "../../src/errors/BridgeErrors.sol";
 import {RegistryErrors} from "../../src/errors/RegistryErrors.sol";
-import {DecisionOutcome, ReasonCode, RequestStatus, TitleRegistry} from "../../src/TitleRegistry.sol";
+import {DecisionOutcome, ReasonCode, RequestStatus} from "../../src/TitleRegistry.sol";
 import {MsgType, Packet, PacketCodec} from "../../src/libraries/PacketCodec.sol";
 import {RedteamBase} from "./RedteamBase.sol";
 import {ReentrancyAttacker, VulnerableTitleDecide} from "./vulnerable/VulnerableTitleDecide.sol";

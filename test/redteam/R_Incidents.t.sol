@@ -116,9 +116,8 @@ contract RedteamIncidentsTest is RedteamBase {
 
         bytes memory payload = _transferPayload(keccak256("t-r5b"), 10);
         (bytes memory wire, bytes32 mid) = _inboundWire(payload, 1);
-        bytes32 digest = PacketCodec.signingDigestFromParts(
-            PacketCodec.PACKET_VERSION, REMOTE, LOCAL, remoteEmitter, 1, mid
-        );
+        bytes32 digest =
+            PacketCodec.signingDigestFromParts(PacketCodec.PACKET_VERSION, REMOTE, LOCAL, remoteEmitter, 1, mid);
         uint256[] memory oldPks = new uint256[](2);
         oldPks[0] = r1Pk;
         oldPks[1] = r2Pk;
@@ -137,8 +136,7 @@ contract RedteamIncidentsTest is RedteamBase {
         assertTrue(ok);
         assertEq(vuln.drained(), 10_000);
         vuln.pause();
-        bool afterPause =
-            vuln.submitInbound(keccak256("d2"), 1, assetId, 1, 1, new bytes[](0), 0, true, false, false);
+        bool afterPause = vuln.submitInbound(keccak256("d2"), 1, assetId, 1, 1, new bytes[](0), 0, true, false, false);
         assertFalse(afterPause);
     }
 

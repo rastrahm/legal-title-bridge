@@ -94,8 +94,6 @@ abstract contract RedteamBase is BridgePacketHelpers {
     }
 
     function _digest(bytes32 mid, uint64 epoch) internal view returns (bytes32) {
-        return PacketCodec.signingDigestFromParts(
-            PacketCodec.PACKET_VERSION, REMOTE, LOCAL, remoteEmitter, epoch, mid
-        );
+        return PacketCodec.signingDigestFromParts(PacketCodec.PACKET_VERSION, REMOTE, LOCAL, remoteEmitter, epoch, mid);
     }
 }

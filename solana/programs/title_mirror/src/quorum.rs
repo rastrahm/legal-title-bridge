@@ -182,7 +182,16 @@ mod tests {
         let mut lamports = 0u64;
         let mut data = vec![0u8; 0];
         let owner = Pubkey::new_unique();
-        let info = AccountInfo::new(&fake, false, false, &mut lamports, &mut data, &owner, false, 0);
+        let info = AccountInfo::new(
+            &fake,
+            false,
+            false,
+            &mut lamports,
+            &mut data,
+            &owner,
+            false,
+            0,
+        );
         assert!(require_instructions_sysvar(&info).is_err());
     }
 
@@ -193,7 +202,16 @@ mod tests {
         let mut lamports = 0u64;
         let mut data = vec![0u8; 0];
         let owner = Pubkey::new_unique();
-        let info = AccountInfo::new(&fake, false, false, &mut lamports, &mut data, &owner, false, 0);
+        let info = AccountInfo::new(
+            &fake,
+            false,
+            false,
+            &mut lamports,
+            &mut data,
+            &owner,
+            false,
+            0,
+        );
         assert!(require_instructions_sysvar_vulnerable(&info).is_ok());
     }
 }

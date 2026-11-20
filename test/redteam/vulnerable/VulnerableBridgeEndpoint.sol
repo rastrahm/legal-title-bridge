@@ -48,7 +48,8 @@ contract VulnerableBridgeEndpoint {
     function submitInbound(
         bytes32 messageId,
         uint8 msgType,
-        bytes32 /*assetId*/,
+        bytes32,
+        /*assetId*/
         uint256 amount,
         uint64 packetEpoch,
         bytes[] calldata signatures,
@@ -57,19 +58,27 @@ contract VulnerableBridgeEndpoint {
         bool skipReplayMark,
         bool requireQuorum
     ) external returns (bool success) {
-        if (paused) return false;
+        if (paused) {
+            return false;
+        }
 
         // R7 Nomad: empty/unknown accepted when requireQuorum=false.
         if (requireQuorum) {
-            if (!_quorumOk(digest, signatures)) return false;
+            if (!_quorumOk(digest, signatures)) {
+                return false;
+            }
         }
 
         // R5b: real code would demand packetEpoch == epoch.
-        if (!skipEpochCheck && packetEpoch != epoch) return false;
+        if (!skipEpochCheck && packetEpoch != epoch) {
+            return false;
+        }
 
         // P1: real code marks before effects; vulnerable can skip.
         if (!skipReplayMark) {
-            if (processed[messageId]) return false;
+            if (processed[messageId]) {
+                return false;
+            }
             processed[messageId] = true;
         }
 
@@ -98,13 +107,19 @@ contract VulnerableBridgeEndpoint {
     }
 
     function _quorumOk(bytes32 digest, bytes[] calldata signatures) internal view returns (bool) {
-        if (signatures.length < threshold) return false;
+        if (signatures.length < threshold) {
+            return false;
+        }
         address prev = address(0);
         uint256 valid;
         for (uint256 i; i < signatures.length; ++i) {
             address signer = ECDSA.recover(digest, signatures[i]);
-            if (signer == address(0) || !_isRelayer(signer)) return false;
-            if (uint160(signer) <= uint160(prev)) return false;
+            if (signer == address(0) || !_isRelayer(signer)) {
+                return false;
+            }
+            if (uint160(signer) <= uint160(prev)) {
+                return false;
+            }
             prev = signer;
             unchecked {
                 ++valid;
@@ -116,7 +131,9 @@ contract VulnerableBridgeEndpoint {
     function _isRelayer(address account) internal view returns (bool) {
         uint256 n = relayers.length;
         for (uint256 i; i < n; ++i) {
-            if (relayers[i] == account) return true;
+            if (relayers[i] == account) {
+                return true;
+            }
         }
         return false;
     }
