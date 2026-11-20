@@ -48,7 +48,7 @@
 | 9 | RELAY | ✅ | ✅ | 2026-11-19 |
 | 10 | E2E | ✅ | ✅ | `make check-e2e` C10 · sim harness + F1–F5/D6 · 2026-11-19 · rama `e2e` |
 | 11 | FRONT | ✅ | ✅ | `make check-front` C14–C17 · 2026-11-19 · rama `front` |
-| 12 | REDTEAM | ⬜ | ⬜ | `doc/RED-TEAM-ES.md` |
+| 12 | REDTEAM | ✅ | ✅ | `make check-redteam` C4/C11/C12/C16 · 2026-11-20 · rama `redteam` |
 | 13 | QA | ⬜ | ⬜ | `doc/QA-ES.md` |
 | 14 | EXTATK | ⬜ | ⬜ | `doc/EXTATK-ES.md` |
 | 15 | TESTNET | ⬜ | ⬜ | `doc/DEPLOY-TESTNET-ES.md` |
@@ -152,12 +152,12 @@
 
 ### 12. REDTEAM — Seguridad en repo
 
-- [ ] Autorizada
-- [ ] R1–R7 con control positivo + rechazo en código real
-- [ ] P1–P9; W1–W6; M1–M10
-- [ ] Slither / Aderyn / audits justificados
-- [ ] `doc/RED-TEAM-ES.md` completo
-- [ ] Criterio: C4, C11, C12, C16 verdes
+- [x] Autorizada (2026-11-20, rama `redteam`)
+- [x] R1–R7 con control positivo + rechazo en código real
+- [x] P1–P9; W1–W6; M1–M10
+- [x] Slither / Aderyn / audits justificados (`doc/SWC-AUDIT-ES.md`)
+- [x] `doc/RED-TEAM-ES.md` completo
+- [x] Criterio: C4, C11, C12, C16 · `make check-redteam`
 
 ### 13. QA — Agente humano simulado
 
@@ -203,7 +203,7 @@
 
 - [ ] Códec idéntico Solidity / Rust / TypeScript
 - [ ] Invariantes I1–I9 cubiertas
-- [ ] REDTEAM + mutación + estático cerrados
+- [x] REDTEAM + mutación + estático cerrados
 - [ ] QA cerrado
 - [ ] EXTATK X1–X36 cerrado (local) + subconjunto en testnet
 - [ ] Evidencia Sepolia

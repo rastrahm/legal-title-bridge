@@ -35,6 +35,16 @@ pub fn require_authorized_path(
     classify_authority(authority, permanent_delegate, escrow_authority).map(|_| ())
 }
 
+/// INTENTIONALLY VULNERABLE (REDTEAM / M10): accepts any authority.
+#[cfg(feature = "redteam")]
+pub fn require_authorized_path_vulnerable(
+    _authority: &Pubkey,
+    _permanent_delegate: &Pubkey,
+    _escrow_authority: &Pubkey,
+) -> Result<()> {
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -46,6 +56,16 @@ mod tests {
         let other = Pubkey::new_unique();
         assert!(require_authorized_path(&d, &d, &e).is_ok());
         assert!(require_authorized_path(&e, &d, &e).is_ok());
+        assert!(require_authorized_path(&other, &d, &e).is_err());
+    }
+
+    #[cfg(feature = "redteam")]
+    #[test]
+    fn p3_vulnerable_allows_stranger() {
+        let d = Pubkey::new_unique();
+        let e = Pubkey::new_unique();
+        let other = Pubkey::new_unique();
+        assert!(require_authorized_path_vulnerable(&other, &d, &e).is_ok());
         assert!(require_authorized_path(&other, &d, &e).is_err());
     }
 }
