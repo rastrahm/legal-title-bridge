@@ -257,7 +257,7 @@ flowchart TD
 
 | Bloque | Doc de resultados | Estado |
 |--------|-------------------|--------|
-| R / P / W / M | `RED-TEAM-ES.md` | ⏳ Pendiente fase REDTEAM |
+| R / P / W / M | `RED-TEAM-ES.md` | ✅ REDTEAM 2026-11-20 · `make check-redteam` |
 | F | E2E + notas en RED-TEAM | ✅ F1–F5 en `e2e/test/failures.test.ts` (C10) · detalle REDTEAM pendiente |
 | X | `EXTATK-ES.md` | ⏳ Pendiente EXTATK |
 | QA (no exploit) | `QA-ES.md` | ⏳ Pendiente QA |

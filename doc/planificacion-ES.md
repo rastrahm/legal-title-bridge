@@ -478,7 +478,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **RELAY** | Relayers, finalidad, idempotencia, entrega, reconciliador | ✅ Cerrada | ✅ 2026-11-19 |
 | **E2E** | Stack local, escenarios de ciclo de vida y fallas inducidas | ✅ Cerrada | ✅ 2026-11-19 |
 | **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ✅ Cerrada | ✅ 2026-11-19 |
-| **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ⏳ Pendiente | ⬜ |
+| **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ✅ Cerrada | ✅ 2026-11-20 · `make check-redteam` · rama `redteam` |
 | **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ⏳ Pendiente | ⬜ |
 | **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ⏳ Pendiente | ⬜ |
 | **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | ⏳ Pendiente | ⬜ |
@@ -681,8 +681,8 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 - [ ] Mint Token-2022 que solo se mueve por el flujo autorizado (hook) y por orden judicial (delegado permanente)
 - [ ] Entrega contra pago atómica en Solana, con plazos D4–D6
 - [ ] Invariantes I1–I9 cubiertas
-- [ ] Incidentes R1–R7 reproducidos con control positivo y rechazados por el código real
-- [ ] Ataques P1–P9 y fallas F1–F5 cubiertos
+- [x] Incidentes R1–R7 reproducidos con control positivo y rechazados por el código real (REDTEAM 2026-11-20)
+- [x] Ataques P1–P9 y fallas F1–F5 cubiertos (P en REDTEAM; F1–F5 en E2E)
 - [ ] Mutantes M1–M10 detectados
 - [ ] Formato y linter en `make check` y en pre-commit, sin hallazgos ni excepciones sin motivo
 - [ ] Análisis estático y de dependencias sin hallazgos sin justificar
@@ -700,6 +700,6 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-**Siguiente:** autorizar *"Autorizo Fase REDTEAM"* (FRONT cerrada con C14–C17 / `make check-front`).
+**Siguiente:** autorizar *"Autorizo Fase QA"* (REDTEAM cerrada con C4/C11/C12/C16 / `make check-redteam`).
 
-**Ruta:** REDTEAM → QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
+**Ruta:** QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.

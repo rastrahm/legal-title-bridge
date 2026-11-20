@@ -34,6 +34,12 @@ pub fn require_instructions_sysvar(info: &AccountInfo) -> Result<()> {
     Ok(())
 }
 
+/// INTENTIONALLY VULNERABLE (REDTEAM / M8): skips Instructions sysvar address check.
+#[cfg(feature = "redteam")]
+pub fn require_instructions_sysvar_vulnerable(_info: &AccountInfo) -> Result<()> {
+    Ok(())
+}
+
 /// Verify that prior secp256k1 program instructions attest `message` with ≥ threshold set members.
 ///
 /// Counts **unique Ethereum addresses** in the relayer set (not raw signature count).
@@ -168,5 +174,44 @@ mod tests {
             INSTRUCTIONS_ID.to_string(),
             "Sysvar1nstructions1111111111111111111111111"
         );
+    }
+
+    #[test]
+    fn r3_real_rejects_fake_sysvar_key() {
+        let fake = Pubkey::new_unique();
+        let mut lamports = 0u64;
+        let mut data = vec![0u8; 0];
+        let owner = Pubkey::new_unique();
+        let info = AccountInfo::new(
+            &fake,
+            false,
+            false,
+            &mut lamports,
+            &mut data,
+            &owner,
+            false,
+            0,
+        );
+        assert!(require_instructions_sysvar(&info).is_err());
+    }
+
+    #[cfg(feature = "redteam")]
+    #[test]
+    fn r3_vulnerable_skips_sysvar_address() {
+        let fake = Pubkey::new_unique();
+        let mut lamports = 0u64;
+        let mut data = vec![0u8; 0];
+        let owner = Pubkey::new_unique();
+        let info = AccountInfo::new(
+            &fake,
+            false,
+            false,
+            &mut lamports,
+            &mut data,
+            &owner,
+            false,
+            0,
+        );
+        assert!(require_instructions_sysvar_vulnerable(&info).is_ok());
     }
 }
