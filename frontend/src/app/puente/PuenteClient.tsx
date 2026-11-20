@@ -73,13 +73,13 @@ export function PuenteClient({ e2eFakeRelayer = false }: PuenteClientProps) {
           </p>
         ) : (
           <p className="mt-2 text-sm text-slate-500" data-testid="relayer-status">
-            {relayerError ?? "Sin datos del relayer"}
+            {relayerError ?? dict.relayerDown}
           </p>
         )}
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold">Mensajes</h2>
+        <h2 className="mb-3 text-lg font-semibold">{dict.messages}</h2>
         <ul className="space-y-2 text-sm">
           {demo.messages.map((m) => (
             <li

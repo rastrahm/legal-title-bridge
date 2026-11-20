@@ -5,6 +5,7 @@ import {
   useContext,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
@@ -63,6 +64,12 @@ export function Providers({ children }: { children: ReactNode }) {
   });
 
   const guard = useNetworkGuard({ ethChainId, solGenesisHash });
+  // Client-only flag for Playwright (SSR snapshot stays "0"; no setState-in-effect).
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const setDemo = (updater: (prev: DemoState) => DemoState) =>
     setDemoState((prev) => updater(prev));
@@ -109,7 +116,12 @@ export function Providers({ children }: { children: ReactNode }) {
         visible={!guard.ethOk || !guard.solOk}
         message={dict.networkMismatch}
       />
-      <div data-testid="e2e-toolbar" data-ready="1" hidden />
+      <div
+        data-testid="e2e-toolbar"
+        data-ready="1"
+        data-hydrated={hydrated ? "1" : "0"}
+        hidden
+      />
       {children}
     </AppContext.Provider>
   );

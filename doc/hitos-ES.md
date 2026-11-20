@@ -49,7 +49,7 @@
 | 10 | E2E | ✅ | ✅ | `make check-e2e` C10 · sim harness + F1–F5/D6 · 2026-11-19 · rama `e2e` |
 | 11 | FRONT | ✅ | ✅ | `make check-front` C14–C17 · 2026-11-19 · rama `front` |
 | 12 | REDTEAM | ✅ | ✅ | `make check-redteam` C4/C11/C12/C16 · 2026-11-20 · rama `redteam` |
-| 13 | QA | ⬜ | ⬜ | `doc/QA-ES.md` |
+| 13 | QA | ✅ | ✅ | `make check-qa` · 6 personas + G1–G10 · 2026-11-20 · rama `qa` |
 | 14 | EXTATK | ⬜ | ⬜ | `doc/EXTATK-ES.md` |
 | 15 | TESTNET | ⬜ | ⬜ | `doc/DEPLOY-TESTNET-ES.md` |
 | 16 | SOLV | ⬜ | ⬜ | `make check` + portfolio |
@@ -161,11 +161,11 @@
 
 ### 13. QA — Agente humano simulado
 
-- [ ] Autorizada
-- [ ] Personas: Titular, Comprador, Operador, Verificador, Público, Novato
-- [ ] Guiones 1–10 ejecutados en stack local
-- [ ] `doc/QA-ES.md` sin bloqueantes/mayores abiertos
-- [ ] Criterio: fase QA cerrada
+- [x] Autorizada (2026-11-20, rama `qa`)
+- [x] Personas: Titular, Comprador, Operador, Verificador, Público, Novato
+- [x] Guiones 1–10 ejecutados en stack local
+- [x] `doc/QA-ES.md` sin bloqueantes/mayores abiertos
+- [x] Criterio: fase QA cerrada · `make check-qa`
 
 ### 14. EXTATK — Otro agente atacante
 

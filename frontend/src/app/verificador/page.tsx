@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useState } from "react";
 
 import { useApp } from "@/components/Providers";
@@ -11,8 +10,10 @@ import { t } from "@/lib/i18n";
  * Verifier / attestor console — EIP-712 field preview before signing.
  */
 export default function VerificadorPage() {
-  const { locale, roles, canSignEth, setEthAddress, setEthChainId } = useApp();
+  const { locale, roles, canSignEth, setEthAddress, setEthChainId, ethAddress } =
+    useApp();
   const dict = t(locale);
+  const ready = canSignEth && Boolean(ethAddress);
 
   const [country, setCountry] = useState("ES");
   const [investorType, setInvestorType] = useState("retail");
@@ -28,6 +29,7 @@ export default function VerificadorPage() {
       <button
         type="button"
         className="rounded-full border border-slate-700 px-4 py-2 text-sm"
+        data-testid="btn-connect-eth"
         onClick={() => {
           setEthAddress("0x1111111111111111111111111111111111111111");
           setEthChainId(31337);
@@ -37,31 +39,40 @@ export default function VerificadorPage() {
       </button>
 
       <section className="grid max-w-xl gap-3">
-        <label className="text-sm">
-          País
+        <label className="text-sm" htmlFor="id-country">
+          {dict.fieldCountry}
           <input
+            id="id-country"
             className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
             data-testid="id-country"
+            aria-invalid={country ? undefined : true}
+            aria-describedby={incomplete ? "id-incomplete" : undefined}
           />
         </label>
-        <label className="text-sm">
-          Tipo de inversor
+        <label className="text-sm" htmlFor="id-type">
+          {dict.fieldInvestorType}
           <input
+            id="id-type"
             className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
             value={investorType}
             onChange={(e) => setInvestorType(e.target.value)}
             data-testid="id-type"
+            aria-invalid={investorType ? undefined : true}
+            aria-describedby={incomplete ? "id-incomplete" : undefined}
           />
         </label>
-        <label className="text-sm">
-          Vence (unix)
+        <label className="text-sm" htmlFor="id-expires">
+          {dict.fieldExpires}
           <input
+            id="id-expires"
             className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
             value={expiresAt}
             onChange={(e) => setExpiresAt(e.target.value)}
             data-testid="id-expires"
+            aria-invalid={expiresAt ? undefined : true}
+            aria-describedby={incomplete ? "id-incomplete" : undefined}
           />
         </label>
       </section>
@@ -77,8 +88,8 @@ export default function VerificadorPage() {
       </aside>
 
       {incomplete ? (
-        <p role="alert" className="text-amber-200">
-          Completa todos los campos antes de firmar.
+        <p id="id-incomplete" role="alert" className="text-amber-200">
+          {dict.incompleteFields}
         </p>
       ) : null}
 
@@ -87,24 +98,25 @@ export default function VerificadorPage() {
           type="button"
           data-testid="btn-sign-identity"
           className="rounded-full bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40"
-          disabled={!canSignEth || !canSignIdentity(roles) || incomplete}
+          disabled={!ready || !canSignIdentity(roles) || incomplete}
           onClick={() => setSigned(true)}
         >
-          Firmar identidad
+          {dict.btnSignIdentity}
         </button>
         <button
           type="button"
           data-testid="btn-sign-attestation"
           className="rounded-full border border-slate-600 px-4 py-2 text-sm disabled:opacity-40"
-          disabled={!canSignEth || !canSignAttestation(roles)}
+          disabled={!ready || !canSignAttestation(roles)}
+          onClick={() => setSigned(true)}
         >
-          Firmar certificación
+          {dict.btnSignAttestation}
         </button>
       </div>
 
       {signed ? (
         <p className="text-emerald-300" data-testid="signed-ok">
-          Firma preparada (EIP-712)
+          {dict.signedOk}
         </p>
       ) : null}
     </main>

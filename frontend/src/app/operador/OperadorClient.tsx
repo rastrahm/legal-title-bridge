@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { TransactionRequest } from "ethers";
 
 import { ConfirmTxPanel } from "@/components/ConfirmTxPanel";
@@ -34,13 +34,21 @@ export function OperadorClient({
   e2eChain = null,
   e2ePrepareIssue = false,
 }: OperadorClientProps) {
-  const { locale, roles, ethAddress, setEthAddress, setDemo, demo, solGenesisHash } =
-    useApp();
+  const {
+    locale,
+    roles,
+    ethAddress,
+    setEthAddress,
+    setDemo,
+    demo,
+    solGenesisHash,
+    setRoles,
+  } = useApp();
   const dict = t(locale);
   const addresses = resolveAddresses();
   const ethChainId = e2eChain ?? 31337;
   const guard = useNetworkGuard({ ethChainId, solGenesisHash });
-  const canSignEth = guard.canSignEth;
+  const canSignEth = guard.canSignEth && Boolean(ethAddress);
 
   const [formAmount, setFormAmount] = useState("1");
   const [formTo, setFormTo] = useState(
@@ -49,9 +57,22 @@ export function OperadorClient({
   const [pendingTx, setPendingTx] = useState<TransactionRequest | null>(null);
   const [simOk, setSimOk] = useState<boolean | null>(null);
   const [simErr, setSimErr] = useState<string | undefined>();
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const prevEth = useRef(ethAddress);
 
   const assetId =
     "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+  useEffect(() => {
+    if (prevEth.current != null && prevEth.current !== ethAddress) {
+      setPendingTx(null);
+      setSimOk(null);
+      setSimErr(undefined);
+      setNotice(dict.draftCleared);
+    }
+    prevEth.current = ethAddress;
+  }, [ethAddress, dict.draftCleared]);
 
   const labIssueTx = useMemo((): TransactionRequest | null => {
     if (!e2ePrepareIssue) return null;
@@ -78,6 +99,13 @@ export function OperadorClient({
   const labSimOk = e2ePrepareIssue && labIssueTx != null ? true : simOk;
 
   async function prepareIssue() {
+    if (!ethAddress) {
+      setNotice(dict.connectWalletFirst);
+      return;
+    }
+    if (busy || pendingTx) return;
+    setBusy(true);
+    setNotice(null);
     try {
       const amount = BigInt(5);
       const to = "0x2222222222222222222222222222222222222222";
@@ -89,7 +117,11 @@ export function OperadorClient({
       };
       setPendingTx(tx);
       const sim = await simulateTransaction(
-        { async call() { return "0x"; } },
+        {
+          async call() {
+            return "0x";
+          },
+        },
         tx,
       );
       setSimOk(sim.ok);
@@ -98,6 +130,8 @@ export function OperadorClient({
       setPendingTx(null);
       setSimOk(false);
       setSimErr(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -112,8 +146,13 @@ export function OperadorClient({
       <button
         type="button"
         className="rounded-full border border-slate-700 px-4 py-2 text-sm"
+        data-testid="btn-connect-eth"
         onClick={() =>
-          setEthAddress("0x1111111111111111111111111111111111111111")
+          setEthAddress(
+            ethAddress === "0x1111111111111111111111111111111111111111"
+              ? "0x3333333333333333333333333333333333333333"
+              : "0x1111111111111111111111111111111111111111",
+          )
         }
       >
         {dict.connectEth}
@@ -122,19 +161,45 @@ export function OperadorClient({
         {ethAddress ?? "—"}
       </p>
 
+      <button
+        type="button"
+        className="rounded-full border border-slate-700 px-3 py-1 text-xs"
+        data-testid="btn-strip-roles"
+        onClick={() =>
+          setRoles({
+            issuer: false,
+            operator: false,
+            courtExecutor: false,
+            guardian: false,
+            verifier: false,
+            attestor: false,
+          })
+        }
+      >
+        {dict.stripRolesLab}
+      </button>
+
+      {notice ? (
+        <p role="status" className="text-sm text-amber-200" data-testid="op-notice">
+          {notice}
+        </p>
+      ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="text-sm">
-          Monto (formulario)
+        <label className="text-sm" htmlFor="form-amount">
+          {dict.formAmount}
           <input
+            id="form-amount"
             className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
             value={formAmount}
             onChange={(e) => setFormAmount(e.target.value)}
             data-testid="form-amount"
           />
         </label>
-        <label className="text-sm">
-          Destinatario (formulario)
+        <label className="text-sm" htmlFor="form-to">
+          {dict.formRecipient}
           <input
+            id="form-to"
             className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
             value={formTo}
             onChange={(e) => setFormTo(e.target.value)}
@@ -148,10 +213,10 @@ export function OperadorClient({
           type="button"
           data-testid="btn-issue"
           className="rounded-full bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40"
-          disabled={!canSignEth || !canIssue(roles) || demo.paused}
+          disabled={!canSignEth || !canIssue(roles) || demo.paused || busy || pendingTx != null}
           onClick={() => void prepareIssue()}
         >
-          Emitir
+          {dict.btnIssue}
         </button>
         <button
           type="button"
@@ -165,9 +230,10 @@ export function OperadorClient({
               value: BigInt(0),
             });
             setSimOk(true);
+            setDemo((prev) => ({ ...prev, paused: true }));
           }}
         >
-          Pausar
+          {dict.btnPause}
         </button>
         <button
           type="button"
@@ -185,18 +251,37 @@ export function OperadorClient({
                 },
                 ...prev.messages,
               ],
+              requests: prev.requests.map((r) =>
+                r.status === "Pending"
+                  ? { ...r, status: "Rejected", rejectReason: "COURT_ORDER" }
+                  : r,
+              ),
             }))
           }
         >
-          Orden judicial
+          {dict.btnCourt}
         </button>
         <button
           type="button"
           data-testid="btn-reconcile"
           className="rounded-full border border-slate-600 px-4 py-2 text-sm disabled:opacity-40"
           disabled={!canSignEth || !canReconcile(roles)}
+          onClick={() =>
+            setDemo((prev) => ({
+              ...prev,
+              ethCirculating: prev.solIssued,
+              messages: [
+                {
+                  messageId: `reconcile:d6:${Date.now()}`,
+                  status: "delivered",
+                  direction: "eth_to_sol",
+                },
+                ...prev.messages,
+              ],
+            }))
+          }
         >
-          Reconciliar D6
+          {dict.btnReconcile}
         </button>
       </div>
 
@@ -208,6 +293,9 @@ export function OperadorClient({
           simulationOk={labSimOk}
           simulationError={simErr}
           disabled={!canSignEth}
+          confirmLabel={dict.btnSign}
+          simOkLabel={dict.simOk}
+          simFailLabel={dict.simFail}
           onConfirm={() => {
             setDemo((prev) => ({
               ...prev,

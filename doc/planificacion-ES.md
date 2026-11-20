@@ -479,7 +479,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **E2E** | Stack local, escenarios de ciclo de vida y fallas inducidas | ✅ Cerrada | ✅ 2026-11-19 |
 | **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ✅ Cerrada | ✅ 2026-11-19 |
 | **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ✅ Cerrada | ✅ 2026-11-20 · `make check-redteam` · rama `redteam` |
-| **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ⏳ Pendiente | ⬜ |
+| **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ✅ Cerrada | ✅ 2026-11-20 · `make check-qa` · rama `qa` |
 | **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ⏳ Pendiente | ⬜ |
 | **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | ⏳ Pendiente | ⬜ |
 | **SOLV** | Invariantes finales, gas, SWC-AUDIT, docs EN, diagramas, portfolio | ⏳ Pendiente | ⬜ |
@@ -700,6 +700,6 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-**Siguiente:** autorizar *"Autorizo Fase QA"* (REDTEAM cerrada con C4/C11/C12/C16 / `make check-redteam`).
+**Siguiente:** autorizar *"Autorizo Fase EXTATK"* (QA cerrada con 6 personas + G1–G10 / `make check-qa`).
 
-**Ruta:** QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
+**Ruta:** EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.

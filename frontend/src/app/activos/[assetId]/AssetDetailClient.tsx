@@ -58,7 +58,7 @@ export function AssetDetailClient({
   if (!asset) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-16 text-center">
-        <h1 className="text-2xl font-bold">Activo no encontrado</h1>
+        <h1 className="text-2xl font-bold">{dict.assetNotFound}</h1>
       </main>
     );
   }

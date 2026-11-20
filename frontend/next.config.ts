@@ -12,13 +12,19 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@legal-title-bridge/shared"],
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   async headers() {
+    // Next.js dev / Turbopack injects inline bootstrap scripts; production keeps a
+    // strict script-src without unsafe-inline (W1 / CSP hardening).
+    const scriptSrc =
+      process.env.NODE_ENV === "production"
+        ? "script-src 'self'"
+        : "script-src 'self' 'unsafe-eval' 'unsafe-inline'";
     const contentSecurityPolicy = [
       "default-src 'self'",
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'none'",
       "object-src 'none'",
-      "script-src 'self' 'unsafe-eval'",
+      scriptSrc,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",
       "font-src 'self'",

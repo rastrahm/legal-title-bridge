@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | check-redteam | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | check-redteam | check-qa | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -85,6 +85,12 @@ check-redteam:
 	./scripts/mutate.sh
 	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npx playwright test e2e/attacks-w.spec.ts
 	@echo "make check-redteam: OK (C4/C11/C12/C16)"
+
+# QA: human-sim personas + scripts 1–10 (Playwright) + doc/QA-ES.md
+check-qa:
+	@test -f doc/QA-ES.md
+	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npm test && npx playwright test e2e/qa-personas.spec.ts
+	@echo "make check-qa: OK"
 
 fmt:
 	forge fmt --check
