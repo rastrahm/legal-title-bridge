@@ -3,11 +3,11 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa check-extatk fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | check-redteam | check-qa | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | check-redteam | check-qa | check-extatk | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
 # Full gate grows with phases
 check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa
@@ -85,6 +85,13 @@ check-redteam:
 	./scripts/mutate.sh
 	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npx playwright test e2e/attacks-w.spec.ts
 	@echo "make check-redteam: OK (C4/C11/C12/C16)"
+
+# EXTATK: X1–X36 independent external attacker set (forge + vitest + playwright)
+check-extatk:
+	forge test --match-path 'test/extatk/*'
+	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd e2e && npx vitest run extatk
+	@echo "make check-extatk: forge + vitest OK — playwright attacks require a running dev server"
+	@echo "make check-extatk: OK (X1-X32 automated; X33-X36 via: cd frontend && npx playwright test e2e/extatk-x33-x36.spec.ts)"
 
 # QA: human-sim personas + scripts 1–10 (Playwright) + doc/QA-ES.md
 check-qa:

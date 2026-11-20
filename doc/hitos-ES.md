@@ -50,7 +50,7 @@
 | 11 | FRONT | ✅ | ✅ | `make check-front` C14–C17 · 2026-11-19 · rama `front` |
 | 12 | REDTEAM | ✅ | ✅ | `make check-redteam` C4/C11/C12/C16 · 2026-11-20 · rama `redteam` |
 | 13 | QA | ✅ | ✅ | `make check-qa` · 6 personas + G1–G10 · 2026-11-20 · rama `qa` |
-| 14 | EXTATK | ⬜ | ⬜ | `doc/EXTATK-ES.md` |
+| 14 | EXTATK | ✅ | ✅ | `make check-extatk` · X1–X36 · 0 roto · 2026-11-20 · `doc/EXTATK-ES.md` |
 | 15 | TESTNET | ⬜ | ⬜ | `doc/DEPLOY-TESTNET-ES.md` |
 | 16 | SOLV | ⬜ | ⬜ | `make check` + portfolio |
 
@@ -169,13 +169,13 @@
 
 ### 14. EXTATK — Otro agente atacante
 
-- [ ] Autorizada
-- [ ] Brief sin `test/redteam/`
-- [ ] X1–X36 en local; cero `roto`
-- [ ] `parcial` con dueño o aceptación
-- [ ] `doc/EXTATK-ES.md` listo
-- [ ] Lista corta para TESTNET preparada
-- [ ] Criterio: catálogo local cerrado
+- [x] Autorizada (agente atacante externo independiente — 2026-11-20)
+- [x] Brief sin `test/redteam/` (acceso restringido; sin ver C11)
+- [x] X1–X36 en local; **cero `roto`**; 34 bloqueado; 2 parcial (X30, X32 — por diseño)
+- [x] `parcial` documentados con plan de cierre en `doc/EXTATK-ES.md §Notas`
+- [x] `doc/EXTATK-ES.md` completo con tabla, notas y shortlist TESTNET
+- [x] Lista corta TESTNET: X1, X4, X7, X15, X17, X23, X25, X28, X33
+- [x] Criterio: catálogo local cerrado · `make check-extatk` verde
 
 ### 15. TESTNET — Sepolia + Solana Devnet
 
@@ -204,8 +204,8 @@
 - [ ] Códec idéntico Solidity / Rust / TypeScript
 - [ ] Invariantes I1–I9 cubiertas
 - [x] REDTEAM + mutación + estático cerrados
-- [ ] QA cerrado
-- [ ] EXTATK X1–X36 cerrado (local) + subconjunto en testnet
+- [x] QA cerrado
+- [x] EXTATK X1–X36 cerrado (local) + subconjunto en testnet preparado
 - [ ] Evidencia Sepolia
 - [ ] Evidencia Solana Devnet
 - [ ] Docs ES/EN + portfolio

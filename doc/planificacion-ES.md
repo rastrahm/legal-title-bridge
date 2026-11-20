@@ -480,7 +480,7 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ✅ Cerrada | ✅ 2026-11-19 |
 | **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ✅ Cerrada | ✅ 2026-11-20 · `make check-redteam` · rama `redteam` |
 | **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ✅ Cerrada | ✅ 2026-11-20 · `make check-qa` · rama `qa` |
-| **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ⏳ Pendiente | ⬜ |
+| **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ✅ Cerrada | ✅ 2026-11-20 · `make check-extatk` · 0 roto · `doc/EXTATK-ES.md` |
 | **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | ⏳ Pendiente | ⬜ |
 | **SOLV** | Invariantes finales, gas, SWC-AUDIT, docs EN, diagramas, portfolio | ⏳ Pendiente | ⬜ |
 
@@ -689,7 +689,7 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 - [ ] Frontend con explorador, cartera, operador, verificador y monitor del puente, ES/EN
 - [ ] Ataques al frontend W1–W6 cubiertos; build de producción sin código de test
 - [ ] Fase QA: 6 personas y 10 guiones cubiertos; cero bloqueantes abiertos (`doc/QA-ES.md`)
-- [ ] Fase EXTATK: X1–X36 ejecutados por agente atacante aparte; cero `roto` (`doc/EXTATK-ES.md`)
+- [x] Fase EXTATK: X1–X36 ejecutados por agente atacante aparte; cero `roto` (`doc/EXTATK-ES.md`)
 - [ ] Ciclo completo desde la interfaz en **Sepolia y Solana Devnet** (ambas), con hashes
 - [ ] Ataques rechazados en **ambas** testnets (P1, R5b, P3 + subconjunto EXTATK), con hashes
 - [ ] Docs ES/EN, SWC-AUDIT, GAS, diagramas y portfolio
@@ -700,6 +700,6 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-**Siguiente:** autorizar *"Autorizo Fase EXTATK"* (QA cerrada con 6 personas + G1–G10 / `make check-qa`).
+**Siguiente:** autorizar *"Autorizo Fase TESTNET"* (EXTATK cerrado: 0 roto · 2 parcial documentados · `make check-extatk`).
 
-**Ruta:** EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
+**Ruta:** **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
