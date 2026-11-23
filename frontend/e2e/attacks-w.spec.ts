@@ -52,8 +52,9 @@ test.describe("W1–W6 frontend attacks", () => {
       "0x3333333333333333333333333333333333333333",
     );
     await expect(page.getByTestId("confirm-arg-amount")).toHaveText("5");
-    await expect(page.getByTestId("confirm-arg-to")).toHaveText(
-      /0x2222222222222222222222222222222222222222/i,
+    // issue(assetId, amount, toHolder) — decoded holder bytes32, not the form field.
+    await expect(page.getByTestId("confirm-arg-toHolder")).toHaveText(
+      /0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/i,
     );
   });
 

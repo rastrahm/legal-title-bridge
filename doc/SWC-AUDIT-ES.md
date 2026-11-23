@@ -1,5 +1,7 @@
 # Auditoría estática (C4) — justificaciones
 
+> 🌐 **Español** · [English](./SWC-AUDIT-EN.md)
+
 **Herramientas:** Slither 0.11.6 (`slither . --exclude-dependencies --filter-paths 'lib/|test/'`), Aderyn 0.6.8 (`aderyn .`), `cargo audit` (workspace `solana/`), `npm audit --omit=dev` en `shared` / `relayer` / `frontend`.
 
 **Fecha:** 2026-11-20 · fase REDTEAM · rama `redteam`

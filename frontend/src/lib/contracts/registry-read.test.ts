@@ -32,7 +32,11 @@ vi.mock("ethers", async (importOriginal) => {
   };
 });
 
-import { listCreatedAssetIds, readIssuePreflight } from "./registry-read";
+import {
+  listCreatedAssetIds,
+  readIssuePreflight,
+  readOnChainAssetDetail,
+} from "./registry-read";
 
 const TITLE = "0x27fE06348f6937f0f980790EC6963633f2D22F2a";
 const ATTEST = "0x29Ac990fBc054afab565c0270Ae324e48D70603a";
@@ -102,5 +106,38 @@ describe("listCreatedAssetIds", () => {
     ]);
     const ids = await listCreatedAssetIds(TITLE, 500);
     expect(ids).toContain(ASSET.toLowerCase());
+  });
+});
+
+describe("readOnChainAssetDetail", () => {
+  beforeEach(() => {
+    assetState.mockReset();
+    isCertified.mockReset();
+    getBlockNumber.mockReset();
+    getLogs.mockReset();
+  });
+
+  it("returns null for Unknown state", async () => {
+    assetState.mockResolvedValue(0);
+    const detail = await readOnChainAssetDetail(TITLE, ATTEST, ASSET);
+    expect(detail).toBeNull();
+  });
+
+  it("loads Active asset with empty ledger and holders", async () => {
+    assetState.mockResolvedValue(1);
+    isCertified.mockResolvedValue(true);
+    getBlockNumber.mockResolvedValue(100);
+    getLogs.mockResolvedValue([]);
+    const detail = await readOnChainAssetDetail(TITLE, ATTEST, ASSET, 50);
+    expect(detail).toMatchObject({
+      assetId: ASSET.toLowerCase(),
+      state: "Active",
+      certified: true,
+      totalIssued: "1000",
+      circulating: "1000",
+      ledgerOk: true,
+      entries: [],
+      holders: [],
+    });
   });
 });

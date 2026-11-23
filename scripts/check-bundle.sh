@@ -30,8 +30,12 @@ scan "${ANVIL_KEY}" "anvil private key #0"
 scan "${SENTINEL}" "E2E wallet sentinel"
 scan "${ANVIL_KEYS_FILE}" "anvil-keys marker"
 
-# NEXT_PUBLIC_E2E=1 must not be baked into a production-oriented build artifact as enabled.
-if grep -R --binary-files=without-match -E 'NEXT_PUBLIC_E2E["=:]+1' "${OUT}" >/dev/null 2>&1; then
+# NEXT_PUBLIC_E2E enabled must not be baked into production JS (ignore source maps / .next/dev).
+# Comment text in maps historically false-positived on "NEXT_PUBLIC_E2E=1".
+if grep -R --binary-files=without-match \
+  --exclude='*.map' \
+  --exclude-dir=dev \
+  -E 'NEXT_PUBLIC_E2E["=:]+1' "${OUT}" >/dev/null 2>&1; then
   echo "check-bundle FAIL: NEXT_PUBLIC_E2E=1 present in .next" >&2
   fail=1
 fi

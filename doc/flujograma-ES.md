@@ -1,6 +1,8 @@
 # Flujograma — Legal Title Bridge
 
-**Idioma:** Español · Módulo 22 · **to-be**.  
+> 🌐 **Español** · [English](./flujograma-EN.md)
+
+**Idioma:** Español · Módulo 22 · **as-built** (TESTNET cerrada · SOLV en curso).  
 **Fuente:** [`planificacion-ES.md`](./planificacion-ES.md) §6, §11–§12, D1–D6.  
 **Companion:** [`diagrama-de-flujo-ES.md`](./diagrama-de-flujo-ES.md) (decisiones por operación).
 
