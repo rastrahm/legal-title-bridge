@@ -1,6 +1,8 @@
 # Planificación — Módulo 22: Legal Title Bridge (Ethereum ↔ Solana)
 
-**Estado:** planificación con hito inicial cerrado (16/11: docs de diseño ES + `hitos-ES.md`). Ninguna fase de código autorizada todavía.
+> 🌐 **Español** · [English](./planificacion-EN.md)
+
+**Estado:** fases BOOT→**SOLV** **cerradas** (2026-11-23). v1 lab aceptada en Sepolia+Devnet. Tablero: `hitos-ES.md`.
 **Regla de avance:** no se escribe código de una fase hasta: *"Autorizo Fase \<ID\>"*.
 **Destino de la ruta:** ambas testnets — **Ethereum Sepolia** y **Solana Devnet** — con ciclo completo desde la interfaz, ataques rechazados con hashes de evidencia, y cierre solo cuando las dos redes hayan pasado el mismo checklist. Local (anvil + solana-test-validator) es el laboratorio; Sepolia + Devnet es el hito de aceptación pública de v1.
 **Origen:** el artículo "Tokenizar sin reinventar la rueda: un puente Ethereum–Solana pensado desde el derecho europeo" (10/11/2026). Este módulo lo convierte en código que corre y se ataca.
@@ -483,8 +485,8 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ✅ Cerrada | ✅ 2026-11-20 · `make check-redteam` · rama `redteam` |
 | **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ✅ Cerrada | ✅ 2026-11-20 · `make check-qa` · rama `qa` |
 | **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ✅ Cerrada | ✅ 2026-11-20 · `make check-extatk` · 0 roto · `doc/EXTATK-ES.md` |
-| **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | 🔄 En curso | Deploy+issue+P1/R5b/P3/apply_issue ✅ · shortlist parcial ✅ · UI + X4/X7/X15/X28 ⏳ |
-| **SOLV** | Invariantes finales, gas, SWC-AUDIT, docs EN, diagramas, portfolio | ⏳ Pendiente | ⬜ |
+| **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | ✅ Cerrada | ✅ 2026-11-23 · `doc/DEPLOY-TESTNET-ES.md` · X7/X15/X28 diferidos opc. |
+| **SOLV** | Invariantes finales, gas, SWC-AUDIT, docs EN, diagramas, portfolio | ✅ Cerrada | ✅ 2026-11-23 · `make check` verde |
 
 **Orden fijado tras FRONT:** REDTEAM → QA → EXTATK → TESTNET → SOLV. QA busca fallos de producto con mentalidad humana; EXTATK busca romper el sistema con mentalidad adversaria e independiente; TESTNET exige evidencia en **las dos** redes de prueba.
 
@@ -664,6 +666,8 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 **Criterio de salida:** operaciones del punto 3 confirmadas en ambas cadenas; ataques del punto 4 rechazados con hash en la punta que corresponda; checklist de las dos testnets completo — sin eso no hay SOLV.
 
+**Cierre (2026-11-23):** criterio cumplido — deploy Sepolia+Devnet, ciclo UI MetaMask+Phantom (issue + DvP handoff escrow), P1/R5b/P3 + shortlist EXTATK (X1/X4/X17/X23/X25/X33; X7/X15/X28 diferidos opc. con evidencia local), smoke QA, evidencia en `doc/DEPLOY-TESTNET-ES.md`.
+
 ### Fase SOLV — Cierre de v1
 
 1. Repasar invariantes, gas (`forge snapshot`), NatSpec.
@@ -672,6 +676,8 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 4. Actualizar el índice de la suite (`doc/README.md`: módulos 01–22).
 
 **Criterio de salida:** `make check` verde de punta a punta; evidencia de ambas testnets presente; informes QA y EXTATK cerrados.
+
+**Cierre (2026-11-23):** criterio cumplido — `make check` (boot…extatk+solv) verde; GAS/SWC/INVARIANTES ES+EN; portfolio/; evidencia TESTNET en `DEPLOY-TESTNET-ES.md`. Video walkthrough opcional (capturas en `doc/front-screenshots/`).
 
 ---
 
@@ -688,20 +694,20 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 - [ ] Mutantes M1–M10 detectados
 - [ ] Formato y linter en `make check` y en pre-commit, sin hallazgos ni excepciones sin motivo
 - [ ] Análisis estático y de dependencias sin hallazgos sin justificar
-- [ ] Frontend con explorador, cartera, operador, verificador y monitor del puente, ES/EN
-- [ ] Ataques al frontend W1–W6 cubiertos; build de producción sin código de test
-- [ ] Fase QA: 6 personas y 10 guiones cubiertos; cero bloqueantes abiertos (`doc/QA-ES.md`)
+- [x] Frontend con explorador, cartera, operador, verificador y monitor del puente, ES/EN
+- [x] Ataques al frontend W1–W6 cubiertos; build de producción sin código de test (`check-bundle` C17)
+- [x] Fase QA: 6 personas y 10 guiones cubiertos; cero bloqueantes abiertos (`doc/QA-ES.md`)
 - [x] Fase EXTATK: X1–X36 ejecutados por agente atacante aparte; cero `roto` (`doc/EXTATK-ES.md`)
-- [ ] Ciclo completo desde la interfaz en **Sepolia y Solana Devnet** (ambas), con hashes
-- [ ] Ataques rechazados en **ambas** testnets (P1, R5b, P3 + subconjunto EXTATK), con hashes
-- [ ] Docs ES/EN, SWC-AUDIT, GAS, diagramas y portfolio
+- [x] Ciclo completo desde la interfaz en **Sepolia y Solana Devnet** (ambas), con hashes (TESTNET 2026-11-23)
+- [x] Ataques rechazados en **ambas** testnets (P1, R5b, P3 + subconjunto EXTATK), con hashes · X7/X15/X28 diferidos opc.
+- [x] Docs ES/EN, SWC-AUDIT, GAS, diagramas y portfolio (SOLV 2026-11-23; video walkthrough opcional)
 
 ---
 
 ## 14. Próximo paso
 
-Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
+**v1 lab cerrada** (BOOT→SOLV, 2026-11-23). Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-**Siguiente:** ciclo UI MetaMask+Phantom; `executeRotateRelayers` tras 1d (X4); diferidos X7/X15/X28 si se quiere evidencia on-chain completa.
+**Hecho:** `make check` verde; evidencia Sepolia+Devnet; QA/EXTATK/DEPLOY; GAS/SWC/INVARIANTES; portfolio/.
 
-**Ruta:** UI + diferidos EXTATK → SOLV. Sin evidencia operativa completa en las dos testnets, v1 no cierra.
+**Opcional post-v1:** video walkthrough; X7/X15/X28 on-chain; mutantes M1–M10 / códec checklist residual si se quiere endurecer el §13.

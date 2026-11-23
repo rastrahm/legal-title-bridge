@@ -1,6 +1,8 @@
 # Diagrama de clases — Legal Title Bridge (Ethereum ↔ Solana)
 
-**Idioma:** Español · Módulo 22 · **to-be** (planificación; aún sin código).  
+> 🌐 **Español** · [English](./diagrama-de-clases-EN.md)
+
+**Idioma:** Español · Módulo 22 · **as-built** (SOLV 2026-11-23).  
 **Stack:** Solidity `0.8.37` / EVM Cancun · Anchor `0.31.1` · Relayer + Frontend TypeScript.  
 **Fuente:** [`planificacion-ES.md`](./planificacion-ES.md) §3–§8, D1–D14.
 

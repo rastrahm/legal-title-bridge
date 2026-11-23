@@ -2,13 +2,17 @@
 
 Puente Ethereum ↔ Solana para títulos legales (vino en depósito fiscal, v1). Laboratorio en redes locales y de prueba (**Sepolia** + **Solana Devnet**). No es producción ni asesoramiento legal.
 
-## Estado
+## Estado (v1 lab · 2026-11-23)
 
-- Planificación y D1–D14: cerradas.
-- Fase **BOOT**: en curso (rama `git` `boot`).
-- Autorización: no se codea una fase sin `Autorizo Fase <ID>`.
+| Fase | Estado |
+|------|--------|
+| BOOT → **SOLV** | ✅ Cerradas |
+| D1–D14 | ✅ Cerradas |
+| `make check` | ✅ Verde |
 
-## Stack (anotado en BOOT · 2026-11-17)
+Autorización: no se codea una fase sin `Autorizo Fase <ID>`.
+
+## Stack
 
 | Pieza | Versión |
 |-------|---------|
@@ -17,13 +21,8 @@ Puente Ethereum ↔ Solana para títulos legales (vino en depósito fiscal, v1).
 | OpenZeppelin | **v5.2.0** |
 | Anchor | **0.31.1** |
 | Solana CLI | **2.2.20** (Agave) |
-| Cargo | 1.96.0-nightly (host) |
-| Node / npm | **v22.22.2** / 10.9.7 (`.nvmrc`) |
-| Next.js / React / Tailwind | 16.4.6 / 19.3 / 4.x |
-| slither | **0.11.6** (`pipx`) |
-| cargo-audit | **0.23.0** |
-| Playwright | **1.65.1** + Chromium (en `frontend/`) |
-| aderyn | **0.6.8** (Cyfrin git) |
+| Node / npm | **v22** (`.nvmrc`) |
+| Next.js / React / Tailwind | 16 / 19 / 4.x |
 
 > Nota PATH: el `forge` de nvm **no** es Foundry. Usar `export PATH="$HOME/.foundry/bin:$PATH"`.
 
@@ -33,17 +32,26 @@ Puente Ethereum ↔ Solana para títulos legales (vino en depósito fiscal, v1).
 export PATH="$HOME/.foundry/bin:$PATH"
 nvm use 22
 cp .env.example .env
-make hooks          # pre-commit
-make check-boot     # C0 + builds + tests de humo
+make hooks
+make check          # gate completo (incluye EXTATK)
 ```
+
+Testnet lab: ver [`doc/DEPLOY-TESTNET-ES.md`](doc/DEPLOY-TESTNET-ES.md) y `NEXT_PUBLIC_NETWORK_ID=sepolia-devnet` en `frontend/.env.local`.
 
 ## Docs
 
-- [`doc/planificacion-ES.md`](doc/planificacion-ES.md)
-- [`doc/hitos-ES.md`](doc/hitos-ES.md)
-- [`doc/casos-de-uso-ES.md`](doc/casos-de-uso-ES.md) — situaciones UC-01…UC-16
-- [`doc/manual-de-ayuda-ES.md`](doc/manual-de-ayuda-ES.md) — pasos por pantalla
-- Diagramas y mapas de ataque en `doc/`
+| Doc | Contenido |
+|-----|-----------|
+| [`doc/planificacion-ES.md`](doc/planificacion-ES.md) / [EN](doc/planificacion-EN.md) | Plan y fases |
+| [`doc/hitos-ES.md`](doc/hitos-ES.md) | Tablero operativo |
+| [`doc/INVARIANTES-ES.md`](doc/INVARIANTES-ES.md) / [EN](doc/INVARIANTES-EN.md) | I1–I9 |
+| [`doc/GAS-ES.md`](doc/GAS-ES.md) / [EN](doc/GAS-EN.md) | Hot paths + snapshot |
+| [`doc/SWC-AUDIT-ES.md`](doc/SWC-AUDIT-ES.md) / [EN](doc/SWC-AUDIT-EN.md) | Estático C4 |
+| [`doc/DEPLOY-TESTNET-ES.md`](doc/DEPLOY-TESTNET-ES.md) | Evidencia Sepolia + Devnet |
+| [`doc/manual-de-ayuda-ES.md`](doc/manual-de-ayuda-ES.md) | UI paso a paso |
+| [`portfolio/`](portfolio/) | Landing portfolio (ES/EN) |
+
+Capturas UI: `doc/front-screenshots/`. Video walkthrough: pendiente (las capturas cubren el tour v1).
 
 ## Remotos
 

@@ -51,8 +51,8 @@
 | 12 | REDTEAM | ✅ | ✅ | `make check-redteam` C4/C11/C12/C16 · 2026-11-20 · rama `redteam` |
 | 13 | QA | ✅ | ✅ | `make check-qa` · 6 personas + G1–G10 · 2026-11-20 · rama `qa` |
 | 14 | EXTATK | ✅ | ✅ | `make check-extatk` · X1–X36 · 0 roto · 2026-11-20 · `doc/EXTATK-ES.md` |
-| 15 | TESTNET | ✅ | ⬜ | Deploy+UI+DvP handoff ✅ · shortlist ✅ · execute+X4 ✅ · X7/X15/X28 diferidos opc. · `doc/DEPLOY-TESTNET-ES.md` |
-| 16 | SOLV | ⬜ | ⬜ | `make check` + portfolio |
+| 15 | TESTNET | ✅ | ✅ | Cerrada 2026-11-23 · Deploy+UI+DvP · shortlist+X4 · X7/X15/X28 diferidos opc. · `doc/DEPLOY-TESTNET-ES.md` |
+| 16 | SOLV | ✅ | ✅ | Cerrada 2026-11-23 · `make check` verde · docs EN + portfolio |
 
 ---
 
@@ -182,20 +182,20 @@
 - [x] Autorizada (2026-11-21)
 - [x] Deploy Sepolia + Devnet + 3 relayers (status API) — contratos + programa + config
 - [x] Ciclo UI MetaMask + Phantom (2026-11-22): `registerAssertion` `0x146532…` · `issue` `0xa1b9…` · Phantom `EDTzyw…M4x5` (Cartera venta/compra = demo)
-- [x] Ataques: P1 · R5b (firma inválida) · P3 Devnet · `apply_issue` mint=1000 — rotate+execute tras 1d ⏳
+- [x] Ataques: P1 · R5b (firma inválida) · P3 Devnet · `apply_issue` mint=1000 · `executeRotateRelayers` + X4 ✅
 - [x] Subconjunto EXTATK ejecutable: X1/X17/X23/X25/X33 ✅ · X4 ✅ (2026-11-23) · X7/X15/X28 diferidos opc.
 - [x] Smoke QA: ciclo feliz Eth + rechazo identidad (`InvalidSignature`) + W2 MetaMask Mainnet→Sepolia
 - [x] `doc/DEPLOY-TESTNET-ES.md` con direcciones/hashes (redeploy `2DvHn2…` + apply_issue + shortlist + UI)
-- [x] Criterio: checklist completo (`executeRotateRelayers` → X4 ✅ 2026-11-23)
+- [x] Criterio: checklist completo — **fase cerrada 2026-11-23**
 
 ### 16. SOLV — Cierre v1
 
-- [ ] Autorizada
-- [ ] Invariantes, gas, NatSpec
-- [ ] QA + EXTATK + DEPLOY-TESTNET cerrados
-- [ ] SWC-AUDIT, GAS, diagramas, docs EN, portfolio
-- [ ] Índice suite actualizado
-- [ ] Criterio: `make check` verde de punta a punta
+- [x] Autorizada (2026-11-23)
+- [x] Invariantes I1–I9 documentadas + `forge test --mt invariant_` verde · gas `HotPath` + snapshot
+- [x] QA + EXTATK + DEPLOY-TESTNET sin bloqueantes
+- [x] SWC-AUDIT ES/EN · GAS ES/EN · diagramas EN stub · docs EN clave · portfolio/
+- [x] Índice suite `doc/README.md` → 01–22
+- [x] Criterio: `make check` verde de punta a punta (incluye `check-extatk` + `check-solv`) — **fase cerrada 2026-11-23**
 
 ---
 
@@ -208,12 +208,12 @@
 - [x] EXTATK X1–X36 cerrado (local) + subconjunto en testnet preparado
 - [x] Evidencia Sepolia (deploy + UI `registerAssertion`/`issue` + P1/R5b/X1…)
 - [x] Evidencia Solana Devnet (programa `2DvHn2…` + `apply_issue` + P3 + Phantom connect)
-- [ ] Docs ES/EN + portfolio
+- [x] Docs ES/EN + portfolio (video walkthrough opcional)
 
 ---
 
 ## Próximo hito activo
 
-1. ~~TESTNET deploy + UI smoke~~ ✅ 2026-11-22 · ver `doc/DEPLOY-TESTNET-ES.md`
-2. ~~Cerrar TESTNET: `executeRotateRelayers` → X4~~ ✅ 2026-11-23
-3. Autorizar: *"Autorizo Fase SOLV"* (cierre v1: `make check`, docs EN, portfolio)
+1. ~~TESTNET~~ ✅ cerrada 2026-11-23
+2. ~~SOLV~~ ✅ cerrada 2026-11-23 · `make check` verde · v1 lab completa
+3. Opcional: video walkthrough · X7/X15/X28 on-chain · residuales §13 (códec/I1–I9 checklist / mutantes)

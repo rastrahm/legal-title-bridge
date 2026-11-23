@@ -3,14 +3,14 @@
 
 export PATH := $(HOME)/.foundry/bin:$(HOME)/.cargo/bin:$(PATH)
 
-.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa check-extatk fmt lint lint-smoke test-forge test-forge-heavy build-forge \
+.PHONY: help check check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa check-extatk check-solv fmt lint lint-smoke test-forge test-forge-heavy build-forge \
 	build-anchor test-ts build-frontend tools-versions hooks gen-vectors deploy-solana-devnet deploy-sepolia
 
 help:
-	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | check-redteam | check-qa | check-extatk | deploy-solana-devnet | deploy-sepolia | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
+	@echo "Targets: check | check-boot | check-codec | check-title | check-attest | check-endpoint | check-mirror | check-dvp | check-court | check-relay | check-e2e | check-front | check-redteam | check-qa | check-extatk | check-solv | deploy-solana-devnet | deploy-sepolia | gen-vectors | fmt | lint | test-forge | test-forge-heavy | build-forge | build-anchor | test-ts | build-frontend | hooks | tools-versions"
 
-# Full gate grows with phases
-check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa
+# Full gate grows with phases (SOLV: includes EXTATK + docs/gas/portfolio presence)
+check: check-boot check-codec check-title check-attest check-endpoint check-mirror check-dvp check-court check-relay check-e2e check-front check-redteam check-qa check-extatk check-solv
 
 check-boot: fmt lint lint-smoke build-forge test-forge build-anchor test-ts build-frontend
 	@echo "make check-boot: OK"
@@ -71,8 +71,9 @@ check-e2e:
 	@echo "make check-e2e: OK"
 
 # FRONT: C14 lint/tsc/build, C15 vitest+coverage, C16 playwright, C17 check-bundle
+# Production build must not bake NEXT_PUBLIC_E2E (lab .env.local often sets it).
 check-front:
-	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run check-bundle && npx playwright test
+	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npm run lint && npm run typecheck && npm run test:coverage && rm -rf .next && NEXT_PUBLIC_E2E= npm run build && npm run check-bundle && npx playwright test
 	@echo "make check-front: OK"
 
 # REDTEAM: C11 positive+real attacks, C12 mutate, C4 static (SWC-AUDIT), C16 W1–W6 re-check
@@ -98,6 +99,19 @@ check-qa:
 	@test -f doc/QA-ES.md
 	@. $(HOME)/.nvm/nvm.sh && nvm use 22 >/dev/null && cd frontend && npm test && npx playwright test e2e/qa-personas.spec.ts
 	@echo "make check-qa: OK"
+
+# SOLV: invariants + gas snapshot check + closure docs/portfolio present
+check-solv:
+	@test -f doc/GAS-ES.md && test -f doc/GAS-EN.md
+	@test -f doc/SWC-AUDIT-ES.md && test -f doc/SWC-AUDIT-EN.md
+	@test -f doc/INVARIANTES-ES.md && test -f doc/INVARIANTES-EN.md
+	@test -f doc/planificacion-EN.md
+	@test -f doc/DEPLOY-TESTNET-ES.md
+	@test -f doc/QA-ES.md && test -f doc/EXTATK-ES.md
+	@test -f portfolio/index.html && test -f portfolio/i18n.js
+	forge test --mt 'invariant_'
+	forge snapshot --check --match-contract 'HotPathGasTest|X01_X08_BridgeDomainTest'
+	@echo "make check-solv: OK"
 
 # TESTNET: Sepolia + Solana Devnet deploys (requires secrets/ + funded deployer)
 deploy-solana-devnet:

@@ -26,6 +26,14 @@ export default defineConfig({
         "src/**/*.test.*",
         "src/lib/demo/**",
         "src/lib/wallets/**",
+        // Wallet / RPC / tx builders — Playwright E2E; unit suite keeps pure helpers.
+        "src/lib/solana/dvp.ts",
+        "src/lib/solana/polyfill.ts",
+        "src/lib/eth-rpc.ts",
+        "src/lib/eip712/attestation.ts",
+        "src/lib/contracts/registry.ts",
+        "src/lib/cartera/purchase.ts",
+        "src/hooks/useConnectWallets.ts",
         "src/hooks/useWindowSearch.ts",
       ],
       thresholds: {

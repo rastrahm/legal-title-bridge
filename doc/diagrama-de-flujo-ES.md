@@ -1,6 +1,8 @@
 # Diagrama de flujo — Legal Title Bridge
 
-**Idioma:** Español · Módulo 22 · **to-be**.  
+> 🌐 **Español** · [English](./diagrama-de-flujo-EN.md)
+
+**Idioma:** Español · Módulo 22 · **as-built** (SOLV 2026-11-23).  
 **Fuente:** [`planificacion-ES.md`](./planificacion-ES.md) D1–D6, MsgType, §8 invariantes.  
 **Companion:** [`flujograma-ES.md`](./flujograma-ES.md) (ciclo de vida completo) · [`diagrama-de-clases-ES.md`](./diagrama-de-clases-ES.md).
 

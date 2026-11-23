@@ -100,7 +100,7 @@ test.describe("X34: EIP-712 field order and type aliases", () => {
       await expect(page.getByTestId("confirm-arg-amount")).not.toHaveText(
         "9999999",
       );
-      await expect(page.getByTestId("confirm-arg-to")).not.toContainText(
+      await expect(page.getByTestId("confirm-arg-toHolder")).not.toContainText(
         "aa".repeat(20),
         { ignoreCase: true },
       );
