@@ -1,5 +1,7 @@
 # Red team — resultados (C11 / C12 / C4 / C16)
 
+> 🌐 [English](./RED-TEAM-EN.md) · **Español**
+
 **Fase:** REDTEAM · **Rama:** `redteam` · **Fecha:** 2026-11-20  
 **Regla:** cada ataque gana primero contra variante vulnerable (control positivo) y falla contra el código real con el error esperado (§10.1).
 

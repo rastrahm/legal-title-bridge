@@ -1,5 +1,7 @@
 # Protocolo de mensajes — Legal Title Bridge v1
 
+> 🌐 [English](./PROTOCOLO-EN.md) · **Español**
+
 **Idioma:** Español · Fase CODEC.  
 **Implementaciones:** `PacketCodec.sol`, `solana/.../codec.rs`, `shared/src/codec.ts`.  
 **Regla C5:** los tres lenguajes producen los **mismos bytes** y el **mismo** `messageId` / `signingDigest` para cada vector en `test/vectors/packets.json`.

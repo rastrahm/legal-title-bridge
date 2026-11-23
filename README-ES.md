@@ -40,15 +40,18 @@ Testnet lab: ver [`doc/DEPLOY-TESTNET-ES.md`](doc/DEPLOY-TESTNET-ES.md) y `NEXT_
 
 ## Docs
 
+Índice completo: [`doc/README-ES.md`](doc/README-ES.md) · [`doc/README-EN.md`](doc/README-EN.md) (todos los `*-ES.md` tienen gemelo `*-EN.md`).
+
 | Doc | Contenido |
 |-----|-----------|
 | [`doc/planificacion-ES.md`](doc/planificacion-ES.md) / [EN](doc/planificacion-EN.md) | Plan y fases |
-| [`doc/hitos-ES.md`](doc/hitos-ES.md) | Tablero operativo |
+| [`doc/hitos-ES.md`](doc/hitos-ES.md) / [EN](doc/hitos-EN.md) | Tablero operativo |
+| [`doc/casos-de-uso-ES.md`](doc/casos-de-uso-ES.md) / [EN](doc/casos-de-uso-EN.md) | Casos de uso |
+| [`doc/manual-de-ayuda-ES.md`](doc/manual-de-ayuda-ES.md) / [EN](doc/manual-de-ayuda-EN.md) | UI paso a paso |
+| [`doc/DEPLOY-TESTNET-ES.md`](doc/DEPLOY-TESTNET-ES.md) / [EN](doc/DEPLOY-TESTNET-EN.md) | Evidencia Sepolia + Devnet |
 | [`doc/INVARIANTES-ES.md`](doc/INVARIANTES-ES.md) / [EN](doc/INVARIANTES-EN.md) | I1–I9 |
 | [`doc/GAS-ES.md`](doc/GAS-ES.md) / [EN](doc/GAS-EN.md) | Hot paths + snapshot |
 | [`doc/SWC-AUDIT-ES.md`](doc/SWC-AUDIT-ES.md) / [EN](doc/SWC-AUDIT-EN.md) | Estático C4 |
-| [`doc/DEPLOY-TESTNET-ES.md`](doc/DEPLOY-TESTNET-ES.md) | Evidencia Sepolia + Devnet |
-| [`doc/manual-de-ayuda-ES.md`](doc/manual-de-ayuda-ES.md) | UI paso a paso |
 | [`portfolio/`](portfolio/) | Landing portfolio (ES/EN) |
 
 Capturas UI: `doc/front-screenshots/`. Video walkthrough: pendiente (las capturas cubren el tour v1).

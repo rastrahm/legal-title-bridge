@@ -1,5 +1,7 @@
 # QA — agente humano simulado
 
+> 🌐 [English](./QA-EN.md) · **Español**
+
 **Fase:** QA · **Rama:** `qa` · **Fecha:** 2026-11-20  
 **Stack:** Next.js lab (`frontend/`, store demo) + Playwright Chromium  
 **Suite:** `frontend/e2e/qa-personas.spec.ts` · capturas en `doc/qa-screenshots/`

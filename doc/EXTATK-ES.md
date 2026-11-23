@@ -1,5 +1,7 @@
 # EXTATK — Informe de Ataques Profundos X1–X36
 
+> 🌐 [English](./EXTATK-EN.md) · **Español**
+
 **Fecha:** 2026-11-20  
 **Agente:** atacante externo (perspectiva caja gris/negra independiente)  
 **Stack objetivo:** Legal Title Bridge v1 — código de producción en `src/`, `solana/programs/title_mirror/src/`, `shared/`, `e2e/src/`, `frontend/src/`  
