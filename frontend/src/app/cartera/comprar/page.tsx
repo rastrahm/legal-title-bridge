@@ -10,6 +10,7 @@ import {
 } from "@/lib/cartera/purchase";
 import { LAB_PAYMENT_LABEL, type DemoListing } from "@/lib/demo/store";
 import { t } from "@/lib/i18n";
+import { hexTimeSuffix, unixSeconds } from "@/lib/time";
 
 /**
  * Buyer workspace — catalog.
@@ -30,7 +31,7 @@ export default function CarteraComprarPage() {
   }, [demo.listings, demoPath]);
 
   function applyDemoBuy(listing: DemoListing) {
-    const now = Math.floor(Date.now() / 1000);
+    const now = unixSeconds();
     setDemo((prev) => {
       const alreadyDone = prev.requests.find(
         (r) =>
@@ -76,7 +77,7 @@ export default function CarteraComprarPage() {
         };
       }
 
-      const transferId = `0xoffer:${Date.now().toString(16)}`;
+      const transferId = `0xoffer:${hexTimeSuffix()}`;
       return {
         ...prev,
         listings: prev.listings.map((l) =>
@@ -113,7 +114,7 @@ export default function CarteraComprarPage() {
   }
 
   function placeOffer(listing: DemoListing) {
-    const now = Math.floor(Date.now() / 1000);
+    const now = unixSeconds();
     const existing = demo.requests.find(
       (r) =>
         r.listingId === listing.listingId &&
@@ -127,7 +128,7 @@ export default function CarteraComprarPage() {
       );
       return;
     }
-    const transferId = `0xoffer:${Date.now().toString(16)}`;
+    const transferId = `0xoffer:${hexTimeSuffix()}`;
     setDemo((prev) => ({
       ...prev,
       listings: prev.listings.map((l) =>

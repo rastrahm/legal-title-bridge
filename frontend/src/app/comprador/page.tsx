@@ -54,9 +54,22 @@ export default function CompradorPage() {
     }
   }, [addresses.identityRegistry, holder]);
 
+  // Auto-check only when holder exists; setState only in the promise callback.
   useEffect(() => {
-    void refreshStatus();
-  }, [refreshStatus]);
+    if (!holder) return;
+    let cancelled = false;
+    void readIsVerified(addresses.identityRegistry, holder).then(
+      (next) => {
+        if (!cancelled) setStatus(next);
+      },
+      () => {
+        if (!cancelled) setStatus("unknown");
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [addresses.identityRegistry, holder]);
 
   async function copyHolder() {
     if (!holder) return;

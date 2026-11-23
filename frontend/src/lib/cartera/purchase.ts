@@ -12,9 +12,7 @@ import { getPhantom } from "@/lib/wallets/solana";
 
 export function isSolanaPubkey(value: string): boolean {
   try {
-    // eslint-disable-next-line no-new
-    new PublicKey(value);
-    return true;
+    return new PublicKey(value).toBase58().length > 0;
   } catch {
     return false;
   }

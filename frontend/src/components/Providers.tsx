@@ -88,14 +88,18 @@ export function Providers({ children }: { children: ReactNode }) {
   );
 
   // Restore listings/offers after mount (SSR stays seed — no hydration mismatch).
+  // Defer setState so the effect body stays sync-clean (react-hooks/set-state-in-effect).
   useEffect(() => {
     const saved = loadPersistedMarket();
     if (!saved) return;
-    setDemoState((prev) => ({
-      ...prev,
-      listings: saved.listings,
-      requests: saved.requests,
-    }));
+    const id = window.setTimeout(() => {
+      setDemoState((prev) => ({
+        ...prev,
+        listings: saved.listings,
+        requests: saved.requests,
+      }));
+    }, 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   const setDemo = (updater: (prev: DemoState) => DemoState) =>

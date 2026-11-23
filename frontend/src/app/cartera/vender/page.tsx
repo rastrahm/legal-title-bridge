@@ -20,6 +20,7 @@ import {
 } from "@/lib/demo/store";
 import { formatCountdown, snapshotDeadlines } from "@/lib/deadlines";
 import { t } from "@/lib/i18n";
+import { hexTimeSuffix } from "@/lib/time";
 
 /**
  * Seller workspace — publish a lot and review offers received.
@@ -60,7 +61,7 @@ export default function CarteraVenderPage() {
       setNotice(dict.connectWalletFirst);
       return;
     }
-    const listingId = `listing:${Date.now().toString(16)}`;
+    const listingId = `listing:${hexTimeSuffix()}`;
     const asset = demo.assets[DEMO_ASSET_ID];
     setDemo((prev) => ({
       ...prev,

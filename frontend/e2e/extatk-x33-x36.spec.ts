@@ -113,18 +113,8 @@ test.describe("X34: EIP-712 field order and type aliases", () => {
     await page.goto("/activos");
     await waitForAppHooks(page);
 
-    const headers = await page.evaluate(() => {
-      // Check meta CSP if the response headers are not directly accessible from JS.
-      const metaCsp = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
-      return metaCsp?.getAttribute("content") ?? "";
-    });
-
-    // If a meta CSP is present it must include frame-ancestors.
-    // Response headers are checked in next.config.ts (W6).
-    // The browser-visible check: X-Frame-Options via headers API is not accessible in JS,
-    // but we confirm that the page renders without errors.
-    // Real frame-ancestors test is in W6 of attacks-w.spec.ts.
-    // Here we verify no JS errors on load.
+    // Response headers / frame-ancestors: next.config.ts + attacks-w W6.
+    // Here: page loads without JS errors (no iframeable UI).
     const jsErrors: string[] = [];
     page.on("pageerror", (e) => jsErrors.push(e.message));
     await page.reload();

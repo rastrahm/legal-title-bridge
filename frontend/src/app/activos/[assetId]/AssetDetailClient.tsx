@@ -52,10 +52,7 @@ export function AssetDetailClient({
   const [loading, setLoading] = useState(!isE2eLab());
 
   useEffect(() => {
-    if (isE2eLab()) {
-      setLoading(false);
-      return;
-    }
+    if (isE2eLab()) return;
     let cancelled = false;
     void (async () => {
       try {

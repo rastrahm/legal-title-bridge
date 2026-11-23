@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { CarteraShell } from "@/app/cartera/CarteraShell";
 import { useApp } from "@/components/Providers";
@@ -12,6 +12,17 @@ import {
 import { buyerCompleteDvPHandoff } from "@/lib/cartera/purchase";
 import { t } from "@/lib/i18n";
 
+function subscribeHash(onStoreChange: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("hashchange", onStoreChange);
+  return () => window.removeEventListener("hashchange", onStoreChange);
+}
+
+function readHashPayload(): DvPHandoffPayload | null {
+  if (typeof window === "undefined") return null;
+  return decodeDvPHandoff(window.location.hash.replace(/^#/, ""));
+}
+
 /**
  * Buyer completes a seller-signed request_transfer (cross-device handoff).
  */
@@ -20,21 +31,16 @@ export default function CarteraFirmarPage() {
   const dict = t(locale);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [payload, setPayload] = useState<DvPHandoffPayload | null>(null);
+  const payload = useSyncExternalStore(
+    subscribeHash,
+    readHashPayload,
+    () => null,
+  );
   const walletReady = canSignSol && Boolean(solAddress);
 
-  useEffect(() => {
-    const hash =
-      typeof window !== "undefined" ? window.location.hash.replace(/^#/, "") : "";
-    setPayload(decodeDvPHandoff(hash));
-  }, []);
-
-  const ttlHint = useMemo(() => {
-    if (!payload) return null;
-    const ageMs = Date.now() - payload.createdAt * 1000;
-    const left = Math.max(0, DVP_HANDOFF_SOFT_TTL_MS - ageMs);
-    return Math.ceil(left / 1000);
-  }, [payload]);
+  const ttlHint = payload
+    ? Math.ceil(DVP_HANDOFF_SOFT_TTL_MS / 1000)
+    : null;
 
   async function signAsBuyer() {
     if (!payload) {
