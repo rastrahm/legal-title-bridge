@@ -8,6 +8,9 @@ import type { LedgerEntry } from "../ledger";
 export const DEMO_ASSET_ID =
   "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
+/** Human label for the lab payment token (mint stays in config/env). */
+export const LAB_PAYMENT_LABEL = "Lab USD";
+
 const ZERO =
   "0x0000000000000000000000000000000000000000000000000000000000000000";
 
@@ -41,6 +44,21 @@ export interface DemoAsset {
   }>;
 }
 
+/** Seller listing shown in the buy catalog. */
+export interface DemoListing {
+  listingId: string;
+  assetId: string;
+  assetName: string;
+  seller: string;
+  titleAmount: string;
+  /** Display price, e.g. "5 Lab USD". */
+  priceLabel: string;
+  /** Raw payment units for protocol (hidden from casual UX). */
+  paymentAmount: string;
+  status: "Open" | "Closed";
+  labExample?: boolean;
+}
+
 export interface DemoRequest {
   transferId: string;
   assetId: string;
@@ -49,12 +67,18 @@ export interface DemoRequest {
   amount: string;
   deadline: number;
   hardDeadline: number;
-  status: "Pending" | "Approved" | "Rejected" | "Expired" | "Refunded";
+  status: "Pending" | "Approved" | "Rejected" | "Expired" | "Refunded" | "DepositDemo";
   rejectReason?: string;
+  /** Seeded Playwright / QA fixture — not created by the user in this session. */
+  labExample?: boolean;
+  /** Links offer back to a catalog listing when present. */
+  listingId?: string;
+  priceLabel?: string;
 }
 
 export interface DemoState {
   assets: Record<string, DemoAsset>;
+  listings: DemoListing[];
   requests: DemoRequest[];
   ethCirculating: string;
   solIssued: string;
@@ -94,6 +118,19 @@ export function createDemoState(now = 1_700_000_000): DemoState {
         ],
       },
     },
+    listings: [
+      {
+        listingId: "listing-lab-rioja",
+        assetId: DEMO_ASSET_ID,
+        assetName: "Lote Rioja 2019",
+        seller: "seller-sol",
+        titleAmount: "5",
+        priceLabel: `5 ${LAB_PAYMENT_LABEL}`,
+        paymentAmount: "5",
+        status: "Open",
+        labExample: true,
+      },
+    ],
     requests: [
       {
         transferId: "0xbb",
@@ -104,6 +141,21 @@ export function createDemoState(now = 1_700_000_000): DemoState {
         deadline: now + 3600,
         hardDeadline: now + 3600 + 7 * 86400,
         status: "Pending",
+        labExample: true,
+        listingId: "listing-lab-rioja",
+        priceLabel: `5 ${LAB_PAYMENT_LABEL}`,
+      },
+      {
+        transferId: "0xcert-expired",
+        assetId: DEMO_ASSET_ID,
+        seller: "seller-sol",
+        buyer: "buyer-sol",
+        amount: "2",
+        deadline: now + 1800,
+        hardDeadline: now + 1800 + 7 * 86400,
+        status: "Rejected",
+        rejectReason: "CERTIFICATION_EXPIRED",
+        labExample: true,
       },
     ],
     ethCirculating: "100",

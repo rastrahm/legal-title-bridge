@@ -14,7 +14,7 @@ pub mod state;
 
 pub use instructions::*;
 
-declare_id!("H4fc36LTnKLeGfdT5UUCa8d39VM3Q1Z4N8Myf8uc4nRU");
+declare_id!("2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL");
 
 #[program]
 pub mod title_mirror {

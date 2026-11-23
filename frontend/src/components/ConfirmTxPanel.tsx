@@ -9,6 +9,9 @@ export interface ConfirmTxPanelProps {
   simulationOk: boolean | null;
   simulationError?: string;
   disabled?: boolean;
+  confirmLabel?: string;
+  simOkLabel?: string;
+  simFailLabel?: string;
   onConfirm: () => void;
 }
 
@@ -22,6 +25,9 @@ export function ConfirmTxPanel({
   simulationOk,
   simulationError,
   disabled,
+  confirmLabel = "Firmar",
+  simOkLabel = "Simulation OK",
+  simFailLabel = "Simulation failed",
   onConfirm,
 }: ConfirmTxPanelProps) {
   return (
@@ -53,19 +59,20 @@ export function ConfirmTxPanel({
       </dl>
       {simulationOk === false ? (
         <p role="alert" className="text-sm text-rose-300">
-          {simulationError ?? "Simulation failed"}
+          {simulationError ?? simFailLabel}
         </p>
       ) : null}
       {simulationOk === true ? (
-        <p className="text-sm text-emerald-300">Simulation OK</p>
+        <p className="text-sm text-emerald-300">{simOkLabel}</p>
       ) : null}
       <button
         type="button"
+        data-testid="btn-confirm-sign"
         className="rounded-full bg-cyan-300 px-5 py-2 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-40"
         disabled={disabled || simulationOk === false}
         onClick={onConfirm}
       >
-        Firmar
+        {confirmLabel}
       </button>
     </section>
   );

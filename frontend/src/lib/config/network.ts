@@ -28,7 +28,8 @@ export const LOCAL_NETWORK: NetworkExpectations = {
 export const SEPOLIA_DEVNET_NETWORK: NetworkExpectations = {
   networkId: "sepolia-devnet",
   ethChainId: 11155111,
-  solanaGenesisHash: "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrvAE",
+  // Live Devnet genesis (getGenesisHash); was mistyped …PkrvAE and failed W2 after CSP allowed RPC.
+  solanaGenesisHash: "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
   labelEs: "Sepolia + Solana Devnet",
   labelEn: "Sepolia + Solana Devnet",
 };

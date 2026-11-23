@@ -111,7 +111,10 @@ fn collect_matching_signers(
 
     for s in 0..num_sigs {
         let base = 1 + s * OFFSETS_SIZE;
-        let eth_address_offset = u16::from_le_bytes([data[base + 2], data[base + 3]]) as usize;
+        // Secp256k1SignatureOffsets (11 bytes): signature_offset u16, signature_ix u8,
+        // eth_address_offset u16, eth_address_ix u8, message_data_offset u16,
+        // message_data_size u16, message_ix u8. See solana_sdk::secp256k1_instruction.
+        let eth_address_offset = u16::from_le_bytes([data[base + 3], data[base + 4]]) as usize;
         let message_data_offset = u16::from_le_bytes([data[base + 6], data[base + 7]]) as usize;
         let message_data_size = u16::from_le_bytes([data[base + 8], data[base + 9]]) as usize;
 
@@ -125,7 +128,11 @@ fn collect_matching_signers(
             .try_into()
             .map_err(|_| error!(MirrorError::InvalidQuorum))?;
         let msg_slice = &data[message_data_offset..message_data_offset + message_data_size];
-        if msg_slice != message {
+        // Solana secp256k1 program verifies ECDSA over keccak(msg). Relayers sign the
+        // 32-byte signingDigest; clients therefore embed either the digest itself
+        // (Solana-native createInstructionWithPrivateKey) or the 121-byte preimage
+        // (keccak(preimage) == digest, Eth-compatible).
+        if !message_attests_digest(msg_slice, message) {
             continue;
         }
         if !is_relayer(&eth_addr, relayers, relayer_count) {
@@ -138,6 +145,17 @@ fn collect_matching_signers(
         }
     }
     Ok(())
+}
+
+fn message_attests_digest(msg_slice: &[u8], digest: &[u8]) -> bool {
+    if msg_slice == digest {
+        return true;
+    }
+    if digest.len() != 32 {
+        return false;
+    }
+    let hashed = anchor_lang::solana_program::keccak::hash(msg_slice);
+    hashed.to_bytes().as_slice() == digest
 }
 
 fn is_relayer(addr: &[u8; 20], relayers: &[[u8; 20]], count: usize) -> bool {
@@ -158,6 +176,44 @@ mod tests {
         assert_eq!(min_threshold(4), 3);
         assert_eq!(min_threshold(5), 4);
         assert_eq!(min_threshold(6), 4);
+    }
+
+    #[test]
+    fn secp_offsets_layout_eth_at_base_plus_3() {
+        // Synthetic single-sig header matching solana_sdk layout (num_sigs + 11-byte offsets).
+        // signature@32, eth@12, message@97 size 32 — mirrors createInstructionWithPrivateKey.
+        let mut data = vec![0u8; 129];
+        data[0] = 1;
+        data[1] = 32;
+        data[2] = 0; // sig_off
+        data[3] = 0; // sig_ix
+        data[4] = 12;
+        data[5] = 0; // eth_off
+        data[6] = 0; // eth_ix
+        data[7] = 97;
+        data[8] = 0; // msg_off
+        data[9] = 32;
+        data[10] = 0; // msg_sz
+        data[11] = 0; // msg_ix
+        let base = 1;
+        let eth_off = u16::from_le_bytes([data[base + 3], data[base + 4]]) as usize;
+        let msg_off = u16::from_le_bytes([data[base + 6], data[base + 7]]) as usize;
+        let msg_sz = u16::from_le_bytes([data[base + 8], data[base + 9]]) as usize;
+        assert_eq!(eth_off, 12);
+        assert_eq!(msg_off, 97);
+        assert_eq!(msg_sz, 32);
+        // Regression: old parser read base+2/base+3 → 0x0c00 = 3072 (OOB).
+        let broken = u16::from_le_bytes([data[base + 2], data[base + 3]]) as usize;
+        assert_eq!(broken, 3072);
+    }
+
+    #[test]
+    fn message_attests_digest_accepts_preimage_or_digest() {
+        let preimage = [0x11u8; 121];
+        let digest = anchor_lang::solana_program::keccak::hash(&preimage).to_bytes();
+        assert!(message_attests_digest(&digest, &digest));
+        assert!(message_attests_digest(&preimage, &digest));
+        assert!(!message_attests_digest(&[0x22u8; 121], &digest));
     }
 
     #[test]

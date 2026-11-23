@@ -142,6 +142,8 @@ Clase de activo en v1: **vino en depósito fiscal** (lote intercambiable, custod
 │   ├── RED-TEAM-ES/EN.md         # incidentes, controles positivos, resultados
 │   ├── QA-ES/EN.md               # agente QA humano simulado: personas, guiones, hallazgos
 │   ├── EXTATK-ES/EN.md           # set profundo X1–X36 por agente atacante externo
+│   ├── casos-de-uso-ES.md        # UC-01…UC-16 por situación / actor
+│   ├── manual-de-ayuda-ES.md     # guía paso a paso de la UI (lab / testnet)
 │   ├── diagrama-de-clases-ES.md  # UML contratos / programa / relayer / frontend
 │   ├── diagrama-de-flujo-ES.md   # decisiones por operación (issue, DvP, quórum, hook…)
 │   ├── flujograma-ES.md          # ciclo de vida, fases, plazos, testnets
@@ -479,9 +481,9 @@ Este catálogo **no** lo ejecuta el agente que escribe el módulo. Lo ejecuta un
 | **E2E** | Stack local, escenarios de ciclo de vida y fallas inducidas | ✅ Cerrada | ✅ 2026-11-19 |
 | **FRONT** | Frontend Next.js: explorador, cartera, operador, verificador, monitor del puente | ✅ Cerrada | ✅ 2026-11-19 |
 | **REDTEAM** | Incidentes R1–R7, ataques P1–P9, ataques al frontend W1–W6, mutación, análisis estático | ✅ Cerrada | ✅ 2026-11-20 · `make check-redteam` · rama `redteam` |
-| **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ⏳ Pendiente | ⬜ |
-| **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ⏳ Pendiente | ⬜ |
-| **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | ⏳ Pendiente | ⬜ |
+| **QA** | Agente QA que simula un humano: recorridos por rol, errores, plazos, recuperabilidad | ✅ Cerrada | ✅ 2026-11-20 · `make check-qa` · rama `qa` |
+| **EXTATK** | Set profundo X1–X36 ejecutado por **otro agente** atacante; informe `EXTATK-ES` | ✅ Cerrada | ✅ 2026-11-20 · `make check-extatk` · 0 roto · `doc/EXTATK-ES.md` |
+| **TESTNET** | **Sepolia + Solana Devnet** (ambas): ciclo real desde la UI y ataques rechazados con hashes | 🔄 En curso | Deploy+issue+P1/R5b/P3/apply_issue ✅ · shortlist parcial ✅ · UI + X4/X7/X15/X28 ⏳ |
 | **SOLV** | Invariantes finales, gas, SWC-AUDIT, docs EN, diagramas, portfolio | ⏳ Pendiente | ⬜ |
 
 **Orden fijado tras FRONT:** REDTEAM → QA → EXTATK → TESTNET → SOLV. QA busca fallos de producto con mentalidad humana; EXTATK busca romper el sistema con mentalidad adversaria e independiente; TESTNET exige evidencia en **las dos** redes de prueba.
@@ -689,7 +691,7 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 - [ ] Frontend con explorador, cartera, operador, verificador y monitor del puente, ES/EN
 - [ ] Ataques al frontend W1–W6 cubiertos; build de producción sin código de test
 - [ ] Fase QA: 6 personas y 10 guiones cubiertos; cero bloqueantes abiertos (`doc/QA-ES.md`)
-- [ ] Fase EXTATK: X1–X36 ejecutados por agente atacante aparte; cero `roto` (`doc/EXTATK-ES.md`)
+- [x] Fase EXTATK: X1–X36 ejecutados por agente atacante aparte; cero `roto` (`doc/EXTATK-ES.md`)
 - [ ] Ciclo completo desde la interfaz en **Sepolia y Solana Devnet** (ambas), con hashes
 - [ ] Ataques rechazados en **ambas** testnets (P1, R5b, P3 + subconjunto EXTATK), con hashes
 - [ ] Docs ES/EN, SWC-AUDIT, GAS, diagramas y portfolio
@@ -700,6 +702,6 @@ No es red team. Es un **agente QA separado** (u otra sesión con brief de QA) qu
 
 Orden, EXTATK en testnet (subconjunto), X1–X36 y **D1–D14**: **cerrados**. Tablero: [`doc/hitos-ES.md`](hitos-ES.md).
 
-**Siguiente:** autorizar *"Autorizo Fase QA"* (REDTEAM cerrada con C4/C11/C12/C16 / `make check-redteam`).
+**Siguiente:** ciclo UI MetaMask+Phantom; `executeRotateRelayers` tras 1d (X4); diferidos X7/X15/X28 si se quiere evidencia on-chain completa.
 
-**Ruta:** QA → EXTATK → **Sepolia + Solana Devnet** → SOLV. Sin evidencia en las dos testnets, v1 no cierra.
+**Ruta:** UI + diferidos EXTATK → SOLV. Sin evidencia operativa completa en las dos testnets, v1 no cierra.

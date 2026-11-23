@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 
+import { ContextualHelp } from "@/components/ContextualHelp";
 import { useApp } from "@/components/Providers";
 import { getActiveNetwork } from "@/lib/config/network";
 import { t } from "@/lib/i18n";
@@ -30,6 +31,7 @@ export default function Home() {
           {dict.brand}
         </h1>
         <p className="max-w-2xl text-lg leading-8 text-slate-300">{dict.homeLead}</p>
+        <ContextualHelp screen="home" />
       </section>
 
       <dl className="grid gap-4 sm:grid-cols-3">
@@ -51,6 +53,9 @@ export default function Home() {
         <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
           <dt className="text-sm text-slate-400">Vistas</dt>
           <dd className="mt-2 flex flex-wrap gap-2 text-sm">
+            <Link className="text-cyan-300 hover:underline" href="/comprador">
+              {dict.navBuyer}
+            </Link>
             <Link className="text-cyan-300 hover:underline" href="/activos">
               {dict.navExplorer}
             </Link>

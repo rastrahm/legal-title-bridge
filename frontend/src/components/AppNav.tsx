@@ -17,6 +17,7 @@ export function AppNav({ dict, locale, onLocaleChange }: AppNavProps) {
   const links = [
     { href: "/", label: dict.navHome },
     { href: "/activos", label: dict.navExplorer },
+    { href: "/comprador", label: dict.navBuyer },
     { href: "/cartera", label: dict.navWallet },
     { href: "/operador", label: dict.navOperator },
     { href: "/verificador", label: dict.navVerifier },

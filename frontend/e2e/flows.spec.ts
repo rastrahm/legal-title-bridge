@@ -32,6 +32,11 @@ test("home + views screenshots for portfolio", async ({ page }) => {
   await waitForAppHooks(page);
   await page.screenshot({ path: join(shotsDir, "cartera.png"), fullPage: true });
 
+  await page.goto("/comprador");
+  await waitForAppHooks(page);
+  await expect(page.getByTestId("help-comprador")).toBeVisible();
+  await page.screenshot({ path: join(shotsDir, "comprador.png"), fullPage: true });
+
   await page.goto("/operador");
   await waitForAppHooks(page);
   await page.screenshot({ path: join(shotsDir, "operador.png"), fullPage: true });

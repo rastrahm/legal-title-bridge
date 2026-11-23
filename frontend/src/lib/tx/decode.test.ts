@@ -10,8 +10,9 @@ describe("decodeTransactionRequest (W4)", () => {
   it("decodes issue calldata independent of form fields", () => {
     const assetId =
       "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    const to = "0x2222222222222222222222222222222222222222";
-    const data = encodeIssueCall(assetId, to, 5n);
+    const holder =
+      "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+    const data = encodeIssueCall(assetId, 5n, holder);
     const view = decodeTransactionRequest({
       to: "0x0000000000000000000000000000000000000001",
       data,
@@ -19,7 +20,7 @@ describe("decodeTransactionRequest (W4)", () => {
     });
     expect(view.functionName).toBe("issue");
     expect(view.args.amount).toBe("5");
-    expect(view.args.to.toLowerCase()).toBe(to.toLowerCase());
+    expect(view.args.toHolder.toLowerCase()).toBe(holder.toLowerCase());
   });
 
   it("labels empty data as nativeTransfer and pause by name", () => {
