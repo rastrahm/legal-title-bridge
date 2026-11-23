@@ -1,5 +1,7 @@
 # Hitos — Módulo 22: Legal Title Bridge
 
+> 🌐 [English](./hitos-EN.md) · **Español**
+
 **Uso:** marcar `[x]` al cerrar cada ítem. No sustituye la autorización de fase (`Autorizo Fase <ID>` en `planificacion-ES.md`).
 **Destino v1:** evidencia en **Sepolia** y **Solana Devnet** (ambas).
 **Orden cerrado tras FRONT:** REDTEAM → QA → EXTATK → TESTNET → SOLV.

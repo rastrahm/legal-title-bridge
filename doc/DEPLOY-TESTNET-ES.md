@@ -1,5 +1,7 @@
 # DEPLOY-TESTNET — Sepolia + Solana Devnet
 
+> 🌐 [English](./DEPLOY-TESTNET-EN.md) · **Español**
+
 **Fecha:** 2026-11-21 (UI smoke 2026-11-22 · execute+X4 + DvP UI 2026-11-23)  
 **Fase:** TESTNET (autorizada)  
 **Advertencia:** laboratorio en redes de prueba. Sin fondos reales ni activos legales.

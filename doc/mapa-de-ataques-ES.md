@@ -1,5 +1,7 @@
 # Mapa de posibles ataques — Legal Title Bridge
 
+> 🌐 **Español** · [English](./mapa-de-ataques-EN.md)
+
 **Idioma:** Español · Módulo 22 · **to-be**.  
 **Fuente:** [`planificacion-ES.md`](./planificacion-ES.md) §5, §10, §10.7.  
 **Companion:** [`superficie-de-ataques-ES.md`](./superficie-de-ataques-ES.md) · informes futuros `RED-TEAM-ES`, `EXTATK-ES`, `QA-ES`.

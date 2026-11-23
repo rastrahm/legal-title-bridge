@@ -1,5 +1,7 @@
 # Superficie de ataques — Legal Title Bridge
 
+> 🌐 **Español** · [English](./superficie-de-ataques-EN.md)
+
 **Idioma:** Español · Módulo 22 · **to-be**.  
 **Fuente:** [`planificacion-ES.md`](./planificacion-ES.md) §2–§6, D7–D14.  
 **Companion:** [`mapa-de-ataques-ES.md`](./mapa-de-ataques-ES.md).

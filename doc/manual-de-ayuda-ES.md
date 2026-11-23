@@ -1,5 +1,7 @@
 # Manual de ayuda — Legal Title Bridge
 
+> 🌐 **Español** · [English](./manual-de-ayuda-EN.md)
+
 **Público:** operadores de laboratorio, verificadores, emisores y testers de la UI.  
 **Entorno:** redes de prueba (Sepolia + Solana Devnet) o lab local. **Sin fondos reales.**  
 **Companion:** [`casos-de-uso-ES.md`](./casos-de-uso-ES.md) · capturas en `doc/front-screenshots/` y `doc/qa-screenshots/`.

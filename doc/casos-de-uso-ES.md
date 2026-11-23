@@ -1,5 +1,7 @@
 # Casos de uso — Legal Title Bridge
 
+> 🌐 **Español** · [English](./casos-de-uso-EN.md)
+
 **Idioma:** Español · Laboratorio v1 (Sepolia + Solana Devnet / UI local).  
 **Reglas:** Ethereum manda; el frontend **no** es verdad on-chain (D14); direcciones solo desde `shared/`.  
 **Companions:** [`manual-de-ayuda-ES.md`](./manual-de-ayuda-ES.md) · [`flujograma-ES.md`](./flujograma-ES.md) · [`QA-ES.md`](./QA-ES.md).  

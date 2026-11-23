@@ -1,5 +1,7 @@
 # Detalles de funcionamiento — Legal Title Bridge
 
+> 🌐 **Español** · [English](./detalles-de-funcionamiento-EN.md)
+
 **Idioma:** Español · Documento de orientación sobre estructura y flujos.  
 **Alcance:** laboratorio Sepolia + Solana Devnet (no producción).  
 **Regla de gobernanza:** Ethereum manda; el frontend no es verdad (D14); códec alineado en tres lenguajes (C5).
