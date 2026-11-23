@@ -41,6 +41,8 @@ make check-boot     # C0 + builds + tests de humo
 
 - [`doc/planificacion-ES.md`](doc/planificacion-ES.md)
 - [`doc/hitos-ES.md`](doc/hitos-ES.md)
+- [`doc/casos-de-uso-ES.md`](doc/casos-de-uso-ES.md) — situaciones UC-01…UC-16
+- [`doc/manual-de-ayuda-ES.md`](doc/manual-de-ayuda-ES.md) — pasos por pantalla
 - Diagramas y mapas de ataque en `doc/`
 
 ## Remotos

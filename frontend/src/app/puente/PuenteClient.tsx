@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { ContextualHelp } from "@/components/ContextualHelp";
 import { useApp } from "@/components/Providers";
 import { checkI2 } from "@/lib/bridge-status";
 import { fetchRelayerStatus, type RelayerStatus } from "@/lib/relayer-client";
@@ -48,6 +49,7 @@ export function PuenteClient({ e2eFakeRelayer = false }: PuenteClientProps) {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 space-y-8 px-6 py-10">
       <h1 className="text-3xl font-bold">{dict.navBridge}</h1>
+      <ContextualHelp screen="puente" />
 
       <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">

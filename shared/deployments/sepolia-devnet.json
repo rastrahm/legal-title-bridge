@@ -1,0 +1,28 @@
+{
+  "network": "sepolia-devnet",
+  "ethereum": {
+    "identityRegistry": "0x2525Db5706d4547B93cF2b608c9809bE2a887EE9",
+    "attestationRegistry": "0x29Ac990fBc054afab565c0270Ae324e48D70603a",
+    "titleRegistry": "0x27fE06348f6937f0f980790EC6963633f2D22F2a",
+    "bridgeEndpoint": "0x577f3B58DF21357ED4F8AF6631d2017FAeE38389"
+  },
+  "solana": {
+    "programId": "2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL",
+    "configPda": "A9j9D6XGUC94SLcpGhK8AyCJReyVu6oGKdD1QRdDm4KU",
+    "deploySignature": "3p6c8VYq3Frt98aSPNuyHPywXos5RKWgg2wBZcY4mhq7nEEx3uP1wRzEDQpzF5vtT3r2TZKncz1caDASh5DN7bLn",
+    "initializeConfigSignature": "5D8wpCxE9KPtyEzrthXqDDW7p6gsK23KEY6wTB2vMHLGnZ9Rqd4KBQDPyeFVdBrajmRrnrUUH8wLKEn4ux1wzSx1",
+    "notes": "Redeployed 2026-11-21 after quorum secp256k1 eth_address_offset fix (closed prior H4fc36…)."
+  },
+  "evidence": {
+    "issueTx": "0x8c8a9eafe8ac22e70f4480c0aa5e3350446e6045cdfece689b21429f8518a29c",
+    "issueMessageId": "0xad678faa8fec83d76039c4c6a7eae7b18f546fe5c61c361a28fbc19389766cf0",
+    "p1First": "0x507565a45312f3cf63cc4fa537948ead80328dbbc0640391cdc2c99725d78736",
+    "p1ReplayRejected": true,
+    "r5bBadSigRejected": true,
+    "p3UnauthorizedTransferPath": true,
+    "applyIssue": "4LJ1jKZJWcSNzQeiKa2KNweMPxsGuNFqDLoXdFzZdQexJ3b1f1QtjByi8n6MNUQES1WkF1BFx6i3TrTYgwY1tN8c",
+    "applyIssueDestinationAmount": "1000",
+    "mint": "6HDbgKmdmoBhLjfVNciZiV4tVYDqyTL3LK9Ei6qtQZMU",
+    "extatkShortlist": "secrets/deploy/extatk-shortlist.json"
+  }
+}

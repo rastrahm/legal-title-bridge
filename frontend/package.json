@@ -15,7 +15,11 @@
     "check-bundle": "bash ../scripts/check-bundle.sh"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
     "@legal-title-bridge/shared": "file:../shared",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.4",
+    "buffer": "^6.0.3",
     "ethers": "^6.17.0",
     "next": "16.4.6",
     "react": "19.3.0",

@@ -81,17 +81,19 @@
 
 ## Shortlist TESTNET (re-ejecución obligatoria)
 
-| ID | Justificación re-ejecución |
-|----|---------------------------|
-| X1 | Reenvío de paquete con cadenas intercambiadas en Sepolia → Devnet real |
-| X4 | Rotación de relayers real + firma de época anterior |
-| X7 | Llenado de ventana de flujo on-chain |
-| X15 | Race hardDeadline con bloques reales (slot timing Devnet) |
-| X17 | Sustitución de mint en instrucción Solana real |
-| X23 | Sysvar falso en transacción Devnet |
-| X25 | Transfer con delegate no autorizado en token-2022 real |
-| X28 | Reorg simulada en Sepolia con `confirmations − 1` |
-| X33 | Clone UI contra dev server en TESTNET (si aplica) |
+| ID | Justificación re-ejecución | Estado TESTNET (2026-11-21) |
+|----|---------------------------|----------------------------|
+| X1 | Reenvío de paquete con cadenas intercambiadas en Sepolia → Devnet real | ✅ bloqueado (`WrongDomain` / revert) — `secrets/deploy/extatk-shortlist.json` |
+| X4 | Rotación de relayers real + firma de época anterior | ✅ Sepolia 2026-11-23 · execute `0x40d86eb8…` · X4 `0x178cd1bc…` status 0 (`WrongDomain`) |
+| X7 | Llenado de ventana de flujo on-chain | ⏳ diferido (coste gas; evidencia local X7) |
+| X15 | Race hardDeadline con bloques reales (slot timing Devnet) | ⏳ diferido (DvP live; evidencia local X15) |
+| X17 | Sustitución de mint en instrucción Solana real | ✅ bloqueado (mint `AccountNotInitialized` / mismatch) |
+| X23 | Sysvar falso en transacción Devnet | ✅ bloqueado (`InvalidInstructionsSysvar`) |
+| X25 | Transfer con delegate no autorizado en token-2022 real | ✅ bloqueado (`UnauthorizedTransferPath`) |
+| X28 | Reorg simulada en Sepolia con `confirmations − 1` | ⏳ diferido (evidencia local X28) |
+| X33 | Clone UI contra dev server en TESTNET (si aplica) | ✅ D14 `resolveAddresses` ignora URL |
+
+Runner: `solana/scripts/testnet-extatk-shortlist.ts`.
 
 ---
 

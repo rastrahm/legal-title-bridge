@@ -23,33 +23,65 @@ test.describe("QA personas", () => {
   test("Q-Titular: list balances, sell, cancel, retry other price", async ({
     page,
   }) => {
-    await page.goto("/cartera");
+    await page.goto("/cartera/vender");
     await waitForAppHooks(page);
     await page.getByTestId("btn-connect-sol").click();
     await expect(page.getByTestId("sol-address")).toContainText("seller-sol");
     await page.getByTestId("btn-sell").first().click();
-    await expect(page.getByTestId("wallet-notice")).toContainText(/venta|sale/i);
+    await expect(page.getByTestId("wallet-notice")).toContainText(/listado|listing|venta|sale/i);
     await page.getByTestId("btn-cancel-sale").first().click();
     await expect(page.getByTestId("wallet-notice")).toContainText(/cancel/i);
     await page.getByTestId("btn-retry-price").click();
-    await expect(page.getByTestId("wallet-notice")).toContainText(/venta|sale/i);
+    await expect(page.getByTestId("wallet-notice")).toContainText(/listado|listing|venta|sale/i);
     await shot(page, "q-titular");
   });
 
-  test("Q-Comprador: start buy, leave, return, deposit notice", async ({
-    page,
-  }) => {
-    await page.goto("/cartera");
+  test("Q-Comprador: onboarding UC-17 then buy demo", async ({ page }) => {
+    await page.goto("/comprador");
+    await waitForAppHooks(page);
+    await expect(page.getByTestId("help-comprador")).toBeVisible();
+    await expect(page.getByTestId("btn-buyer-enter")).toBeDisabled();
+    await page.getByTestId("btn-connect-sol").click();
+    await expect(page.getByTestId("sol-address")).toContainText("seller-sol");
+    const holder = (await page.getByTestId("buyer-holder").textContent()) ?? "";
+    expect(holder).toMatch(/^0x[0-9a-f]{64}$/);
+    await expect(page.getByTestId("link-buyer-verifier")).toHaveAttribute(
+      "href",
+      `/verificador?holder=${encodeURIComponent(holder)}`,
+    );
+    await page.getByTestId("btn-buyer-enter").click();
+    await expect(page.getByTestId("buyer-entered")).toBeVisible();
+    await shot(page, "q-comprador-onboarding");
+
+    await page.goto("/cartera/comprar");
     await waitForAppHooks(page);
     await page.getByTestId("btn-connect-sol").click();
     await page.getByTestId("btn-buy").first().click();
-    await expect(page.getByTestId("wallet-notice")).toContainText(/compra|purchase|depósito|deposit/i);
+    await expect(page.getByTestId("wallet-notice")).toContainText(
+      /compra|purchase|oferta|offer|depósito|deposit/i,
+    );
+    await expect(page.getByTestId("request-status-0xbb")).toContainText(
+      /depósito|deposit/i,
+    );
+    await expect(page.getByTestId("request-buyer-0xbb")).toContainText(
+      "seller-sol",
+    );
     await page.goto("/");
     await waitForAppHooks(page);
     await page.goto("/cartera");
     await waitForAppHooks(page);
-    await expect(page.getByRole("heading", { name: /cartera|wallet/i })).toBeVisible();
+    await expect(page.getByTestId("cartera-heading")).toBeVisible();
     await shot(page, "q-comprador");
+  });
+
+  test("Q-Comprador: verifier prefills holder from onboarding link", async ({
+    page,
+  }) => {
+    const holder =
+      "0xc4596daaf354c9835802d722e528f1852d2e203dbf801838cf8c13d6eb414766";
+    await page.goto(`/verificador?holder=${encodeURIComponent(holder)}`);
+    await waitForAppHooks(page);
+    await expect(page.getByTestId("id-holder")).toHaveValue(holder);
   });
 
   test("Q-Operador: issue/pause/reconcile/court; foreign roles disabled", async ({
@@ -59,7 +91,7 @@ test.describe("QA personas", () => {
     await waitForAppHooks(page);
     await page.getByTestId("btn-connect-eth").click();
     await page.getByTestId("btn-issue").click();
-    await expect(page.getByTestId("confirm-arg-amount")).toHaveText("5");
+    await expect(page.getByTestId("confirm-arg-amount")).toHaveText("1000");
     await page.getByTestId("btn-pause").click();
     await page.getByTestId("btn-reconcile").click();
     await page.getByTestId("btn-court").click();
@@ -77,11 +109,11 @@ test.describe("QA personas", () => {
     await page.goto("/verificador");
     await waitForAppHooks(page);
     await page.getByTestId("btn-connect-eth").click();
-    await page.getByTestId("id-country").fill("");
+    await page.getByTestId("id-country").selectOption("");
     await expect(page.locator("#id-incomplete")).toBeVisible();
     await expect(page.getByTestId("btn-sign-identity")).toBeDisabled();
-    await page.getByTestId("id-country").fill("ES");
-    await page.getByTestId("id-expires").fill("1700000000");
+    await page.getByTestId("id-country").selectOption("724");
+    await page.getByTestId("id-expires").fill("2030-06-15");
     await page.getByTestId("btn-sign-identity").click();
     await expect(page.getByTestId("signed-ok")).toBeVisible();
     await shot(page, "q-verificador");
@@ -135,13 +167,13 @@ test.describe("QA scripts 1–10", () => {
   });
 
   test("G2 abandon mid-flow then cancel sale", async ({ page }) => {
-    await page.goto("/cartera");
+    await page.goto("/cartera/vender");
     await waitForAppHooks(page);
     await page.getByTestId("btn-connect-sol").click();
     await page.getByTestId("btn-sell").first().click();
     await page.goto("/puente");
     await waitForAppHooks(page);
-    await page.goto("/cartera");
+    await page.goto("/cartera/vender");
     await waitForAppHooks(page);
     await page.getByTestId("btn-connect-sol").click();
     await page.getByTestId("btn-cancel-sale").first().click();
@@ -149,7 +181,7 @@ test.describe("QA scripts 1–10", () => {
   });
 
   test("G3 clear reject reason for expired certification", async ({ page }) => {
-    await page.goto("/cartera");
+    await page.goto("/cartera/vender");
     await waitForAppHooks(page);
     await expect(
       page.getByTestId("request-status-0xcert-expired"),
@@ -191,7 +223,7 @@ test.describe("QA scripts 1–10", () => {
     await page.goto("/puente");
     await waitForAppHooks(page);
     await expect(page.getByTestId("msg-signed").or(page.getByTestId("msg-delivered")).first()).toBeVisible();
-    await page.goto("/cartera");
+    await page.goto("/cartera/vender");
     await waitForAppHooks(page);
     await expect(page.getByTestId("deadline-hint")).toBeVisible();
   });
@@ -225,7 +257,7 @@ test.describe("QA scripts 1–10", () => {
     await waitForAppHooks(page);
     await page.getByTestId("id-country").focus();
     await expect(page.getByTestId("id-country")).toBeFocused();
-    await page.getByTestId("id-country").clear();
+    await page.getByTestId("id-country").selectOption("");
     await expect(page.locator("#id-incomplete")).toBeVisible();
     await expect(page.getByTestId("id-country")).toHaveAttribute(
       "aria-describedby",

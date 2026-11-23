@@ -23,7 +23,7 @@
 | Persona | Resultado | Notas |
 |---------|-----------|-------|
 | Q-Titular | ✅ | Conecta Phantom (lab), vende, cancela, reintenta precio 9 |
-| Q-Comprador | ✅ | Compra/depósito demo, sale a home, vuelve sin pantalla rota |
+| Q-Comprador | ✅ | UC-17 `/comprador` (Phantom→holder→ingreso) + compra/depósito demo; `?holder=` precarga Verificador |
 | Q-Operador | ✅ | Emitir → confirmar; pausa; reconciliar; orden; strip roles deshabilita botones |
 | Q-Verificador | ✅ | Campos incompletos bloquean firma; aviso ligado al campo |
 | Q-Público | ✅ | Explorador, puente, `assetId` inválido, 404 |
@@ -78,7 +78,7 @@ Ninguno.
 
 ## Capturas
 
-`doc/qa-screenshots/`: `q-titular`, `q-comprador`, `q-operador`, `q-verificador`, `q-publico`, `q-novato`, `g1-happy`.
+`doc/qa-screenshots/`: `q-titular`, `q-comprador-onboarding`, `q-comprador`, `q-operador`, `q-verificador`, `q-publico`, `q-novato`, `g1-happy`.
 
 ## Regresión
 

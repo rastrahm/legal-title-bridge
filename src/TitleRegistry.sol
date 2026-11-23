@@ -165,12 +165,14 @@ contract TitleRegistry is AccessControl {
         emit RegistriesUpdated(identity, attestation);
     }
 
-    /// @notice Wire BridgeEndpoint so `decide` emits TRANSFER_DECISION (D4 → Solana).
+    /// @notice Wire BridgeEndpoint so `issue`/`decide`/`forced` emit outbound (D1/D4 → Solana).
+    /// @dev Also grants BRIDGE_ROLE so inbound TRANSFER_REQUEST can call `onTransferRequest`.
     function setBridgeEndpoint(address bridgeEndpoint_) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (bridgeEndpoint_ == address(0)) {
             revert RegistryErrors.ZeroAddress();
         }
         bridgeEndpoint = IBridgeEndpoint(bridgeEndpoint_);
+        _grantRole(BRIDGE_ROLE, bridgeEndpoint_);
         emit BridgeEndpointUpdated(bridgeEndpoint_);
     }
 
@@ -257,6 +259,10 @@ contract TitleRegistry is AccessControl {
         bytes32 entry = _appendEntry(assetId, dataHash);
         _notifyModules(assetId, bytes32(0), toHolder, 0, newBal);
         emit Issued(assetId, toHolder, amount, entry);
+
+        if (address(bridgeEndpoint) != address(0)) {
+            bridgeEndpoint.emitOutbound(MsgType.ISSUE, _encodeIssuePayload(assetId, amount, toHolder));
+        }
     }
 
     /// @notice Court-ordered move (bypasses compliance). `pendingTransferId` non-zero cancels a Pending DvP (P7).
@@ -491,6 +497,20 @@ contract TitleRegistry is AccessControl {
             mstore8(add(p, 32), outcome)
             mstore8(add(p, 33), reasonCode)
             mstore(add(p, 34), amount)
+        }
+    }
+
+    function _encodeIssuePayload(bytes32 assetId, uint256 amount, bytes32 toHolder)
+        internal
+        pure
+        returns (bytes memory payload)
+    {
+        payload = new bytes(96);
+        assembly ("memory-safe") {
+            let p := add(payload, 0x20)
+            mstore(p, assetId)
+            mstore(add(p, 32), amount)
+            mstore(add(p, 64), toHolder)
         }
     }
 

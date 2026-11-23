@@ -1,0 +1,2187 @@
+{
+  "address": "2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL",
+  "metadata": {
+    "name": "title_mirror",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Anchor program for mirroring legal title state on Solana"
+  },
+  "instructions": [
+    {
+      "name": "apply_decision",
+      "discriminator": [
+        80,
+        141,
+        46,
+        212,
+        212,
+        18,
+        11,
+        147
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow.transfer_id",
+                "account": "Escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "title_mint"
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "title_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_title_ata",
+          "writable": true
+        },
+        {
+          "name": "seller_title_ata",
+          "writable": true
+        },
+        {
+          "name": "buyer_title_ata",
+          "writable": true
+        },
+        {
+          "name": "payment_mint"
+        },
+        {
+          "name": "escrow_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "seller_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "buyer_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "processed",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  99,
+                  101,
+                  115,
+                  115,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "message_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "title_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "payment_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "message_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "wire",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "apply_forced_p7",
+      "docs": [
+        "P7: FORCED_TRANSFER while title+payment sit in a Pending escrow."
+      ],
+      "discriminator": [
+        148,
+        201,
+        63,
+        213,
+        204,
+        93,
+        13,
+        7
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow.transfer_id",
+                "account": "Escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "title_mint"
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "title_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_title_ata",
+          "writable": true
+        },
+        {
+          "name": "destination_title_ata",
+          "writable": true
+        },
+        {
+          "name": "payment_mint"
+        },
+        {
+          "name": "escrow_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "buyer_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "processed",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  99,
+                  101,
+                  115,
+                  115,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "message_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "title_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "payment_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "message_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "wire",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "apply_forced_transfer",
+      "discriminator": [
+        19,
+        233,
+        177,
+        239,
+        170,
+        215,
+        162,
+        102
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "permanent_delegate",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  97,
+                  110,
+                  101,
+                  110,
+                  116,
+                  95,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "source_title_ata",
+          "writable": true
+        },
+        {
+          "name": "destination_title_ata",
+          "docs": [
+            "Destination ATA when moving; pass source again when burning (`to == 0`)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "processed",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  99,
+                  101,
+                  115,
+                  115,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "message_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "message_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "wire",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "apply_issue",
+      "discriminator": [
+        97,
+        102,
+        204,
+        113,
+        227,
+        191,
+        220,
+        26
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "permanent_delegate",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  97,
+                  110,
+                  101,
+                  110,
+                  116,
+                  95,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "processed",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  99,
+                  101,
+                  115,
+                  115,
+                  101,
+                  100
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "message_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "message_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "wire",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "assert_transfer_path",
+      "docs": [
+        "Test/helper: assert I5 path without invoking the Token-2022 hook CPI machinery."
+      ],
+      "discriminator": [
+        162,
+        36,
+        23,
+        188,
+        65,
+        215,
+        229,
+        181
+      ],
+      "accounts": [
+        {
+          "name": "authority"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "asset",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permanent_delegate",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  97,
+                  110,
+                  101,
+                  110,
+                  116,
+                  95,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_asset",
+      "discriminator": [
+        214,
+        153,
+        49,
+        248,
+        95,
+        248,
+        208,
+        179
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "permanent_delegate",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  97,
+                  110,
+                  101,
+                  110,
+                  116,
+                  95,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "asset_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "asset_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "decimals",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initialize_config",
+      "discriminator": [
+        208,
+        127,
+        21,
+        1,
+        194,
+        190,
+        196,
+        70
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "InitializeConfigParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "mint_to_holder",
+      "discriminator": [
+        85,
+        175,
+        9,
+        233,
+        36,
+        148,
+        193,
+        213
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "permanent_delegate",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  97,
+                  110,
+                  101,
+                  110,
+                  116,
+                  95,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "ping",
+      "discriminator": [
+        173,
+        0,
+        94,
+        236,
+        73,
+        133,
+        225,
+        153
+      ],
+      "accounts": [],
+      "args": []
+    },
+    {
+      "name": "refund_after_hard_deadline",
+      "discriminator": [
+        181,
+        183,
+        172,
+        107,
+        214,
+        134,
+        142,
+        139
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "docs": [
+            "Permissionless caller — must NOT receive funds (P9)."
+          ],
+          "signer": true
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow.transfer_id",
+                "account": "Escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "title_mint"
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "title_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_title_ata",
+          "writable": true
+        },
+        {
+          "name": "seller_title_ata",
+          "writable": true
+        },
+        {
+          "name": "payment_mint"
+        },
+        {
+          "name": "escrow_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "buyer_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "title_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "payment_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "request_transfer",
+      "discriminator": [
+        212,
+        219,
+        87,
+        213,
+        196,
+        139,
+        61,
+        44
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "seller",
+          "signer": true
+        },
+        {
+          "name": "buyer",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "title_mint"
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "title_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "seller_title_ata",
+          "writable": true
+        },
+        {
+          "name": "escrow_title_ata",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "payment_mint"
+        },
+        {
+          "name": "buyer_payment_ata",
+          "writable": true
+        },
+        {
+          "name": "escrow_payment_ata",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "params.transfer_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "title_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "payment_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "RequestTransferParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "rotate_relayers",
+      "discriminator": [
+        70,
+        138,
+        27,
+        180,
+        28,
+        62,
+        36,
+        111
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "RotateRelayersParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "transfer_hook",
+      "docs": [
+        "Token-2022 transfer hook entry (I5)."
+      ],
+      "discriminator": [
+        220,
+        57,
+        220,
+        152,
+        126,
+        125,
+        97,
+        168
+      ],
+      "accounts": [
+        {
+          "name": "source_token"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "destination_token"
+        },
+        {
+          "name": "owner_delegate"
+        },
+        {
+          "name": "asset",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset.asset_id",
+                "account": "Asset"
+              }
+            ]
+          }
+        },
+        {
+          "name": "permanent_delegate",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  101,
+                  114,
+                  109,
+                  97,
+                  110,
+                  101,
+                  110,
+                  116,
+                  95,
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Asset",
+      "discriminator": [
+        234,
+        180,
+        241,
+        252,
+        139,
+        224,
+        160,
+        8
+      ]
+    },
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "Escrow",
+      "discriminator": [
+        31,
+        213,
+        123,
+        187,
+        186,
+        22,
+        218,
+        155
+      ]
+    },
+    {
+      "name": "ProcessedMessage",
+      "discriminator": [
+        9,
+        46,
+        230,
+        245,
+        67,
+        156,
+        226,
+        235
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "TransferRequested",
+      "discriminator": [
+        92,
+        249,
+        93,
+        138,
+        18,
+        138,
+        80,
+        127
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "ZeroAddress",
+      "msg": "Zero address / empty key"
+    },
+    {
+      "code": 6001,
+      "name": "ThresholdTooLow",
+      "msg": "Threshold too low: need n>=3 and threshold >= ceil(2n/3)"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidRelayerSet",
+      "msg": "Invalid relayer set (duplicate or empty)"
+    },
+    {
+      "code": 6003,
+      "name": "TooManyRelayers",
+      "msg": "Too many relayers"
+    },
+    {
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6005,
+      "name": "Paused",
+      "msg": "Paused"
+    },
+    {
+      "code": 6006,
+      "name": "WrongDomain",
+      "msg": "Wrong domain (chain / emitter / epoch / version)"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidQuorum",
+      "msg": "Invalid quorum"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidInstructionsSysvar",
+      "msg": "Instructions sysvar address mismatch (R3)"
+    },
+    {
+      "code": 6009,
+      "name": "MessageAlreadyProcessed",
+      "msg": "Message already processed (I3)"
+    },
+    {
+      "code": 6010,
+      "name": "UnsupportedMsgType",
+      "msg": "Unsupported message type"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidPacket",
+      "msg": "Invalid packet / payload"
+    },
+    {
+      "code": 6012,
+      "name": "UnauthorizedTransferPath",
+      "msg": "Unauthorized transfer path (I5)"
+    },
+    {
+      "code": 6013,
+      "name": "MintMismatch",
+      "msg": "Mint mismatch (R4)"
+    },
+    {
+      "code": 6014,
+      "name": "ConfigMismatch",
+      "msg": "Config mismatch (R4)"
+    },
+    {
+      "code": 6015,
+      "name": "EscrowNotPending",
+      "msg": "Escrow is not Pending"
+    },
+    {
+      "code": 6016,
+      "name": "TooEarlyForRefund",
+      "msg": "Hard deadline not reached yet (D5)"
+    },
+    {
+      "code": 6017,
+      "name": "LateApprovalRejected",
+      "msg": "Approved after hardDeadline rejected (D6)"
+    },
+    {
+      "code": 6018,
+      "name": "DeadlineInPast",
+      "msg": "Deadline must be in the future"
+    },
+    {
+      "code": 6019,
+      "name": "AmountMismatch",
+      "msg": "Amount / payment mismatch"
+    },
+    {
+      "code": 6020,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6021,
+      "name": "EscrowCourtMismatch",
+      "msg": "Escrow seller / amount mismatch for court cancel (P7)"
+    },
+    {
+      "code": 6022,
+      "name": "MissingResolutionHash",
+      "msg": "Resolution hash required"
+    }
+  ],
+  "types": [
+    {
+      "name": "Asset",
+      "docs": [
+        "Per-asset mint mirror metadata."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "asset_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "permanent_delegate",
+            "type": "pubkey"
+          },
+          {
+            "name": "decimals",
+            "type": "u8"
+          },
+          {
+            "name": "issued",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "docs": [
+        "Bridge config: Ethereum endpoint identity + relayer quorum (D10/D11)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "eth_endpoint",
+            "docs": [
+              "Ethereum BridgeEndpoint address left-padded / keccak identity as bytes32."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "local_chain_id",
+            "type": "u64"
+          },
+          {
+            "name": "remote_chain_id",
+            "type": "u64"
+          },
+          {
+            "name": "epoch",
+            "type": "u64"
+          },
+          {
+            "name": "threshold",
+            "type": "u8"
+          },
+          {
+            "name": "relayer_count",
+            "type": "u8"
+          },
+          {
+            "name": "relayers",
+            "type": {
+              "array": [
+                {
+                  "array": [
+                    "u8",
+                    20
+                  ]
+                },
+                16
+              ]
+            }
+          },
+          {
+            "name": "paused",
+            "type": "bool"
+          },
+          {
+            "name": "hard_deadline_secs",
+            "docs": [
+              "Seconds after `deadline` before unilateral refund (D5). Production: 7 days."
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Escrow",
+      "docs": [
+        "DvP escrow PDA keyed by `transfer_id` (D3 / D5)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "transfer_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "title_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "seller",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyer",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "payment_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "payment_amount",
+            "type": "u64"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          },
+          {
+            "name": "hard_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": "u8"
+          },
+          {
+            "name": "travel_rule_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitializeConfigParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "eth_endpoint",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "local_chain_id",
+            "type": "u64"
+          },
+          {
+            "name": "remote_chain_id",
+            "type": "u64"
+          },
+          {
+            "name": "threshold",
+            "type": "u8"
+          },
+          {
+            "name": "relayers",
+            "type": {
+              "vec": {
+                "array": [
+                  "u8",
+                  20
+                ]
+              }
+            }
+          },
+          {
+            "name": "hard_deadline_secs",
+            "docs": [
+              "D5 offset; production should use `HARD_DEADLINE_SECS` (7 days). Tests may use a short value."
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProcessedMessage",
+      "docs": [
+        "Idempotency marker for inbound message ids (I3)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "message_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RequestTransferParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "transfer_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "payment_amount",
+            "type": "u64"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          },
+          {
+            "name": "travel_rule_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RotateRelayersParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "threshold",
+            "type": "u8"
+          },
+          {
+            "name": "relayers",
+            "type": {
+              "vec": {
+                "array": [
+                  "u8",
+                  20
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TransferRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "transfer_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "seller",
+            "type": "pubkey"
+          },
+          {
+            "name": "buyer",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "payment_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "payment_amount",
+            "type": "u64"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          },
+          {
+            "name": "hard_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "travel_rule_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

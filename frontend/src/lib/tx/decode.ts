@@ -12,12 +12,14 @@ export interface DecodedTxView {
   args: Record<string, string>;
 }
 
+/** Matches TitleRegistry on-chain ABI (issue uses bytes32 holder, not address). */
 const TITLE_FRAGMENT = [
-  "function issue(bytes32 assetId, address to, uint256 amount)",
+  "function createAsset(bytes32 assetId)",
+  "function issue(bytes32 assetId, uint256 amount, bytes32 toHolder)",
   "function pause()",
-  "function forcedTransfer(bytes32 assetId, address from, address to, uint256 amount, bytes32 resolutionHash)",
+  "function forcedTransfer(bytes32 assetId, bytes32 from, bytes32 to, uint256 amount, bytes32 resolutionHash, bytes32 pendingTransferId)",
   "function reconcile(bytes32 transferId, bytes32 resolutionHash)",
-  "function decide(bytes32 transferId, uint8 outcome)",
+  "function decide(bytes32 transferId)",
 ];
 
 const iface = new Interface(TITLE_FRAGMENT);
@@ -53,14 +55,21 @@ export function decodeTransactionRequest(
 }
 
 /**
- * Encode a lab `issue` call for simulation / confirmation demos.
+ * Encode TitleRegistry.issue(assetId, amount, toHolder).
  */
 export function encodeIssueCall(
   assetId: string,
-  to: string,
   amount: bigint,
+  toHolder: string,
 ): string {
-  return iface.encodeFunctionData("issue", [assetId, to, amount]);
+  return iface.encodeFunctionData("issue", [assetId, amount, toHolder]);
+}
+
+/**
+ * Encode TitleRegistry.createAsset(assetId).
+ */
+export function encodeCreateAssetCall(assetId: string): string {
+  return iface.encodeFunctionData("createAsset", [assetId]);
 }
 
 /**
@@ -68,4 +77,11 @@ export function encodeIssueCall(
  */
 export function encodePauseCall(): string {
   return iface.encodeFunctionData("pause", []);
+}
+
+/**
+ * Encode TitleRegistry.decide(transferId) — OPERATOR_ROLE.
+ */
+export function encodeDecideCall(transferId: string): string {
+  return iface.encodeFunctionData("decide", [transferId]);
 }

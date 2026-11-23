@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   useSyncExternalStore,
@@ -13,10 +14,16 @@ import { AppNav } from "@/components/AppNav";
 import { NetworkBanner } from "@/components/NetworkBanner";
 import { useLocale } from "@/hooks/useLocale";
 import { useNetworkGuard } from "@/hooks/useNetworkGuard";
+import { getActiveNetwork } from "@/lib/config/network";
+import {
+  loadPersistedMarket,
+  savePersistedMarket,
+} from "@/lib/demo/persist";
 import { createDemoState, type DemoState } from "@/lib/demo/store";
 import type { Locale } from "@/lib/i18n";
 import type { RoleFlags } from "@/lib/roles";
 import { EMPTY_ROLES } from "@/lib/roles";
+import { isE2eLab } from "@/lib/wallets/env";
 
 export interface AppContextValue {
   locale: Locale;
@@ -47,9 +54,18 @@ const AppContext = createContext<AppContextValue | null>(null);
 export function Providers({ children }: { children: ReactNode }) {
   const { locale, dict, setLocale } = useLocale("es");
   const [demo, setDemoState] = useState(() => createDemoState());
-  const [ethChainId, setEthChainId] = useState<number | null>(31337);
+  // Local / E2E: pre-seed both so Playwright stubs pass W2 without extensions.
+  // Sepolia+Devnet: Eth starts disconnected; Sol genesis is the known Devnet hash
+  // (Phantom connect re-checks via RPC). Banner clears once MetaMask is on Sepolia.
+  const bootNet = getActiveNetwork();
+  const seedLab = isE2eLab() || bootNet.networkId === "local";
+  const [ethChainId, setEthChainId] = useState<number | null>(
+    seedLab ? bootNet.ethChainId : null,
+  );
   const [solGenesisHash, setSolGenesisHash] = useState<string | null>(
-    "11111111111111111111111111111111",
+    seedLab || bootNet.networkId === "sepolia-devnet"
+      ? bootNet.solanaGenesisHash
+      : null,
   );
   const [ethAddress, setEthAddress] = useState<string | null>(null);
   const [solAddress, setSolAddress] = useState<string | null>(null);
@@ -71,8 +87,26 @@ export function Providers({ children }: { children: ReactNode }) {
     () => false,
   );
 
+  // Restore listings/offers after mount (SSR stays seed — no hydration mismatch).
+  useEffect(() => {
+    const saved = loadPersistedMarket();
+    if (!saved) return;
+    setDemoState((prev) => ({
+      ...prev,
+      listings: saved.listings,
+      requests: saved.requests,
+    }));
+  }, []);
+
   const setDemo = (updater: (prev: DemoState) => DemoState) =>
-    setDemoState((prev) => updater(prev));
+    setDemoState((prev) => {
+      const next = updater(prev);
+      savePersistedMarket({
+        listings: next.listings,
+        requests: next.requests,
+      });
+      return next;
+    });
 
   const value = useMemo<AppContextValue>(
     () => ({
@@ -113,7 +147,12 @@ export function Providers({ children }: { children: ReactNode }) {
     <AppContext.Provider value={value}>
       <AppNav dict={dict} locale={locale} onLocaleChange={setLocale} />
       <NetworkBanner
-        visible={!guard.ethOk || !guard.solOk}
+        // Only warn when a *connected* wallet is on the wrong network (W2).
+        // Avoid false alarms on /cartera when MetaMask is not connected yet.
+        visible={
+          (Boolean(ethAddress) && !guard.ethOk) ||
+          (Boolean(solAddress) && !guard.solOk)
+        }
         message={dict.networkMismatch}
       />
       <div

@@ -6,7 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-title_mirror = "H4fc36LTnKLeGfdT5UUCa8d39VM3Q1Z4N8Myf8uc4nRU"
+title_mirror = "2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL"
+
+[programs.devnet]
+title_mirror = "2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL"
 
 [registry]
 url = "https://api.apr.dev"

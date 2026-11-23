@@ -16,5 +16,6 @@ describe("Home", () => {
       screen.getByRole("heading", { name: /Legal Title Bridge/i }),
     ).toBeInTheDocument();
     expect(screen.getByTestId("home-i2")).toBeInTheDocument();
+    expect(screen.getByTestId("help-home")).toBeInTheDocument();
   });
 });

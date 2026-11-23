@@ -31,7 +31,17 @@ const localPlaceholders: NetworkAddresses = {
   bridgeEndpoint: PLACEHOLDER_ETHEREUM_ADDRESS,
 };
 
+/** Sepolia + Solana Devnet — filled after TESTNET deploy (2026-11-21). */
+const sepoliaDevnet: NetworkAddresses = {
+  ethereum: '0x577f3B58DF21357ED4F8AF6631d2017FAeE38389',
+  solana: '2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL',
+  titleRegistry: '0x27fE06348f6937f0f980790EC6963633f2D22F2a',
+  identityRegistry: '0x2525Db5706d4547B93cF2b608c9809bE2a887EE9',
+  attestationRegistry: '0x29Ac990fBc054afab565c0270Ae324e48D70603a',
+  bridgeEndpoint: '0x577f3B58DF21357ED4F8AF6631d2017FAeE38389',
+};
+
 export const addresses = AddressesSchema.parse({
   local: localPlaceholders,
-  'sepolia-devnet': { ...localPlaceholders },
+  'sepolia-devnet': sepoliaDevnet,
 });

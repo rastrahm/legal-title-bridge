@@ -28,7 +28,8 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",
       "font-src 'self'",
-      "connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*",
+      // Testnet DvP / registry reads need public RPCs (browser fetch); keep localhost for lab.
+      "connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:* https://api.devnet.solana.com wss://api.devnet.solana.com https://ethereum-sepolia-rpc.publicnode.com",
     ].join("; ");
 
     return [
