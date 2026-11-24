@@ -1,5 +1,6 @@
 /**
  * Sepolia P1 + R5b attack evidence (Node 22 + ethers).
+ * Canonical copy — `scripts/testnet/attacks-p1-r5b.mjs` is a thin wrapper.
  * P1: submitInbound twice with same wire → second reverts MessageAlreadyProcessed (or first fails domain/title).
  * R5b: quorum with non-relayer signature → InvalidQuorum; proposeRotateRelayers to remove r3 (execute after 1d).
  */

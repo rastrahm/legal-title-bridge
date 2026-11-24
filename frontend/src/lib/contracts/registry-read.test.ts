@@ -32,15 +32,17 @@ vi.mock("ethers", async (importOriginal) => {
   };
 });
 
+import { addresses } from "@/vendor/shared";
+
 import {
   listCreatedAssetIds,
   readIssuePreflight,
   readOnChainAssetDetail,
 } from "./registry-read";
 
-const TITLE = "0x27fE06348f6937f0f980790EC6963633f2D22F2a";
-const ATTEST = "0x29Ac990fBc054afab565c0270Ae324e48D70603a";
-const IDENTITY = "0x2525Db5706d4547B93cF2b608c9809bE2a887EE9";
+const TITLE = addresses["sepolia-devnet"].titleRegistry;
+const ATTEST = addresses["sepolia-devnet"].attestationRegistry;
+const IDENTITY = addresses["sepolia-devnet"].identityRegistry;
 const ASSET =
   "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab";
 const HOLDER =

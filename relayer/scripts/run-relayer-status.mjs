@@ -1,9 +1,10 @@
 /**
  * Minimal TESTNET relayer process: status API only (GET /status, /messages).
- * Full watch→sign→deliver loop is next; this proves 3 read-only endpoints for the frontend.
+ * Canonical copy — `scripts/testnet/run-relayer-status.mjs` is a thin wrapper.
+ * Full watch→sign→deliver loop is next; this proves read-only endpoints for the frontend.
  *
  * Usage:
- *   RELAYER_ID=1 PORT=3101 node scripts/testnet/run-relayer-status.mjs
+ *   RELAYER_ID=1 PORT=3101 node relayer/scripts/run-relayer-status.mjs
  */
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";

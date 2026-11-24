@@ -5,9 +5,8 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_2022::{transfer_checked, Token2022, TransferChecked};
 use anchor_spl::token_interface::{Mint, TokenAccount};
 
-use crate::codec::{self, MsgType};
 use crate::errors::MirrorError;
-use crate::quorum;
+use crate::instructions::apply_forced_transfer::parse_and_verify_forced;
 use crate::state::{
     Asset, Config, Escrow, EscrowStatus, ProcessedMessage, ASSET_SEED, CONFIG_SEED,
     ESCROW_AUTHORITY_SEED, ESCROW_SEED, PROCESSED_SEED,
@@ -95,89 +94,32 @@ pub struct ApplyForcedP7<'info> {
 
 pub fn handler(ctx: Context<ApplyForcedP7>, message_id: [u8; 32], wire: Vec<u8>) -> Result<()> {
     require!(
-        codec::message_id_of_wire(&wire) == message_id,
-        MirrorError::InvalidPacket
-    );
-
-    require!(
         ctx.accounts.escrow.status_enum() == Some(EscrowStatus::Pending),
         MirrorError::EscrowNotPending
     );
 
-    let packet = codec::decode(&wire).map_err(|_| MirrorError::InvalidPacket)?;
-    require!(
-        packet.msg_type == MsgType::ForcedTransfer,
-        MirrorError::UnsupportedMsgType
-    );
-    require!(
-        packet.version == codec::PACKET_VERSION,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.dst_chain == ctx.accounts.config.local_chain_id,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.src_chain == ctx.accounts.config.remote_chain_id,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.emitter == ctx.accounts.config.eth_endpoint,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.epoch == ctx.accounts.config.epoch,
-        MirrorError::WrongDomain
-    );
-    require!(packet.payload.len() == 160, MirrorError::InvalidPacket);
+    let parsed = parse_and_verify_forced(
+        &ctx.accounts.config,
+        &ctx.accounts.asset.asset_id,
+        &ctx.accounts.instructions_sysvar.to_account_info(),
+        &message_id,
+        &wire,
+    )?;
 
-    let mut asset_id = [0u8; 32];
-    asset_id.copy_from_slice(&packet.payload[0..32]);
-    let mut from = [0u8; 32];
-    from.copy_from_slice(&packet.payload[32..64]);
-    let mut to = [0u8; 32];
-    to.copy_from_slice(&packet.payload[64..96]);
-    let amount = {
-        let mut buf = [0u8; 32];
-        buf.copy_from_slice(&packet.payload[96..128]);
-        let mut u64buf = [0u8; 8];
-        u64buf.copy_from_slice(&buf[24..32]);
-        u64::from_be_bytes(u64buf)
-    };
-    let mut resolution_hash = [0u8; 32];
-    resolution_hash.copy_from_slice(&packet.payload[128..160]);
-
+    require!(parsed.to != [0u8; 32], MirrorError::ZeroAddress);
     require!(
-        asset_id == ctx.accounts.asset.asset_id,
-        MirrorError::MintMismatch
-    );
-    require!(to != [0u8; 32], MirrorError::ZeroAddress);
-    require!(
-        resolution_hash != [0u8; 32],
-        MirrorError::MissingResolutionHash
-    );
-    require!(
-        ctx.accounts.escrow.seller.to_bytes() == from,
+        ctx.accounts.escrow.seller.to_bytes() == parsed.from,
         MirrorError::EscrowCourtMismatch
     );
     require!(
-        amount == ctx.accounts.escrow.amount,
+        parsed.amount == ctx.accounts.escrow.amount,
         MirrorError::EscrowCourtMismatch
     );
     require_keys_eq!(
         ctx.accounts.destination_title_ata.owner,
-        Pubkey::new_from_array(to),
+        Pubkey::new_from_array(parsed.to),
         MirrorError::Unauthorized
     );
-
-    let digest = codec::signing_digest(&packet).map_err(|_| MirrorError::InvalidPacket)?;
-    quorum::verify_secp256k1_quorum(
-        &ctx.accounts.instructions_sysvar.to_account_info(),
-        &digest,
-        &ctx.accounts.config.relayers,
-        ctx.accounts.config.relayer_count as usize,
-        ctx.accounts.config.threshold,
-    )?;
 
     ctx.accounts.processed.bump = ctx.bumps.processed;
     ctx.accounts.processed.message_id = message_id;

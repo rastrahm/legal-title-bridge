@@ -1,5 +1,6 @@
 /**
  * Build epoch-1 TRANSFER_REQUEST wire + digest for X4 (run from repo with NODE_PATH=relayer/node_modules).
+ * Canonical copy — `scripts/testnet/build-x4-wire.mjs` is a thin wrapper.
  */
 import { createRequire } from "module";
 import { getBytes, hexlify, keccak256, toUtf8Bytes } from "ethers";

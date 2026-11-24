@@ -12,11 +12,14 @@ use crate::state::MAX_RELAYERS;
 
 /// ⌈2n/3⌉
 pub fn min_threshold(n: usize) -> u8 {
-    ((2 * n + 2) / 3) as u8
+    (2 * n).div_ceil(3) as u8
 }
 
 pub fn require_threshold(n: usize, threshold: u8) -> Result<()> {
-    require!(n >= 3 && n <= MAX_RELAYERS, MirrorError::ThresholdTooLow);
+    require!(
+        (3..=MAX_RELAYERS).contains(&n),
+        MirrorError::ThresholdTooLow
+    );
     require!(
         threshold as usize >= min_threshold(n) as usize && (threshold as usize) <= n,
         MirrorError::ThresholdTooLow

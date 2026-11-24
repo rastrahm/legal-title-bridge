@@ -5,9 +5,16 @@ import { useMemo, useState } from "react";
 import { CarteraShell } from "@/app/cartera/CarteraShell";
 import { useApp } from "@/components/Providers";
 import {
-  isSolanaPubkey,
-  useDemoPurchasePath,
-} from "@/lib/cartera/purchase";
+  applyDemoBuyReducer,
+  findExistingOffer,
+  isLabBbDeposited,
+  placeOfferReducer,
+} from "@/lib/cartera/demo-store";
+import {
+  filterBuyCatalog,
+  isSolWalletReady,
+} from "@/lib/cartera/helpers";
+import { useDemoPurchasePath } from "@/lib/cartera/purchase";
 import { LAB_PAYMENT_LABEL, type DemoListing } from "@/lib/demo/store";
 import { t } from "@/lib/i18n";
 import { hexTimeSuffix, unixSeconds } from "@/lib/time";
@@ -20,150 +27,15 @@ export default function CarteraComprarPage() {
   const { locale, demo, canSignSol, setDemo, solAddress } = useApp();
   const dict = t(locale);
   const [notice, setNotice] = useState<string | null>(null);
-  const walletReady = canSignSol && Boolean(solAddress);
+  const walletReady = isSolWalletReady(canSignSol, solAddress);
   const demoPath = useDemoPurchasePath();
 
-  const catalog = useMemo(() => {
-    const open = demo.listings.filter((l) => l.status === "Open");
-    // Lab fixtures only in E2E; real catalog needs real seller pubkeys.
-    if (demoPath) return open;
-    return open.filter((l) => !l.labExample && isSolanaPubkey(l.seller));
-  }, [demo.listings, demoPath]);
+  const catalog = useMemo(
+    () => filterBuyCatalog(demo.listings, demoPath),
+    [demo.listings, demoPath],
+  );
 
-  function applyDemoBuy(listing: DemoListing) {
-    const now = unixSeconds();
-    setDemo((prev) => {
-      const alreadyDone = prev.requests.find(
-        (r) =>
-          r.listingId === listing.listingId && r.status === "DepositDemo",
-      );
-      if (alreadyDone) return prev;
-
-      const pending = prev.requests.find(
-        (r) =>
-          r.status === "Pending" &&
-          (r.listingId === listing.listingId ||
-            (listing.listingId === "listing-lab-rioja" &&
-              r.transferId === "0xbb")),
-      );
-
-      if (pending) {
-        return {
-          ...prev,
-          requests: prev.requests.map((x) =>
-            x.transferId === pending.transferId
-              ? {
-                  ...x,
-                  buyer: solAddress ?? x.buyer,
-                  status: "DepositDemo" as const,
-                }
-              : x,
-          ),
-          solBalances: {
-            ...prev.solBalances,
-            [solAddress ?? "buyer"]: String(
-              Number(prev.solBalances[solAddress ?? ""] ?? 0) +
-                Number(pending.amount),
-            ),
-          },
-          messages: [
-            {
-              messageId: `deposit:${pending.transferId}`,
-              status: "seen" as const,
-              direction: "sol_to_eth" as const,
-            },
-            ...prev.messages,
-          ],
-        };
-      }
-
-      const transferId = `0xoffer:${hexTimeSuffix()}`;
-      return {
-        ...prev,
-        listings: prev.listings.map((l) =>
-          l.listingId === listing.listingId
-            ? { ...l, status: "Closed" as const }
-            : l,
-        ),
-        requests: [
-          {
-            transferId,
-            assetId: listing.assetId,
-            seller: listing.seller,
-            buyer: solAddress ?? "buyer",
-            amount: listing.titleAmount,
-            deadline: now + 3600,
-            hardDeadline: now + 3600 + 7 * 86400,
-            status: "Pending" as const,
-            listingId: listing.listingId,
-            priceLabel: listing.priceLabel,
-          },
-          ...prev.requests,
-        ],
-        messages: [
-          {
-            messageId: `offer:${transferId}`,
-            status: "seen" as const,
-            direction: "sol_to_eth" as const,
-          },
-          ...prev.messages,
-        ],
-      };
-    });
-    setNotice(dict.buyStarted);
-  }
-
-  function placeOffer(listing: DemoListing) {
-    const now = unixSeconds();
-    const existing = demo.requests.find(
-      (r) =>
-        r.listingId === listing.listingId &&
-        (r.status === "Pending" || r.status === "DepositDemo"),
-    );
-    if (existing) {
-      setNotice(
-        existing.status === "DepositDemo"
-          ? dict.buyAlreadyDone
-          : dict.offerAlreadyPending,
-      );
-      return;
-    }
-    const transferId = `0xoffer:${hexTimeSuffix()}`;
-    setDemo((prev) => ({
-      ...prev,
-      listings: prev.listings.map((l) =>
-        l.listingId === listing.listingId
-          ? { ...l, status: "Closed" as const }
-          : l,
-      ),
-      requests: [
-        {
-          transferId,
-          assetId: listing.assetId,
-          seller: listing.seller,
-          buyer: solAddress ?? "buyer",
-          amount: listing.titleAmount,
-          deadline: now + 3600,
-          hardDeadline: now + 3600 + 7 * 86400,
-          status: "Pending" as const,
-          listingId: listing.listingId,
-          priceLabel: listing.priceLabel,
-        },
-        ...prev.requests,
-      ],
-      messages: [
-        {
-          messageId: `offer:${transferId}`,
-          status: "seen" as const,
-          direction: "sol_to_eth" as const,
-        },
-        ...prev.messages,
-      ],
-    }));
-    setNotice(dict.buyStarted);
-  }
-
-  async function buyListing(listing: DemoListing) {
+  function buyListing(listing: DemoListing) {
     if (!walletReady || !solAddress) {
       setNotice(dict.connectWalletFirst);
       return;
@@ -174,26 +46,33 @@ export default function CarteraComprarPage() {
       return;
     }
 
-    const alreadyDone = demo.requests.some(
-      (r) =>
-        r.listingId === listing.listingId && r.status === "DepositDemo",
-    );
-    if (alreadyDone) {
+    const existing = findExistingOffer(demo.requests, listing.listingId);
+    if (existing?.status === "DepositDemo") {
       setNotice(dict.buyAlreadyDone);
       return;
     }
-
-    // E2E local: silent deposit. Testnet: place Pending offer; seller Accept → Phantom DvP.
-    if (demoPath) {
-      applyDemoBuy(listing);
+    if (!demoPath && existing?.status === "Pending") {
+      setNotice(dict.offerAlreadyPending);
       return;
     }
-    placeOffer(listing);
+
+    const now = unixSeconds();
+    const transferId = `0xoffer:${hexTimeSuffix()}`;
+    const buyer = solAddress;
+
+    if (demoPath) {
+      setDemo((prev) =>
+        applyDemoBuyReducer(prev, { listing, buyer, now, transferId }),
+      );
+    } else {
+      setDemo((prev) =>
+        placeOfferReducer(prev, { listing, buyer, now, transferId }),
+      );
+    }
+    setNotice(dict.buyStarted);
   }
 
-  const alreadyBoughtLab = demo.requests.some(
-    (r) => r.transferId === "0xbb" && r.status === "DepositDemo",
-  );
+  const alreadyBoughtLab = isLabBbDeposited(demo.requests);
 
   return (
     <CarteraShell
@@ -260,9 +139,7 @@ export default function CarteraComprarPage() {
                     className="rounded-full bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40"
                     disabled={!walletReady || isLabBb}
                     data-testid="btn-buy"
-                    onClick={() => {
-                      void buyListing(listing);
-                    }}
+                    onClick={() => buyListing(listing)}
                   >
                     {dict.btnBuy}
                   </button>

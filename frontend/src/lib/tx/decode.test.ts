@@ -4,6 +4,8 @@ import {
   decodeTransactionRequest,
   encodeIssueCall,
   encodePauseCall,
+  LAB_E2E_TO_HOLDER,
+  prepareLabIssueTx,
 } from "./decode";
 
 describe("decodeTransactionRequest (W4)", () => {
@@ -21,6 +23,20 @@ describe("decodeTransactionRequest (W4)", () => {
     expect(view.functionName).toBe("issue");
     expect(view.args.amount).toBe("5");
     expect(view.args.toHolder.toLowerCase()).toBe(holder.toLowerCase());
+  });
+
+  it("prepareLabIssueTx ignores form spoofing (fixed amount + holder)", () => {
+    const assetId =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    const tx = prepareLabIssueTx(
+      "0x0000000000000000000000000000000000000001",
+      assetId,
+    );
+    expect(tx).not.toBeNull();
+    const view = decodeTransactionRequest(tx!);
+    expect(view.functionName).toBe("issue");
+    expect(view.args.amount).toBe("5");
+    expect(view.args.toHolder.toLowerCase()).toBe(LAB_E2E_TO_HOLDER.toLowerCase());
   });
 
   it("labels empty data as nativeTransfer and pause by name", () => {

@@ -5,10 +5,12 @@ import { useState, useSyncExternalStore } from "react";
 import { CarteraShell } from "@/app/cartera/CarteraShell";
 import { useApp } from "@/components/Providers";
 import {
-  decodeDvPHandoff,
   DVP_HANDOFF_SOFT_TTL_MS,
+  snapshotDvPHandoffFromHash,
   type DvPHandoffPayload,
 } from "@/lib/cartera/dvp-handoff";
+import { markOfferAfterDvPReducer } from "@/lib/cartera/demo-store";
+import { asErrorMessage, isSolWalletReady } from "@/lib/cartera/helpers";
 import { buyerCompleteDvPHandoff } from "@/lib/cartera/purchase";
 import { t } from "@/lib/i18n";
 
@@ -20,7 +22,7 @@ function subscribeHash(onStoreChange: () => void): () => void {
 
 function readHashPayload(): DvPHandoffPayload | null {
   if (typeof window === "undefined") return null;
-  return decodeDvPHandoff(window.location.hash.replace(/^#/, ""));
+  return snapshotDvPHandoffFromHash(window.location.hash.replace(/^#/, ""));
 }
 
 /**
@@ -36,7 +38,7 @@ export default function CarteraFirmarPage() {
     readHashPayload,
     () => null,
   );
-  const walletReady = canSignSol && Boolean(solAddress);
+  const walletReady = isSolWalletReady(canSignSol, solAddress);
 
   const ttlHint = payload
     ? Math.ceil(DVP_HANDOFF_SOFT_TTL_MS / 1000)
@@ -62,27 +64,15 @@ export default function CarteraFirmarPage() {
       const result = await buyerCompleteDvPHandoff(payload, (msg) =>
         setNotice(msg),
       );
-      if (payload.offerTransferId) {
-        setDemo((prev) => ({
-          ...prev,
-          requests: prev.requests.map((x) =>
-            x.transferId === payload.offerTransferId
-              ? { ...x, status: "DepositDemo" as const }
-              : x,
-          ),
-          messages: [
-            {
-              messageId: `dvp:${result.signature}`,
-              status: "seen" as const,
-              direction: "sol_to_eth" as const,
-            },
-            ...prev.messages,
-          ],
-        }));
+      const offerId = payload.offerTransferId;
+      if (offerId) {
+        setDemo((prev) =>
+          markOfferAfterDvPReducer(prev, offerId, result.signature),
+        );
       }
       setNotice(`${dict.dvpFirmarOk}: ${result.signature.slice(0, 20)}…`);
     } catch (e: unknown) {
-      setNotice(e instanceof Error ? e.message : String(e));
+      setNotice(asErrorMessage(e));
     } finally {
       setBusy(false);
     }

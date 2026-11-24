@@ -2,6 +2,8 @@
 import { PublicKey } from "@solana/web3.js";
 import { describe, expect, it } from "vitest";
 
+import { addresses } from "@/vendor/shared";
+
 import {
   assetPda,
   configPda,
@@ -9,7 +11,7 @@ import {
   escrowPda,
 } from "./pdas";
 
-const PROGRAM = new PublicKey("2DvHn2Hxj3HFsbn2iDuBGL4TQAzTomcVCsDTPoZ2h1JL");
+const PROGRAM = new PublicKey(addresses["sepolia-devnet"].solana);
 const EXPECTED_CONFIG = new PublicKey(
   "A9j9D6XGUC94SLcpGhK8AyCJReyVu6oGKdD1QRdDm4KU",
 );

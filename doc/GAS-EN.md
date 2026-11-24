@@ -29,9 +29,9 @@ forge snapshot
 
 | Path | Test | Gas (snapshot) | Notes |
 |------|------|----------------|-------|
-| `issue` | `testGas_issue` | **161 007** | Registry issue + outbound `ISSUE` (`emitOutbound` + flow consume) |
+| `issue` | `testGas_issue` | **160 929** | Registry issue + outbound `ISSUE` (−78 vs pre-REF-2: `_emitOutboundIfWired`) |
 | `submitInbound` | `testGas_submitInbound` | **246 836** | Quorum verify + `MessageIdSet` mark + `TRANSFER_REQUEST` dispatch |
-| `decide` | `testGas_decide` | **161 064** | Operator approve + ledger + outbound `TRANSFER_DECISION` |
+| `decide` | `testGas_decide` | **161 003** | Operator approve + ledger + `TRANSFER_DECISION` (−61 vs pre-REF-2) |
 | `rotate` | `testGas_rotate` | **56 433** | `executeRotateRelayers` after timelock (propose/warp in `setUp`) |
 | flow limit | `testGas_flowLimitConsume` | **41 080** | Outbound `ISSUE` consuming the 24h window limiter |
 

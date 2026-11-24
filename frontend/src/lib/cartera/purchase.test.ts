@@ -18,6 +18,7 @@ vi.mock("@/lib/config/network", async () => {
 import { getActiveNetwork } from "@/lib/config/network";
 import { isE2eLab } from "@/lib/wallets/env";
 import {
+  canOnchainAcceptOffer,
   closeDvPWithPhantom,
   isSolanaPubkey,
   sellerPrepareDvPHandoff,
@@ -56,6 +57,30 @@ describe("useDemoPurchasePath", () => {
     vi.mocked(getActiveNetwork).mockReturnValue(LOCAL_NETWORK);
     vi.mocked(isE2eLab).mockReturnValue(true);
     expect(useDemoPurchasePath()).toBe(true);
+  });
+});
+
+describe("canOnchainAcceptOffer", () => {
+  it("requires real pubkeys and non-demo path", () => {
+    expect(
+      canOnchainAcceptOffer(false, { seller: SELLER, buyer: BUYER }),
+    ).toBe(true);
+    expect(
+      canOnchainAcceptOffer(true, { seller: SELLER, buyer: BUYER }),
+    ).toBe(false);
+    expect(
+      canOnchainAcceptOffer(false, {
+        seller: SELLER,
+        buyer: BUYER,
+        labExample: true,
+      }),
+    ).toBe(false);
+    expect(
+      canOnchainAcceptOffer(false, {
+        seller: "seller-lab",
+        buyer: BUYER,
+      }),
+    ).toBe(false);
   });
 });
 

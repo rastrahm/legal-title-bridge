@@ -55,9 +55,11 @@ export const dictionaries = {
     investorInstitutional: "Institucional",
     selectPlaceholder: "Elegir…",
     verifierHintIdentity:
-      "Usá la cuenta verifier en MetaMask. El país y la fecha se traducen solos al formato de la cadena.",
+      "Usá la cuenta verifier en MetaMask. El holder debe ser el bytes32 del comprador (desde /comprador), no el de laboratorio.",
     verifierHintAttest:
       "Certificación: con issuer firmá ambos tipos; luego con operator repetí ambos tipos (quorum).",
+    verifierLabHolderWarn:
+      "Atención: estás por firmar el holder de laboratorio (0xbbb…). Eso NO verifica al comprador con Phantom. Pegá el holder de /comprador o abrí el enlace «Pedir verificación».",
     incompleteFields: "Completa todos los campos antes de firmar.",
     btnSignIdentity: "Firmar identidad",
     btnSignAttestation: "Firmar certificación",
@@ -165,6 +167,8 @@ export const dictionaries = {
     buyerRefreshStatus: "Actualizar estado",
     buyerStatusVerified: "Verificado en IdentityRegistry",
     buyerStatusUnverified: "Aún no verificado — pedí KYC al verificador",
+    buyerStatusUnverifiedHint:
+      "IdentityRegistry no tiene KYC vigente para ESTE holder. Si firmaste el 0xbbb… de laboratorio, no cuenta: volvé a /verificador con el enlace de abajo (prellena tu bytes32) y firmá de nuevo.",
     buyerStatusUnknown: "No se pudo leer la cadena (RPC). Reintentá más tarde.",
     buyerEnterOk: "Listo: ya estás identificado como comprador en esta sesión",
     buyerConfirmEnter: "Confirmar ingreso",
@@ -222,9 +226,11 @@ export const dictionaries = {
     investorInstitutional: "Institutional",
     selectPlaceholder: "Choose…",
     verifierHintIdentity:
-      "Use the verifier account in MetaMask. Country and date are converted to on-chain encoding for you.",
+      "Use the MetaMask verifier account. Holder must be the buyer bytes32 from /comprador — not the lab default.",
     verifierHintAttest:
       "Certification: with issuer sign both types; then with operator repeat both (quorum).",
+    verifierLabHolderWarn:
+      "Warning: you are about to sign the lab holder (0xbbb…). That does NOT verify a Phantom buyer. Paste the holder from /comprador or open the «Request verification» link.",
     incompleteFields: "Complete all fields before signing.",
     btnSignIdentity: "Sign identity",
     btnSignAttestation: "Sign attestation",
@@ -332,6 +338,8 @@ export const dictionaries = {
     buyerRefreshStatus: "Refresh status",
     buyerStatusVerified: "Verified in IdentityRegistry",
     buyerStatusUnverified: "Not verified yet — ask the verifier for KYC",
+    buyerStatusUnverifiedHint:
+      "IdentityRegistry has no live KYC for THIS holder. If you signed the lab 0xbbb… holder, it does not count: reopen /verificador via the link below (prefills your bytes32) and sign again.",
     buyerStatusUnknown: "Could not read the chain (RPC). Retry later.",
     buyerEnterOk: "Done: you are identified as a buyer in this session",
     buyerConfirmEnter: "Confirm entry",

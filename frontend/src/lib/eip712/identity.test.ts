@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 
+import { addresses } from "@/vendor/shared";
+
 import { buildAssertionTypedData } from "./identity";
 
 describe("buildAssertionTypedData", () => {
   it("binds LegalTitleBridge domain and Assertion fields", () => {
     const td = buildAssertionTypedData(
-      "0x2525Db5706d4547B93cF2b608c9809bE2a887EE9",
+      addresses["sepolia-devnet"].identityRegistry,
       11155111,
       {
         holder:

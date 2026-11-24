@@ -9,15 +9,23 @@ import {
   type DvPHandoffPayload,
 } from "@/lib/cartera/dvp-handoff";
 import {
-  isSolanaPubkey,
+  cancelOfferReducer,
+  markOfferAcceptedReducer,
+  publishListingReducer,
+} from "@/lib/cartera/demo-store";
+import {
+  asErrorMessage,
+  filterOffersReceived,
+  filterSellerListings,
+  isSolWalletReady,
+  offerStatusLabel,
+} from "@/lib/cartera/helpers";
+import {
+  canOnchainAcceptOffer,
   sellerPrepareDvPHandoff,
   useDemoPurchasePath,
 } from "@/lib/cartera/purchase";
-import {
-  DEMO_ASSET_ID,
-  LAB_PAYMENT_LABEL,
-  type DemoRequest,
-} from "@/lib/demo/store";
+import { LAB_PAYMENT_LABEL, type DemoRequest } from "@/lib/demo/store";
 import { formatCountdown, snapshotDeadlines } from "@/lib/deadlines";
 import { t } from "@/lib/i18n";
 import { hexTimeSuffix } from "@/lib/time";
@@ -33,28 +41,18 @@ export default function CarteraVenderPage() {
   const [amount, setAmount] = useState("7");
   const [busy, setBusy] = useState(false);
   const [handoffHref, setHandoffHref] = useState<string | null>(null);
-  const walletReady = canSignSol && Boolean(solAddress);
+  const walletReady = isSolWalletReady(canSignSol, solAddress);
   const demoPath = useDemoPurchasePath();
 
   const myListings = useMemo(
-    () =>
-      demo.listings.filter(
-        (l) =>
-          !l.labExample ||
-          l.seller === solAddress ||
-          l.seller === "seller-sol",
-      ),
+    () => filterSellerListings(demo.listings, solAddress),
     [demo.listings, solAddress],
   );
 
-  const offersReceived = useMemo(() => {
-    return demo.requests.filter((r) => {
-      if (r.status === "Rejected" && r.labExample) return true; // show cert-expired example
-      if (r.status !== "Pending" && r.status !== "DepositDemo") return false;
-      if (r.labExample) return true;
-      return Boolean(solAddress) && r.seller === solAddress;
-    });
-  }, [demo.requests, solAddress]);
+  const offersReceived = useMemo(
+    () => filterOffersReceived(demo.requests, solAddress),
+    [demo.requests, solAddress],
+  );
 
   function publishListing(price: string) {
     if (!walletReady) {
@@ -62,32 +60,23 @@ export default function CarteraVenderPage() {
       return;
     }
     const listingId = `listing:${hexTimeSuffix()}`;
-    const asset = demo.assets[DEMO_ASSET_ID];
-    setDemo((prev) => ({
-      ...prev,
-      listings: [
-        {
-          listingId,
-          assetId: DEMO_ASSET_ID,
-          assetName: asset?.name ?? "Lote",
-          seller: solAddress ?? "seller-sol",
-          titleAmount: price,
-          priceLabel: `${price} ${LAB_PAYMENT_LABEL}`,
-          paymentAmount: price,
-          status: "Open",
-        },
-        ...prev.listings,
-      ],
-    }));
+    setDemo((prev) =>
+      publishListingReducer(prev, {
+        listingId,
+        seller: solAddress ?? "seller-sol",
+        titleAmount: price,
+      }),
+    );
     setNotice(dict.saleCreated);
   }
 
   function statusLabel(r: DemoRequest): string {
-    if (r.rejectReason === "CERTIFICATION_EXPIRED") return dict.rejectCertExpired;
-    if (r.rejectReason === "NOT_VERIFIED") return dict.rejectNotVerified;
-    if (r.status === "DepositDemo") return dict.buyStatusDeposit;
-    if (r.rejectReason) return `${r.status} — ${r.rejectReason}`;
-    return r.status === "Pending" ? dict.offerPending : r.status;
+    return offerStatusLabel(r, {
+      rejectCertExpired: dict.rejectCertExpired,
+      rejectNotVerified: dict.rejectNotVerified,
+      buyStatusDeposit: dict.buyStatusDeposit,
+      offerPending: dict.offerPending,
+    });
   }
 
   async function acceptOffer(r: DemoRequest) {
@@ -100,35 +89,10 @@ export default function CarteraVenderPage() {
       return;
     }
 
-    const markAccepted = (messageId: string, noticeMsg?: string) => {
-      setDemo((prev) => ({
-        ...prev,
-        requests: prev.requests.map((x) =>
-          x.transferId === r.transferId
-            ? { ...x, status: "DepositDemo" as const }
-            : x,
-        ),
-        messages: [
-          {
-            messageId,
-            status: "seen" as const,
-            direction: "sol_to_eth" as const,
-          },
-          ...prev.messages,
-        ],
-      }));
-      setNotice(noticeMsg ?? dict.offerAccepted);
-    };
-
     // E2E / lab fixtures: silent UI. Real seller+buyer on testnet → Phantom DvP.
-    const canOnchain =
-      !demoPath &&
-      !r.labExample &&
-      isSolanaPubkey(r.seller) &&
-      isSolanaPubkey(r.buyer);
-
-    if (!canOnchain) {
-      markAccepted(`accept:${r.transferId}`);
+    if (!canOnchainAcceptOffer(demoPath, r)) {
+      setDemo((prev) => markOfferAcceptedReducer(prev, r.transferId));
+      setNotice(dict.offerAccepted);
       return;
     }
 
@@ -154,7 +118,7 @@ export default function CarteraVenderPage() {
       setHandoffHref(href);
       setNotice(dict.dvpHandoffReady);
     } catch (e: unknown) {
-      setNotice(e instanceof Error ? e.message : String(e));
+      setNotice(asErrorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -171,13 +135,7 @@ export default function CarteraVenderPage() {
   }
 
   function cancelOffer(r: DemoRequest) {
-    setDemo((prev) => ({
-      ...prev,
-      requests: prev.requests.filter((x) => x.transferId !== r.transferId),
-      listings: prev.listings.map((l) =>
-        l.listingId === r.listingId ? { ...l, status: "Open" as const } : l,
-      ),
-    }));
+    setDemo((prev) => cancelOfferReducer(prev, r.transferId, r.listingId));
     setNotice(dict.saleCancelled);
   }
 

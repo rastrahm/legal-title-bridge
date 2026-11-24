@@ -1,3 +1,4 @@
+import { concat, keccak256 } from "ethers";
 import { describe, expect, it } from "vitest";
 
 import { computeEntryHash, verifyLedgerChain } from "./ledger";
@@ -25,5 +26,18 @@ describe("verifyLedgerChain", () => {
     ]);
     expect(r.ok).toBe(false);
     expect(r.breakAt).toBe(1);
+  });
+
+  it("matches Solidity LedgerChain when data is bytes32 dataHash", () => {
+    const dataHash =
+      "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+    const expected = keccak256(
+      concat([ZERO as `0x${string}`, dataHash as `0x${string}`]),
+    );
+    expect(computeEntryHash(ZERO, dataHash)).toBe(expected);
+    const r = verifyLedgerChain([
+      { entryHash: expected, prevHash: ZERO, data: dataHash },
+    ]);
+    expect(r.ok).toBe(true);
   });
 });

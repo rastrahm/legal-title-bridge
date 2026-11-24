@@ -24,9 +24,11 @@ vi.mock("ethers", async (importOriginal) => {
   };
 });
 
+import { addresses } from "@/vendor/shared";
+
 import { createAssetAndIssueOnChain } from "./registry";
 
-const TITLE = "0x27fE06348f6937f0f980790EC6963633f2D22F2a";
+const TITLE = addresses["sepolia-devnet"].titleRegistry;
 const ASSET =
   "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab";
 const HOLDER =

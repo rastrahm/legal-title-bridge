@@ -29,9 +29,9 @@ forge snapshot
 
 | Path | Test | Gas (snapshot) | Notas |
 |------|------|----------------|-------|
-| `issue` | `testGas_issue` | **161 007** | Emisión en registro + `ISSUE` outbound (`emitOutbound` + consumo de flujo) |
+| `issue` | `testGas_issue` | **160 929** | Emisión + `ISSUE` outbound (−78 vs pre-REF-2: `_emitOutboundIfWired`) |
 | `submitInbound` | `testGas_submitInbound` | **246 836** | Quórum + marca `MessageIdSet` + dispatch `TRANSFER_REQUEST` |
-| `decide` | `testGas_decide` | **161 064** | Aprobación operador + asiento + `TRANSFER_DECISION` outbound |
+| `decide` | `testGas_decide` | **161 003** | Aprobación + asiento + `TRANSFER_DECISION` (−61 vs pre-REF-2) |
 | `rotate` | `testGas_rotate` | **56 433** | `executeRotateRelayers` tras timelock (propose/warp en `setUp`) |
 | flow limit | `testGas_flowLimitConsume` | **41 080** | `ISSUE` outbound consumiendo el limitador de ventana 24 h |
 

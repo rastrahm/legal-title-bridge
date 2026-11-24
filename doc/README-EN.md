@@ -24,6 +24,7 @@ Bilingual index. Every document has an `*-ES.md` twin.
 | [SWC-AUDIT-EN.md](./SWC-AUDIT-EN.md) / [ES](./SWC-AUDIT-ES.md) | Static C4 |
 | [GAS-EN.md](./GAS-EN.md) / [ES](./GAS-ES.md) | Hot paths + snapshot |
 | [DEPLOY-TESTNET-EN.md](./DEPLOY-TESTNET-EN.md) / [ES](./DEPLOY-TESTNET-ES.md) | Sepolia + Devnet evidence |
+| [REFACTOR-EN.md](./REFACTOR-EN.md) / [ES](./REFACTOR-ES.md) | Phased refactor REF-0…6 |
 
 Screenshots: `front-screenshots/`, `qa-screenshots/`. Portfolio: [`../portfolio/`](../portfolio/).
 

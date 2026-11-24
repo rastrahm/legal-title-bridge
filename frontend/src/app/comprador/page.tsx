@@ -8,7 +8,7 @@ import { useApp } from "@/components/Providers";
 import { useConnectWallets } from "@/hooks/useConnectWallets";
 import { resolveAddresses } from "@/lib/addresses";
 import {
-  readIsVerified,
+  readVerificationDetail,
   type VerificationStatus,
 } from "@/lib/contracts/identity-read";
 import { holderIdFromSolanaAddress } from "@/lib/holder";
@@ -47,8 +47,11 @@ export default function CompradorPage() {
     }
     setStatusBusy(true);
     try {
-      const next = await readIsVerified(addresses.identityRegistry, holder);
-      setStatus(next);
+      const detail = await readVerificationDetail(
+        addresses.identityRegistry,
+        holder,
+      );
+      setStatus(detail.status);
     } finally {
       setStatusBusy(false);
     }
@@ -58,9 +61,9 @@ export default function CompradorPage() {
   useEffect(() => {
     if (!holder) return;
     let cancelled = false;
-    void readIsVerified(addresses.identityRegistry, holder).then(
-      (next) => {
-        if (!cancelled) setStatus(next);
+    void readVerificationDetail(addresses.identityRegistry, holder).then(
+      (detail) => {
+        if (!cancelled) setStatus(detail.status);
       },
       () => {
         if (!cancelled) setStatus("unknown");
@@ -172,6 +175,14 @@ export default function CompradorPage() {
         >
           {statusLabel}
         </p>
+        {status === "unverified" && holder ? (
+          <p
+            className="max-w-2xl text-sm text-amber-100/90"
+            data-testid="buyer-verify-hint"
+          >
+            {dict.buyerStatusUnverifiedHint}
+          </p>
+        ) : null}
         <button
           type="button"
           className="rounded-full border border-slate-600 px-3 py-1 text-sm disabled:opacity-40"

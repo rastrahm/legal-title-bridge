@@ -66,6 +66,34 @@ export function encodeIssueCall(
 }
 
 /**
+ * Fixed bytes32 holder for Playwright `e2ePrepareIssue` (W4 confirm panel).
+ * Must not track form fields — confirmation shows decoded calldata.
+ */
+export const LAB_E2E_TO_HOLDER =
+  "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+/**
+ * Build the lab issue TransactionRequest for `?e2ePrepareIssue=1`.
+ * Amount/toHolder are fixed so form edits cannot spoof the confirm panel.
+ */
+export function prepareLabIssueTx(
+  titleRegistry: string,
+  assetId: string,
+  amount: bigint = 5n,
+  toHolder: string = LAB_E2E_TO_HOLDER,
+): TransactionRequest | null {
+  try {
+    return {
+      to: titleRegistry,
+      data: encodeIssueCall(assetId, amount, toHolder),
+      value: BigInt(0),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Encode TitleRegistry.createAsset(assetId).
  */
 export function encodeCreateAssetCall(assetId: string): string {

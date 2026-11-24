@@ -30,6 +30,8 @@ import {
   encodeDecideCall,
   encodeIssueCall,
   encodePauseCall,
+  LAB_E2E_TO_HOLDER,
+  prepareLabIssueTx,
 } from "@/lib/tx/decode";
 import { simulateTransaction } from "@/lib/tx/simulate";
 import { isE2eLab } from "@/lib/wallets/env";
@@ -67,9 +69,7 @@ export function OperadorClient({
   const canSignEth = guard.canSignEth && Boolean(ethAddress);
 
   const [formAmount, setFormAmount] = useState("1000");
-  const [formTo, setFormTo] = useState(
-    "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-  );
+  const [formTo, setFormTo] = useState(LAB_E2E_TO_HOLDER);
   const [formAssetId, setFormAssetId] = useState(
     "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   );
@@ -94,19 +94,7 @@ export function OperadorClient({
 
   const labIssueTx = useMemo((): TransactionRequest | null => {
     if (!e2ePrepareIssue) return null;
-    try {
-      return {
-        to: addresses.titleRegistry,
-        data: encodeIssueCall(
-          formAssetId,
-          BigInt(5),
-          "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        ),
-        value: BigInt(0),
-      };
-    } catch {
-      return null;
-    }
+    return prepareLabIssueTx(addresses.titleRegistry, formAssetId);
   }, [e2ePrepareIssue, addresses.titleRegistry, formAssetId]);
 
   const activeTx = pendingTx ?? labIssueTx;
