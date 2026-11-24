@@ -62,12 +62,8 @@ pub struct ApplyIssue<'info> {
 }
 
 pub fn handler(ctx: Context<ApplyIssue>, message_id: [u8; 32], wire: Vec<u8>) -> Result<()> {
-    let packet = inbound::decode_typed_inbound(
-        &wire,
-        &message_id,
-        &ctx.accounts.config,
-        MsgType::Issue,
-    )?;
+    let packet =
+        inbound::decode_typed_inbound(&wire, &message_id, &ctx.accounts.config, MsgType::Issue)?;
     let parsed = inbound::parse_issue_payload(&packet.payload)?;
     require!(
         parsed.asset_id == ctx.accounts.asset.asset_id,

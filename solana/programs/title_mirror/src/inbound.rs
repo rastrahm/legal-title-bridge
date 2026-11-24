@@ -128,10 +128,7 @@ pub fn decode_typed_inbound(
 ) -> Result<Packet> {
     require_message_id(wire, message_id)?;
     let packet = codec::decode(wire).map_err(|_| MirrorError::InvalidPacket)?;
-    require!(
-        packet.msg_type == expected,
-        MirrorError::UnsupportedMsgType
-    );
+    require!(packet.msg_type == expected, MirrorError::UnsupportedMsgType);
     require_eth_inbound_domain(&packet, config)?;
     Ok(packet)
 }

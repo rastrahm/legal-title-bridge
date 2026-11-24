@@ -16,7 +16,10 @@ pub fn min_threshold(n: usize) -> u8 {
 }
 
 pub fn require_threshold(n: usize, threshold: u8) -> Result<()> {
-    require!((3..=MAX_RELAYERS).contains(&n), MirrorError::ThresholdTooLow);
+    require!(
+        (3..=MAX_RELAYERS).contains(&n),
+        MirrorError::ThresholdTooLow
+    );
     require!(
         threshold as usize >= min_threshold(n) as usize && (threshold as usize) <= n,
         MirrorError::ThresholdTooLow

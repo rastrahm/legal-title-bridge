@@ -148,8 +148,7 @@ pub(crate) fn parse_and_verify_forced<'info>(
     message_id: &[u8; 32],
     wire: &[u8],
 ) -> Result<ForcedPayload> {
-    let packet =
-        inbound::decode_typed_inbound(wire, message_id, config, MsgType::ForcedTransfer)?;
+    let packet = inbound::decode_typed_inbound(wire, message_id, config, MsgType::ForcedTransfer)?;
     let parsed = inbound::parse_forced_payload(&packet.payload)?;
     require!(parsed.asset_id == *asset_id, MirrorError::MintMismatch);
     require!(parsed.from != [0u8; 32], MirrorError::ZeroAddress);
