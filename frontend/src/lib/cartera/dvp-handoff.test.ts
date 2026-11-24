@@ -4,6 +4,8 @@ import {
   buildFirmarHref,
   decodeDvPHandoff,
   encodeDvPHandoff,
+  resetDvPHandoffSnapshotCache,
+  snapshotDvPHandoffFromHash,
   type DvPHandoffPayload,
 } from "./dvp-handoff";
 
@@ -30,6 +32,17 @@ describe("dvp-handoff", () => {
   it("rejects garbage", () => {
     expect(decodeDvPHandoff("!!!")).toBeNull();
     expect(decodeDvPHandoff("")).toBeNull();
+  });
+
+  it("snapshotDvPHandoffFromHash caches by encoded string", () => {
+    resetDvPHandoffSnapshotCache();
+    const encoded = encodeDvPHandoff(sample);
+    const a = snapshotDvPHandoffFromHash(encoded);
+    const b = snapshotDvPHandoffFromHash(encoded);
+    expect(a).toEqual(sample);
+    expect(a).toBe(b);
+    expect(snapshotDvPHandoffFromHash("")).toBeNull();
+    expect(snapshotDvPHandoffFromHash("")).toBeNull();
   });
 
   it("builds firmar href with hash payload", () => {

@@ -13,7 +13,8 @@ import { isE2eLab } from "@/lib/wallets/env";
 import { canSignAttestation, canSignIdentity } from "@/lib/roles";
 import { t } from "@/lib/i18n";
 
-const DEFAULT_HOLDER =
+/** Lab fixture holder (issue recipient / E2E). Not a Phantom-derived buyer id. */
+const LAB_HOLDER =
   "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 const DEFAULT_ASSET =
   "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -46,8 +47,9 @@ export function VerificadorClient({
   const [holder, setHolder] = useState(() =>
     initialHolder && isHolderBytes32(initialHolder)
       ? initialHolder
-      : DEFAULT_HOLDER,
+      : LAB_HOLDER,
   );
+  const usingLabHolder = holder.toLowerCase() === LAB_HOLDER;
   const [country, setCountry] = useState("724");
   const [investorType, setInvestorType] = useState("1");
   const [expiresDate, setExpiresDate] = useState(() => defaultExpiryDateInput());
@@ -169,6 +171,15 @@ export function VerificadorClient({
             data-testid="id-holder"
           />
         </label>
+        {usingLabHolder ? (
+          <p
+            role="status"
+            className="text-sm text-amber-200"
+            data-testid="lab-holder-warn"
+          >
+            {dict.verifierLabHolderWarn}
+          </p>
+        ) : null}
 
         <label className="text-sm" htmlFor="id-country">
           {dict.fieldCountry}

@@ -194,9 +194,7 @@ export function AssetDetailClient({
 
       <LedgerChainView
         entries={entries}
-        okLabel={
-          chain ? (chain.ledgerOk ? dict.ledgerOk : dict.ledgerBroken) : dict.ledgerOk
-        }
+        okLabel={dict.ledgerOk}
         brokenLabel={dict.ledgerBroken}
       />
     </main>

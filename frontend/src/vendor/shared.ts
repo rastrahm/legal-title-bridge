@@ -9,4 +9,4 @@ export {
   PLACEHOLDER_SOLANA_ADDRESS,
   type NetworkAddresses,
   type NetworkId,
-} from "../../../shared/src/index.ts";
+} from "@legal-title-bridge/shared";

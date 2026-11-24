@@ -218,4 +218,5 @@
 
 1. ~~TESTNET~~ ✅ closed 2026-11-23
 2. ~~SOLV~~ ✅ closed 2026-11-23 · `make check` green · v1 lab complete
-3. Optional: video walkthrough · X7/X15/X28 on-chain · §13 residuals (codec/I1–I9 checklist / mutants)
+3. ~~REF-0…6~~ ✅ closed 2026-11-23 · [REFACTOR-EN.md](./REFACTOR-EN.md) · ABI/IDL/codec preserved · `make check` green
+4. Optional: video walkthrough · X7/X15/X28 on-chain · §13 residuals (codec/I1–I9 checklist / mutants)

@@ -8,6 +8,11 @@ import CompradorPage from "./page";
 
 vi.mock("@/lib/contracts/identity-read", () => ({
   readIsVerified: vi.fn(async () => "unverified" as const),
+  readVerificationDetail: vi.fn(async () => ({
+    status: "unverified" as const,
+    hasAssertion: false,
+    expiry: null,
+  })),
 }));
 
 describe("CompradorPage", () => {

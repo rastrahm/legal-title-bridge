@@ -1,6 +1,6 @@
-HotPathGasTest:testGas_decide() (gas: 161064)
+HotPathGasTest:testGas_decide() (gas: 161003)
 HotPathGasTest:testGas_flowLimitConsume() (gas: 41080)
-HotPathGasTest:testGas_issue() (gas: 161007)
+HotPathGasTest:testGas_issue() (gas: 160929)
 HotPathGasTest:testGas_rotate() (gas: 56433)
 HotPathGasTest:testGas_submitInbound() (gas: 246836)
 X01_X08_BridgeDomainTest:test_X1_swappedDomains_revertWrongDomain() (gas: 38183)

@@ -77,11 +77,12 @@ export function decode(data: Uint8Array): Packet {
   if (data.length < HEADER_SIZE) {
     throw new Error('InvalidPacket: too short');
   }
-  const version = data[0];
+  // Length already ≥ HEADER_SIZE — indices 0 and 57 are in range.
+  const version = data[0]!;
   if (version !== PACKET_VERSION) {
     throw new Error(`UnsupportedVersion(${version})`);
   }
-  const msgTypeRaw = data[57];
+  const msgTypeRaw = data[57]!;
   if (msgTypeRaw > MsgType.FORCED_TRANSFER) {
     throw new Error(`UnsupportedMsgType(${msgTypeRaw})`);
   }

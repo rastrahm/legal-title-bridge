@@ -4,10 +4,10 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_2022::{transfer_checked, Token2022, TransferChecked};
 use anchor_spl::token_interface::{Mint, TokenAccount};
 
-use crate::codec::{self, MsgType};
+use crate::codec::MsgType;
 use crate::dvp;
 use crate::errors::MirrorError;
-use crate::quorum;
+use crate::inbound;
 use crate::state::{
     Config, Escrow, EscrowStatus, ProcessedMessage, CONFIG_SEED, ESCROW_AUTHORITY_SEED,
     ESCROW_SEED, PROCESSED_SEED,
@@ -108,78 +108,41 @@ pub struct ApplyDecision<'info> {
 
 pub fn handler(ctx: Context<ApplyDecision>, message_id: [u8; 32], wire: Vec<u8>) -> Result<()> {
     require!(
-        codec::message_id_of_wire(&wire) == message_id,
-        MirrorError::InvalidPacket
-    );
-
-    require!(
         ctx.accounts.escrow.status_enum() == Some(EscrowStatus::Pending),
         MirrorError::EscrowNotPending
     );
 
-    let packet = codec::decode(&wire).map_err(|_| MirrorError::InvalidPacket)?;
+    let packet = inbound::decode_typed_inbound(
+        &wire,
+        &message_id,
+        &ctx.accounts.config,
+        MsgType::TransferDecision,
+    )?;
+    let parsed = inbound::parse_decision_payload(&packet.payload)?;
     require!(
-        packet.msg_type == MsgType::TransferDecision,
-        MirrorError::UnsupportedMsgType
-    );
-    require!(
-        packet.version == codec::PACKET_VERSION,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.dst_chain == ctx.accounts.config.local_chain_id,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.src_chain == ctx.accounts.config.remote_chain_id,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.emitter == ctx.accounts.config.eth_endpoint,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.epoch == ctx.accounts.config.epoch,
-        MirrorError::WrongDomain
-    );
-    require!(packet.payload.len() == 66, MirrorError::InvalidPacket);
-
-    let mut transfer_id = [0u8; 32];
-    transfer_id.copy_from_slice(&packet.payload[0..32]);
-    require!(
-        transfer_id == ctx.accounts.escrow.transfer_id,
+        parsed.transfer_id == ctx.accounts.escrow.transfer_id,
         MirrorError::InvalidPacket
     );
-
-    let outcome = packet.payload[32];
-    let amount = {
-        let mut buf = [0u8; 32];
-        buf.copy_from_slice(&packet.payload[34..66]);
-        let mut u64buf = [0u8; 8];
-        u64buf.copy_from_slice(&buf[24..32]);
-        u64::from_be_bytes(u64buf)
-    };
     require!(
-        amount == ctx.accounts.escrow.amount,
+        parsed.amount == ctx.accounts.escrow.amount,
         MirrorError::AmountMismatch
     );
     require!(
-        outcome == OUTCOME_APPROVED || outcome == OUTCOME_REJECTED || outcome == OUTCOME_EXPIRED,
+        parsed.outcome == OUTCOME_APPROVED
+            || parsed.outcome == OUTCOME_REJECTED
+            || parsed.outcome == OUTCOME_EXPIRED,
         MirrorError::InvalidPacket
     );
 
-    let digest = codec::signing_digest(&packet).map_err(|_| MirrorError::InvalidPacket)?;
-    quorum::verify_secp256k1_quorum(
+    inbound::verify_quorum(
         &ctx.accounts.instructions_sysvar.to_account_info(),
-        &digest,
-        &ctx.accounts.config.relayers,
-        ctx.accounts.config.relayer_count as usize,
-        ctx.accounts.config.threshold,
+        &packet,
+        &ctx.accounts.config,
     )?;
 
     let now = Clock::get()?.unix_timestamp;
     let hard_deadline = ctx.accounts.escrow.hard_deadline;
-    if outcome == OUTCOME_APPROVED {
+    if parsed.outcome == OUTCOME_APPROVED {
         dvp::require_approved_before_hard_deadline(now, hard_deadline)?;
     }
 
@@ -193,11 +156,12 @@ pub fn handler(ctx: Context<ApplyDecision>, message_id: [u8; 32], wire: Vec<u8>)
     let payment_amount = ctx.accounts.escrow.payment_amount;
     let title_decimals = ctx.accounts.title_mint.decimals;
     let payment_decimals = ctx.accounts.payment_mint.decimals;
+    let transfer_id = parsed.transfer_id;
 
     let auth_seeds: &[&[u8]] = &[ESCROW_AUTHORITY_SEED, title_mint_key.as_ref(), &[auth_bump]];
     let escrow_seeds: &[&[u8]] = &[ESCROW_SEED, transfer_id.as_ref(), &[escrow_bump]];
 
-    if outcome == OUTCOME_APPROVED {
+    if parsed.outcome == OUTCOME_APPROVED {
         transfer_checked(
             CpiContext::new_with_signer(
                 ctx.accounts.title_token_program.to_account_info(),

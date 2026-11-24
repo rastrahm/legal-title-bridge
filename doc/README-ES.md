@@ -24,6 +24,7 @@
 | [SWC-AUDIT-ES.md](./SWC-AUDIT-ES.md) / [EN](./SWC-AUDIT-EN.md) | Estático C4 |
 | [GAS-ES.md](./GAS-ES.md) / [EN](./GAS-EN.md) | Hot paths + snapshot |
 | [DEPLOY-TESTNET-ES.md](./DEPLOY-TESTNET-ES.md) / [EN](./DEPLOY-TESTNET-EN.md) | Evidencia Sepolia + Devnet |
+| [REFACTOR-ES.md](./REFACTOR-ES.md) / [EN](./REFACTOR-EN.md) | Refactor por fases REF-0…6 |
 
 Capturas: `front-screenshots/`, `qa-screenshots/`. Portfolio: [`../portfolio/`](../portfolio/).
 

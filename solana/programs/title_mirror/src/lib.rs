@@ -8,6 +8,7 @@ pub mod codec;
 pub mod dvp;
 pub mod errors;
 pub mod hook;
+pub mod inbound;
 pub mod instructions;
 pub mod quorum;
 pub mod state;

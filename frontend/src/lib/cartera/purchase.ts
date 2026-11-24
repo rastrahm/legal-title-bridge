@@ -49,6 +49,21 @@ export function useDemoPurchasePath(): boolean {
   return isE2eLab();
 }
 
+/**
+ * True when Accept should run sellerPrepareDvPHandoff (not silent demo).
+ */
+export function canOnchainAcceptOffer(
+  demoPath: boolean,
+  offer: { labExample?: boolean; seller: string; buyer: string },
+): boolean {
+  return (
+    !demoPath &&
+    !offer.labExample &&
+    isSolanaPubkey(offer.seller) &&
+    isSolanaPubkey(offer.buyer)
+  );
+}
+
 function assertDvPParties(seller: string, buyer: string): void {
   if (!isSolanaPubkey(seller) || !isSolanaPubkey(buyer)) {
     throw new Error(

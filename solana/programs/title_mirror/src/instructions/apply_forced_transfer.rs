@@ -6,9 +6,9 @@ use anchor_spl::token_2022::{
 };
 use anchor_spl::token_interface::{Mint, TokenAccount};
 
-use crate::codec::{self, MsgType};
+use crate::codec::MsgType;
 use crate::errors::MirrorError;
-use crate::quorum;
+use crate::inbound::{self, ForcedPayload};
 use crate::state::{
     Asset, Config, ProcessedMessage, ASSET_SEED, CONFIG_SEED, PERMANENT_DELEGATE_SEED,
     PROCESSED_SEED,
@@ -74,7 +74,13 @@ pub fn handler(
     message_id: [u8; 32],
     wire: Vec<u8>,
 ) -> Result<()> {
-    let parsed = parse_and_verify_forced(&ctx, &message_id, &wire)?;
+    let parsed = parse_and_verify_forced(
+        &ctx.accounts.config,
+        &ctx.accounts.asset.asset_id,
+        &ctx.accounts.instructions_sysvar.to_account_info(),
+        &message_id,
+        &wire,
+    )?;
     ctx.accounts.processed.bump = ctx.bumps.processed;
     ctx.accounts.processed.message_id = message_id;
 
@@ -134,83 +140,19 @@ pub fn handler(
     Ok(())
 }
 
-pub(crate) struct ForcedParts {
-    pub from: [u8; 32],
-    pub to: [u8; 32],
-    pub amount: u64,
-}
-
-pub(crate) fn parse_and_verify_forced(
-    ctx: &Context<ApplyForcedTransfer>,
+/// Shared FORCED_TRANSFER verify used by court move and P7 paths.
+pub(crate) fn parse_and_verify_forced<'info>(
+    config: &Config,
+    asset_id: &[u8; 32],
+    instructions_sysvar: &AccountInfo<'info>,
     message_id: &[u8; 32],
     wire: &[u8],
-) -> Result<ForcedParts> {
-    require!(
-        codec::message_id_of_wire(wire) == *message_id,
-        MirrorError::InvalidPacket
-    );
-    let packet = codec::decode(wire).map_err(|_| MirrorError::InvalidPacket)?;
-    require!(
-        packet.msg_type == MsgType::ForcedTransfer,
-        MirrorError::UnsupportedMsgType
-    );
-    require!(
-        packet.version == codec::PACKET_VERSION,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.dst_chain == ctx.accounts.config.local_chain_id,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.src_chain == ctx.accounts.config.remote_chain_id,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.emitter == ctx.accounts.config.eth_endpoint,
-        MirrorError::WrongDomain
-    );
-    require!(
-        packet.epoch == ctx.accounts.config.epoch,
-        MirrorError::WrongDomain
-    );
-    require!(packet.payload.len() == 160, MirrorError::InvalidPacket);
-
-    let mut asset_id = [0u8; 32];
-    asset_id.copy_from_slice(&packet.payload[0..32]);
-    let mut from = [0u8; 32];
-    from.copy_from_slice(&packet.payload[32..64]);
-    let mut to = [0u8; 32];
-    to.copy_from_slice(&packet.payload[64..96]);
-    let amount = {
-        let mut buf = [0u8; 32];
-        buf.copy_from_slice(&packet.payload[96..128]);
-        let mut u64buf = [0u8; 8];
-        u64buf.copy_from_slice(&buf[24..32]);
-        u64::from_be_bytes(u64buf)
-    };
-    let mut resolution_hash = [0u8; 32];
-    resolution_hash.copy_from_slice(&packet.payload[128..160]);
-
-    require!(
-        asset_id == ctx.accounts.asset.asset_id,
-        MirrorError::MintMismatch
-    );
-    require!(amount > 0, MirrorError::InvalidPacket);
-    require!(
-        resolution_hash != [0u8; 32],
-        MirrorError::MissingResolutionHash
-    );
-    require!(from != [0u8; 32], MirrorError::ZeroAddress);
-
-    let digest = codec::signing_digest(&packet).map_err(|_| MirrorError::InvalidPacket)?;
-    quorum::verify_secp256k1_quorum(
-        &ctx.accounts.instructions_sysvar.to_account_info(),
-        &digest,
-        &ctx.accounts.config.relayers,
-        ctx.accounts.config.relayer_count as usize,
-        ctx.accounts.config.threshold,
-    )?;
-
-    Ok(ForcedParts { from, to, amount })
+) -> Result<ForcedPayload> {
+    let packet =
+        inbound::decode_typed_inbound(wire, message_id, config, MsgType::ForcedTransfer)?;
+    let parsed = inbound::parse_forced_payload(&packet.payload)?;
+    require!(parsed.asset_id == *asset_id, MirrorError::MintMismatch);
+    require!(parsed.from != [0u8; 32], MirrorError::ZeroAddress);
+    inbound::verify_quorum(instructions_sysvar, &packet, config)?;
+    Ok(parsed)
 }

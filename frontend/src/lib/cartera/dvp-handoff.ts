@@ -75,6 +75,27 @@ export function decodeDvPHandoff(encoded: string): DvPHandoffPayload | null {
   }
 }
 
+/** Cache for useSyncExternalStore — same hash ⇒ same object reference. */
+let snapshotHashKey: string | null = null;
+let snapshotHashValue: DvPHandoffPayload | null = null;
+
+/**
+ * Stable getSnapshot for `/cartera/firmar` hash payload.
+ * React requires Object.is equality across reads when the external store is unchanged.
+ */
+export function snapshotDvPHandoffFromHash(encoded: string): DvPHandoffPayload | null {
+  if (encoded === snapshotHashKey) return snapshotHashValue;
+  snapshotHashKey = encoded;
+  snapshotHashValue = decodeDvPHandoff(encoded);
+  return snapshotHashValue;
+}
+
+/** Test-only: clear snapshot cache. */
+export function resetDvPHandoffSnapshotCache(): void {
+  snapshotHashKey = null;
+  snapshotHashValue = null;
+}
+
 /** Absolute or path href for the buyer firmar page. */
 export function buildFirmarHref(
   payload: DvPHandoffPayload,

@@ -1,6 +1,9 @@
 /**
  * Ledger chain verification in the browser (explorer integrity / X14).
- * entryHash = keccak256(prevHash || data)
+ *
+ * - Demo / lab strings: entryHash = keccak256(prevHash ‖ utf8(data))
+ * - On-chain TitleRegistry: entryHash = keccak256(prevHash ‖ dataHash) with dataHash as bytes32
+ *   (LedgerChain.sol). `data` then holds the 0x-prefixed 32-byte hex from `dataHashAt`.
  */
 
 import { concat, keccak256, toUtf8Bytes } from "ethers";
@@ -10,7 +13,10 @@ export interface LedgerEntry {
   entryHash: string;
   /** Previous entry hash (0x…); genesis may be zero hash. */
   prevHash: string;
-  /** Canonical payload string used when hashing (lab encoding). */
+  /**
+   * Demo: human-readable payload string.
+   * On-chain: bytes32 dataHash hex from the registry.
+   */
   data: string;
 }
 
@@ -24,11 +30,16 @@ export interface LedgerVerification {
 const ZERO =
   "0x0000000000000000000000000000000000000000000000000000000000000000";
 
+const BYTES32_HEX = /^0x[0-9a-fA-F]{64}$/;
+
 /**
- * Compute entryHash = keccak256(abi.encodePacked(prevHash, data)) using utf8 data bytes.
+ * Compute next entry hash. Bytes32 hex `data` follows Solidity LedgerChain.nextHash.
  */
 export function computeEntryHash(prevHash: string, data: string): string {
   const prev = prevHash.toLowerCase() === ZERO ? ZERO : prevHash;
+  if (BYTES32_HEX.test(data)) {
+    return keccak256(concat([prev as `0x${string}`, data as `0x${string}`]));
+  }
   return keccak256(concat([prev as `0x${string}`, toUtf8Bytes(data)]));
 }
 

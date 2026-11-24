@@ -260,9 +260,7 @@ contract TitleRegistry is AccessControl {
         _notifyModules(assetId, bytes32(0), toHolder, 0, newBal);
         emit Issued(assetId, toHolder, amount, entry);
 
-        if (address(bridgeEndpoint) != address(0)) {
-            bridgeEndpoint.emitOutbound(MsgType.ISSUE, _encodeIssuePayload(assetId, amount, toHolder));
-        }
+        _emitOutboundIfWired(MsgType.ISSUE, _encodeIssuePayload(assetId, amount, toHolder));
     }
 
     /// @notice Court-ordered move (bypasses compliance). `pendingTransferId` non-zero cancels a Pending DvP (P7).
@@ -304,11 +302,7 @@ contract TitleRegistry is AccessControl {
         _notifyModules(assetId, from, to, newFrom, newTo);
         emit ForcedTransfer(assetId, from, to, amount, resolutionHash, entry);
 
-        if (address(bridgeEndpoint) != address(0)) {
-            bridgeEndpoint.emitOutbound(
-                MsgType.FORCED_TRANSFER, _encodeForcedPayload(assetId, from, to, amount, resolutionHash)
-            );
-        }
+        _emitOutboundIfWired(MsgType.FORCED_TRANSFER, _encodeForcedPayload(assetId, from, to, amount, resolutionHash));
     }
 
     /// @notice Burn units in-kind (court close-out); maintains I1. Emits FORCED_TRANSFER with `to = 0` (burn).
@@ -340,12 +334,10 @@ contract TitleRegistry is AccessControl {
         _notifyModules(assetId, holder, bytes32(0), newBal, 0);
         emit Redeemed(assetId, holder, amount, entry);
 
-        if (address(bridgeEndpoint) != address(0)) {
-            // Wire: `to = 0` ⇒ Solana burns (rescate en especie).
-            bridgeEndpoint.emitOutbound(
-                MsgType.FORCED_TRANSFER, _encodeForcedPayload(assetId, holder, bytes32(0), amount, resolutionHash)
-            );
-        }
+        // Wire: `to = 0` ⇒ Solana burns (in-kind redeem).
+        _emitOutboundIfWired(
+            MsgType.FORCED_TRANSFER, _encodeForcedPayload(assetId, holder, bytes32(0), amount, resolutionHash)
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -416,11 +408,7 @@ contract TitleRegistry is AccessControl {
 
         emit TransferDecided(transferId, outcome, reason, entry);
 
-        if (address(bridgeEndpoint) != address(0)) {
-            bridgeEndpoint.emitOutbound(
-                MsgType.TRANSFER_DECISION, _encodeDecisionPayload(transferId, outcome, reason, req.amount)
-            );
-        }
+        _emitOutboundIfWired(MsgType.TRANSFER_DECISION, _encodeDecisionPayload(transferId, outcome, reason, req.amount));
     }
 
     /// @notice D6 reconciler path: undo an Approved move that Solana rejected after hardDeadline.
@@ -484,6 +472,13 @@ contract TitleRegistry is AccessControl {
     // -------------------------------------------------------------------------
     // Internal
     // -------------------------------------------------------------------------
+
+    /// @dev No-op when bridge is unwired (unit tests / early deploy).
+    function _emitOutboundIfWired(MsgType msgType, bytes memory payload) private {
+        if (address(bridgeEndpoint) != address(0)) {
+            bridgeEndpoint.emitOutbound(msgType, payload);
+        }
+    }
 
     function _encodeDecisionPayload(bytes32 transferId, DecisionOutcome outcome, uint8 reasonCode, uint256 amount)
         internal
